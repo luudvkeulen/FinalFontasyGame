@@ -185,13 +185,21 @@ public class Player {
 		batch.draw(currentFrame, x, y, gridsize, gridsize);
 	}
 	
-	private boolean checkCollision(Rectangle rec, MapObjects objects) {
+	private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects) {
 		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if (rec.overlaps(rectangleMapObject)) {
 				return true;
 			}
 		}
+		
+		for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangleMapObject = mapObject.getRectangle();
+			if (rec.overlaps(rectangleMapObject)) {
+				return true;
+			}
+		}
+	
 		return false;
 	}
 
@@ -217,7 +225,7 @@ public class Player {
 			currentAnim = walkLeft;
 			direction = Direction.LEFT;
 			Rectangle rec = new Rectangle(x + 16 - this.speed, y, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects)) {
+			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				x -= this.speed;
 			}
 		}
@@ -225,7 +233,7 @@ public class Player {
 			currentAnim = walkRight;
 			direction = Direction.RIGHT;
 			Rectangle rec = new Rectangle(x + 16 + this.speed, y, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects)) {
+			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				x += this.speed;
 			}
 		}
@@ -234,7 +242,7 @@ public class Player {
 			currentAnim = walkUp;
 			direction = Direction.UP;
 			Rectangle rec = new Rectangle(x+ 16, y + this.speed, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects)) {
+			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				y += this.speed;
 			}
 		}
@@ -242,7 +250,7 @@ public class Player {
 			currentAnim = walkDown;
 			direction = Direction.DOWN;
 			Rectangle rec = new Rectangle(x+ 16, y - this.speed, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects)) {
+			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				y -= this.speed;
 			}
 		}

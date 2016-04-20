@@ -29,9 +29,8 @@ public class GameScreen implements Screen {
 	Player mainPlayer;
 	private ShapeRenderer shape;
 	private SpriteBatch batch;
-	public static TiledMapTileLayer wallLayer;
-	public static TiledMapTileLayer wallLayer2;
 	public static MapObjects wallObjects;
+	public static MapObjects objects;
 	public static ArrayList<Bullet> bullets;
 	private final Stage stage;
 	private final Skin skin;
@@ -74,6 +73,7 @@ public class GameScreen implements Screen {
 	public void show() {
 		map = new TmxMapLoader().load("DungeonMap.tmx");
 		wallObjects = map.getLayers().get("WallObjects").getObjects();
+		objects = map.getLayers().get("Objects").getObjects();
 		renderer = new OrthogonalTiledMapRenderer(map, 1f);
 		renderer.setView(camera);
 	}
