@@ -7,6 +7,12 @@ import com.ffxvi.game.Game;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new Game(), config);
+		config.title = "Final Fontasy XVI";
+		config.width = 1600;
+		config.height = 900;
+		config.fullscreen = false;
+		config.resizable = false;
+		config.vSyncEnabled = true;
+		LwjglApplication lwjglApplication = new LwjglApplication(new Game(), config);
 	}
 }
