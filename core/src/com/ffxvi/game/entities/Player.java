@@ -3,6 +3,7 @@ package com.ffxvi.game.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -101,7 +102,8 @@ public class Player {
 		direction = Direction.RIGHT;
 		this.speed = Player.WALK_SPEED;
 		this.playerName = playerName;
-
+		Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
+		sound.play();
 	}
 
 	/**
@@ -194,6 +196,9 @@ public class Player {
 	}
 
 	public void update() {
+		int modifiedgridsizey = gridsize - 12;
+		int modifiedgridsizex = gridsize - 32;
+		
 		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
 			game.setScreen(new MenuScreen(game));
 			return;
@@ -209,40 +214,36 @@ public class Player {
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-			x -= this.speed;
 			currentAnim = walkLeft;
 			direction = Direction.LEFT;
-			Rectangle rec = new Rectangle(x, y, gridsize, gridsize);
-			if(checkCollision(rec, GameScreen.wallObjects)) {
-				x += this.speed;
+			Rectangle rec = new Rectangle(x + 16 - this.speed, y, modifiedgridsizex, modifiedgridsizey);
+			if(!checkCollision(rec, GameScreen.wallObjects)) {
+				x -= this.speed;
 			}
 		}
 		if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-			x += this.speed;
 			currentAnim = walkRight;
 			direction = Direction.RIGHT;
-			Rectangle rec = new Rectangle(x, y, gridsize, gridsize);
-			if(checkCollision(rec, GameScreen.wallObjects)) {
-				x -= this.speed;
+			Rectangle rec = new Rectangle(x + 16 + this.speed, y, modifiedgridsizex, modifiedgridsizey);
+			if(!checkCollision(rec, GameScreen.wallObjects)) {
+				x += this.speed;
 			}
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-			y += this.speed;
 			currentAnim = walkUp;
 			direction = Direction.UP;
-			Rectangle rec = new Rectangle(x, y, gridsize, gridsize);
-			if(checkCollision(rec, GameScreen.wallObjects)) {
-				y -= this.speed;
+			Rectangle rec = new Rectangle(x+ 16, y + this.speed, modifiedgridsizex, modifiedgridsizey);
+			if(!checkCollision(rec, GameScreen.wallObjects)) {
+				y += this.speed;
 			}
 		}
 		if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-			y -= this.speed;
 			currentAnim = walkDown;
 			direction = Direction.DOWN;
-			Rectangle rec = new Rectangle(x, y, gridsize, gridsize);
-			if(checkCollision(rec, GameScreen.wallObjects)) {
-				y += this.speed;
+			Rectangle rec = new Rectangle(x+ 16, y - this.speed, modifiedgridsizex, modifiedgridsizey);
+			if(!checkCollision(rec, GameScreen.wallObjects)) {
+				y -= this.speed;
 			}
 		}
 

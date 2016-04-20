@@ -73,8 +73,6 @@ public class GameScreen implements Screen {
 	@Override
 	public void show() {
 		map = new TmxMapLoader().load("DungeonMap.tmx");
-		wallLayer = (TiledMapTileLayer)map.getLayers().get("Walls");
-		wallLayer2 = (TiledMapTileLayer)map.getLayers().get("Walls2");
 		wallObjects = map.getLayers().get("WallObjects").getObjects();
 		renderer = new OrthogonalTiledMapRenderer(map, 1f);
 		renderer.setView(camera);
