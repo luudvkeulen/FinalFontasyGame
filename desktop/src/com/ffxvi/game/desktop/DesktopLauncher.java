@@ -12,6 +12,6 @@ public class DesktopLauncher {
 		config.height = 600;
 		config.resizable = false;
 		config.vSyncEnabled = true;
-		new LwjglApplication(new MainClass(), config);
+		LwjglApplication lwjglApplication = new LwjglApplication(new MainClass(), config);
 	}
 }
