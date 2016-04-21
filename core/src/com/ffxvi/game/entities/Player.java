@@ -106,7 +106,24 @@ public class Player {
 	 */
 	private void setAnimations(String walkingAnim, String slashingAnim) {
 		setWalkingAnimations(walkingAnim);
-		setSlashingAnimations(slashingAnim);
+		if(!slashingAnim.equals("")) {
+			setSlashingAnimations(slashingAnim);
+		}
+		currentAnim = null;
+	}
+	
+	private void switchCharacter(PlayerCharacter character) {
+		switch (character) {
+			case SKELETON_DAGGER:
+				setAnimations("Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
+				break;
+			case SKELETON_HOODED_BOW:
+				setAnimations("Units/Skeleton_Hooded_Bow/Walk.png", "");
+				break;
+			case SKELETON_HOODED_DAGGER:
+				setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png", "Units/Skeleton_Hooded_Dagger/Slash.png");
+				break;
+		}
 	}
 
 	/**
@@ -168,6 +185,47 @@ public class Player {
 		
 		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
 			game.setScreen(new MenuScreen(game));
+			return;
+		}
+		
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_1))
+		{
+			switchCharacter(PlayerCharacter.SKELETON_HOODED_DAGGER);
+			switch(direction) {
+				case LEFT:
+					currentAnim = new Animation(0, walkLeft.getKeyFrame(0));
+					break;
+				case RIGHT:
+					currentAnim = new Animation(0, walkRight.getKeyFrame(0));
+					break;
+				case UP:
+					currentAnim = new Animation(0, walkUp.getKeyFrame(0));
+					break;
+				case DOWN:
+					currentAnim = new Animation(0, walkDown.getKeyFrame(0));
+					break;
+			}
+			
+			return;
+		}
+		
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_2))
+		{
+			switchCharacter(PlayerCharacter.SKELETON_HOODED_BOW);
+			switch(direction) {
+				case LEFT:
+					currentAnim = new Animation(0, walkLeft.getKeyFrame(0));
+					break;
+				case RIGHT:
+					currentAnim = new Animation(0, walkRight.getKeyFrame(0));
+					break;
+				case UP:
+					currentAnim = new Animation(0, walkUp.getKeyFrame(0));
+					break;
+				case DOWN:
+					currentAnim = new Animation(0, walkDown.getKeyFrame(0));
+					break;
+			}
 			return;
 		}
 
