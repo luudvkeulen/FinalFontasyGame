@@ -4,14 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,8 +15,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
-import com.ffxvi.game.PlayerCharacter;
-import static com.ffxvi.game.PlayerCharacter.SKELETON_DAGGER;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 
@@ -141,41 +135,6 @@ public class Player {
 		slashLeft = new Animation(slashSpeed, anims[1]);
 		slashDown = new Animation(slashSpeed, anims[2]);
 		slashRight = new Animation(slashSpeed, anims[3]);
-	}
-
-	/**
-	 *
-	 * @param x Move this player this much horizontally
-	 * @param y Move this player this much vertically
-	 */
-	public void translate(int x, int y) {
-		if (x == 0 && y == 0) {
-			currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
-			return;
-		}
-		this.x += x;
-		this.y += y;
-		if (y == 0) {
-			if (x > 0) {
-				currentAnim = walkRight;
-			} else {
-				currentAnim = walkLeft;
-			}
-		} else if (y > 0) {
-			currentAnim = walkUp;
-		} else {
-			currentAnim = walkDown;
-		}
-		//TODO
-	}
-
-	public void render(ShapeRenderer shape, OrthographicCamera camera) {
-		shape.setProjectionMatrix(camera.combined);
-		//shape.begin(ShapeType.Line);
-		shape.begin(ShapeType.Filled);
-		shape.setColor(Color.WHITE);
-		shape.box(x, y, 0, gridsize, gridsize, 0);
-		shape.end();
 	}
 
 	public void render(SpriteBatch batch) {
