@@ -9,7 +9,6 @@ import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.screens.PreGameScreen;
-import com.ffxvi.videoforgdx.VideoGenerator;
 
 public class MainClass extends Game implements ApplicationListener {
 	public static int WIDTH;
@@ -43,8 +42,6 @@ public class MainClass extends Game implements ApplicationListener {
 		HEIGHT = Gdx.graphics.getHeight();
 		
 		camera = new OrthographicCamera(WIDTH, HEIGHT);
-		
-		VideoGenerator.create("D:\\Downloads", "D:\\Downloads\\test.jpg", "FinalFontasy.mp4", 60);
 		
 		setMenuScreen();
 	}
