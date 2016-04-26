@@ -33,30 +33,33 @@ project(":desktop") {
 
 
     dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+	compile project(":core")
+	compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+	compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+	compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
+	compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 	compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
     }
 }
 
 project(":core") {
-    apply plugin: "java"
+	apply plugin: "java"
 
+	sourceSets.test.java.srcDirs = ["test/"]
 
-    dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        compile "com.underwaterapps.overlap2druntime:overlap2d-runtime-libgdx:0.1.0"
-    }
+	dependencies {
+		testCompile "junit:junit:4.11"   
+		
+		compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+		compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+		compile "com.underwaterapps.overlap2druntime:overlap2d-runtime-libgdx:0.1.0"
+	}
 }
 
 tasks.eclipse.doLast {
-    delete ".project"
+	delete ".project"
 }
