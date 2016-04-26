@@ -1,4 +1,5 @@
-package org.package.name;
+package com.ffxvi.game;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -9,7 +10,7 @@ public class WorkingTest
     @Test
     public void thisAlwaysPasses() 
     {
-        assertTrue(true);
+        assertTrue(false);
     }
 
     @Test
