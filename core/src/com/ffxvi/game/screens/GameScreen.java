@@ -95,19 +95,19 @@ public class GameScreen implements Screen {
 
 			renderer.setView(camera);
 			renderer.render();
-
-	//		mainPlayer.render(shape, camera);
-			batch.begin();
-			mainPlayer.render(batch);
-			mainPlayer.update();
-			batch.end();
 			
 			// Set the playerLabel position to the position of the player
 			Vector3 playerPos = new Vector3(mainPlayer.getX(), mainPlayer.getY(), 0);
 			camera.project(playerPos);
 			layout.setText(skin.getFont("default"), mainPlayer.getName());
 			float playerLabelWidth = layout.width;
-			playerLabel.setPosition(playerPos.x + 32 - (playerLabelWidth/2), playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight() + 10);
+			playerLabel.setPosition(playerPos.x + 32 - (playerLabelWidth/2), playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight());
+			
+	//		mainPlayer.render(shape, camera);
+			batch.begin();
+			mainPlayer.render(batch);
+			mainPlayer.update();
+			batch.end();
 			
 			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 			stage.draw();
