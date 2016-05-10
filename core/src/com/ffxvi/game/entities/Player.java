@@ -37,8 +37,8 @@ public class Player {
 	protected float[] shapey;
 
 	private Direction direction;
-	private float animSpeed;
-	private float stateTime;
+	private final float animSpeed = 0.05f;
+	private float stateTime = 0f;
 	private Animation currentAnim,
 			walkUp, walkLeft, walkDown, walkRight,
 			slashUp, slashLeft, slashDown, slashRight;
@@ -50,6 +50,7 @@ public class Player {
 	private int gridsize = 64;
 	private float speed;
 	private final String playerName;
+	private final GameScreen screen;
 
 	public float getX() {
 		return x;
@@ -76,9 +77,8 @@ public class Player {
 	 *
 	 * @param walkingAnim Filename of the walking animations, located in assets
 	 */
-	public Player(MainClass game, PlayerCharacter character, String playerName) {
-		animSpeed = 0.05f;
-		stateTime = 0f;
+	public Player(MainClass game, PlayerCharacter character, String playerName, GameScreen screen) {
+		this.screen = screen;
 
 		switch (character) {
 			case SKELETON_DAGGER:
@@ -96,8 +96,8 @@ public class Player {
 		direction = Direction.RIGHT;
 		this.speed = Player.WALK_SPEED;
 		this.playerName = playerName;
-		Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
-		sound.play();
+		//Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
+		//sound.play();
 	}
 
 	/**
@@ -178,6 +178,16 @@ public class Player {
 	
 		return false;
 	}
+	
+	private void checkDoorCollision(Rectangle rec, MapObjects objects) {
+		for(RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangleMapObject = mapObject.getRectangle();
+			if(rec.overlaps(rectangleMapObject)) {
+				screen.setLevel(mapObject.getName() + ".tmx");
+				System.out.println("DOOR COLLISION");
+			}
+		}
+	}
 
 	public void update() {
 		int modifiedgridsizey = gridsize - 12;
@@ -245,6 +255,8 @@ public class Player {
 			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				x -= this.speed;
 			}
+			
+			checkDoorCollision(rec, GameScreen.doors);
 		}
 		if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
 			currentAnim = walkRight;
@@ -253,6 +265,8 @@ public class Player {
 			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				x += this.speed;
 			}
+			
+			checkDoorCollision(rec, GameScreen.doors);
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
@@ -262,6 +276,8 @@ public class Player {
 			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				y += this.speed;
 			}
+			
+			checkDoorCollision(rec, GameScreen.doors);
 		}
 		if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
 			currentAnim = walkDown;
@@ -270,6 +286,8 @@ public class Player {
 			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
 				y -= this.speed;
 			}
+			
+			checkDoorCollision(rec, GameScreen.doors);
 		}
 
 		if (!Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT)
