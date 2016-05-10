@@ -26,6 +26,7 @@ public class GameScreen implements Screen {
 	OrthogonalTiledMapRenderer renderer;
 	MainClass game;
 	Player mainPlayer;
+        
 	private ShapeRenderer shape;
 	private SpriteBatch batch;
 	public static MapObjects wallObjects;
