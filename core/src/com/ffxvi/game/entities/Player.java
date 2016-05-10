@@ -31,9 +31,6 @@ public class Player {
     protected static final float RUN_SPEED = 8;
     protected float rotationSpeed;
 
-    protected int width;
-    protected int height;
-
     protected float[] shapex;
     protected float[] shapey;
 
@@ -46,8 +43,16 @@ public class Player {
 
     private MainClass game;
 
-    private int shootDelay = 0;
-    private final int maxShootDelay = 10;
+    private float shootCooldown = 0.5f;
+    //private final int maxShootDelay = 20;
+	private long shootStart = 0;
+	
+	private boolean isUsingMelee = false;
+	/* Melee cooldown in seconds */
+	private float meleeCooldown = 1.0f;
+	/* Melee start in nanoseconds */
+	private long meleeStart = 0;
+	
     private int gridsize = 64;
     private int modifiedgridsizex;
     private int modifiedgridsizey;
@@ -80,7 +85,7 @@ public class Player {
      * @param walkingAnim Filename of the walking animations, located in assets
      */
     public Player(MainClass game, PlayerCharacter character, String playerName) {
-        animSpeed = 0.05f;
+        animSpeed = 0.1f;
         stateTime = 0f;
 
         switch (character) {
@@ -151,7 +156,7 @@ public class Player {
     }
 
     private void setSlashingAnimations(String slashingAnim) {
-        float slashSpeed = animSpeed * 0.5f;
+        float slashSpeed = animSpeed * 1f;
         int slashSheet_Cols = 6;
         int slashSheet_Rows = 4;
         Texture slashSheet = new Texture(Gdx.files.internal(slashingAnim));
@@ -188,7 +193,6 @@ public class Player {
     }
 
     public void update() {
-
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             game.setScreen(new MenuScreen(game));
             return;
@@ -214,35 +218,36 @@ public class Player {
                 && !Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
             sprint(false);
         }
+		
+		if (!this.isUsingMelee) {
+			if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
+				DirectionInput(Direction.LEFT);
 
-        if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-            DirectionInput(Direction.LEFT);
-            
-        }
-        if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-            DirectionInput(Direction.RIGHT);
-        }
+			}
+			if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
+				DirectionInput(Direction.RIGHT);
+			}
 
-        if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-            DirectionInput(Direction.UP);
-        }
-        if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-            DirectionInput(Direction.DOWN);
-        }
+			if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
+				DirectionInput(Direction.UP);
+			}
+			if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
+				DirectionInput(Direction.DOWN);
+			}
 
-        if (!Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT)
-                && !Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN)
-                && !Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)
-                && !Gdx.input.isKeyPressed(Keys.W) && !Gdx.input.isKeyPressed(Keys.S)) {
-            currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
-        }
-
-        this.shootDelay--;
+			if (!Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT)
+					&& !Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN)
+					&& !Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)
+					&& !Gdx.input.isKeyPressed(Keys.W) && !Gdx.input.isKeyPressed(Keys.S)) {
+				currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+			}
+		}
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && this.shootDelay <= 0) {
+			&& System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000)
+		{
             // Reset the shoot delay
-            this.shootDelay = this.maxShootDelay;
+			this.shootStart = System.nanoTime();
 
             // Create a vector3 with the player's coordinates
             Vector3 playerPos = new Vector3(this.x, this.y, 0);
@@ -251,28 +256,42 @@ public class Player {
             camera.project(playerPos);
 
             // Create a vector2 with the mouse coordinates
-            Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
+            Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY() + 50);
 
             // Set the speed of the bullet
             float speed2 = 15.0f;
 
             // Calculate the direction of the bullet using arctan
-            float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y, mousePos.x - playerPos.x));
+            float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize/3), mousePos.x - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth()/2)));
 
             // Create a bullet inside the player with the direction and speed
             GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
         }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)
+			&& System.nanoTime() - this.meleeStart > this.meleeCooldown * 1000000000)
+		{
+			this.isUsingMelee = true;
+			this.meleeStart = System.nanoTime();
+			
             setCurrentSlashingAnimation(direction);
         }
+		
+		// Check if melee animation has ended
+		if (this.currentAnim.getKeyFrames().length-1 == this.currentAnim.getKeyFrameIndex(stateTime)
+			&& this.isUsingMelee)
+		{
+			this.isUsingMelee = false;
+		};
     }
+	
     private void DirectionInput(Direction direction){
         this.direction = direction;
         setCurrentWalkingAnimation(direction);
-            if (!checkCollision(movingCollisionBox(direction), GameScreen.wallObjects, GameScreen.objects)) {
-                Move(direction);
-            }
+		
+		if (!checkCollision(movingCollisionBox(direction), GameScreen.wallObjects, GameScreen.objects)) {
+			Move(direction);
+		}
     }
     
     private void Move(Direction direction) {
@@ -301,20 +320,22 @@ public class Player {
     }
 
     private void setCurrentWalkingAnimation(Direction direction) {
-        switch (direction) {
-            case LEFT:
-                currentAnim = walkLeft;
-                break;
-            case RIGHT:
-                currentAnim = walkRight;
-                break;
-            case UP:
-                currentAnim = walkUp;
-                break;
-            case DOWN:
-                currentAnim = walkDown;
-                break;
-        }
+		if (!this.isUsingMelee) {
+			switch (direction) {
+				case LEFT:
+					currentAnim = walkLeft;
+					break;
+				case RIGHT:
+					currentAnim = walkRight;
+					break;
+				case UP:
+					currentAnim = walkUp;
+					break;
+				case DOWN:
+					currentAnim = walkDown;
+					break;
+			}
+		}
     }
     private void setCurrentSlashingAnimation(Direction direction) {
         switch (direction) {
