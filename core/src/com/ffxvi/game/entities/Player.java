@@ -23,19 +23,9 @@ public class Player {
     protected float x;
     protected float y;
 
-    protected float dx;
-    protected float dy;
-
-    protected float radians;
     protected static final float WALK_SPEED = 5;
     protected static final float RUN_SPEED = 8;
-    protected float rotationSpeed;
 
-    protected int width;
-    protected int height;
-
-    protected float[] shapex;
-    protected float[] shapey;
 
     private Direction direction;
     private float animSpeed;
@@ -134,33 +124,7 @@ public class Player {
         }
     }
 
-    /**
-     *
-     * @param walkingAnim Filename of the walking animations, located in assets
-     */
-    private void setWalkingAnimations(String walkingAnim) {
-        float walkSpeed = animSpeed * 1f;
-        int walkSheet_Cols = 9;
-        int walkSheet_Rows = 4;
-        Texture walkSheet = new Texture(Gdx.files.internal(walkingAnim));
-        TextureRegion[][] anims = TextureRegion.split(walkSheet, walkSheet.getWidth() / walkSheet_Cols, walkSheet.getHeight() / walkSheet_Rows);
-        walkUp = new Animation(walkSpeed, anims[0]);
-        walkLeft = new Animation(walkSpeed, anims[1]);
-        walkDown = new Animation(walkSpeed, anims[2]);
-        walkRight = new Animation(walkSpeed, anims[3]);
-    }
-
-    private void setSlashingAnimations(String slashingAnim) {
-        float slashSpeed = animSpeed * 0.5f;
-        int slashSheet_Cols = 6;
-        int slashSheet_Rows = 4;
-        Texture slashSheet = new Texture(Gdx.files.internal(slashingAnim));
-        TextureRegion[][] anims = TextureRegion.split(slashSheet, slashSheet.getWidth() / slashSheet_Cols, slashSheet.getHeight() / slashSheet_Rows);
-        slashUp = new Animation(slashSpeed, anims[0]);
-        slashLeft = new Animation(slashSpeed, anims[1]);
-        slashDown = new Animation(slashSpeed, anims[2]);
-        slashRight = new Animation(slashSpeed, anims[3]);
-    }
+    
 
     public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(camera.combined);
@@ -183,12 +147,21 @@ public class Player {
                 return true;
             }
         }
+        
+        
 
         return false;
     }
 
     public void update() {
 
+        checkInputs();
+        this.shootDelay--;
+
+        
+    }
+    
+    private void checkInputs() {
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             game.setScreen(new MenuScreen(game));
             return;
@@ -236,13 +209,20 @@ public class Player {
                 && !Gdx.input.isKeyPressed(Keys.W) && !Gdx.input.isKeyPressed(Keys.S)) {
             currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
         }
-
-        this.shootDelay--;
-
+        
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)
                 && this.shootDelay <= 0) {
             // Reset the shoot delay
-            this.shootDelay = this.maxShootDelay;
+            fire();
+        }
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            setCurrentSlashingAnimation(direction);
+        }
+    }
+    
+    private void fire(){
+        this.shootDelay = this.maxShootDelay;
 
             // Create a vector3 with the player's coordinates
             Vector3 playerPos = new Vector3(this.x, this.y, 0);
@@ -261,12 +241,9 @@ public class Player {
 
             // Create a bullet inside the player with the direction and speed
             GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
-        }
-
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            setCurrentSlashingAnimation(direction);
-        }
     }
+    
+    
     private void DirectionInput(Direction direction){
         this.direction = direction;
         setCurrentWalkingAnimation(direction);
@@ -332,6 +309,34 @@ public class Player {
                 break;
         }
     }
+    
+    /**
+     *
+     * @param walkingAnim Filename of the walking animations, located in assets
+     */
+    private void setWalkingAnimations(String walkingAnim) {
+        float walkSpeed = animSpeed * 1f;
+        int walkSheet_Cols = 9;
+        int walkSheet_Rows = 4;
+        Texture walkSheet = new Texture(Gdx.files.internal(walkingAnim));
+        TextureRegion[][] anims = TextureRegion.split(walkSheet, walkSheet.getWidth() / walkSheet_Cols, walkSheet.getHeight() / walkSheet_Rows);
+        walkUp = new Animation(walkSpeed, anims[0]);
+        walkLeft = new Animation(walkSpeed, anims[1]);
+        walkDown = new Animation(walkSpeed, anims[2]);
+        walkRight = new Animation(walkSpeed, anims[3]);
+    }
+
+    private void setSlashingAnimations(String slashingAnim) {
+        float slashSpeed = animSpeed * 0.5f;
+        int slashSheet_Cols = 6;
+        int slashSheet_Rows = 4;
+        Texture slashSheet = new Texture(Gdx.files.internal(slashingAnim));
+        TextureRegion[][] anims = TextureRegion.split(slashSheet, slashSheet.getWidth() / slashSheet_Cols, slashSheet.getHeight() / slashSheet_Rows);
+        slashUp = new Animation(slashSpeed, anims[0]);
+        slashLeft = new Animation(slashSpeed, anims[1]);
+        slashDown = new Animation(slashSpeed, anims[2]);
+        slashRight = new Animation(slashSpeed, anims[3]);
+    }
 
     private Rectangle movingCollisionBox(Direction direction) {
         Rectangle rec = null;
@@ -351,5 +356,4 @@ public class Player {
         }
         return rec;
     }
-     
 }
