@@ -36,7 +36,7 @@ public class Player {
 	protected float[] shapex;
 	protected float[] shapey;
 
-	private Direction direction;
+	public Direction direction;
 	private final float animSpeed = 0.05f;
 	private float stateTime = 0f;
 	private Animation currentAnim,
@@ -73,10 +73,6 @@ public class Player {
 		this.y = y;
 	}
 
-	/**
-	 *
-	 * @param walkingAnim Filename of the walking animations, located in assets
-	 */
 	public Player(MainClass game, PlayerCharacter character, String playerName, GameScreen screen) {
 		this.screen = screen;
 
@@ -183,8 +179,7 @@ public class Player {
 		for(RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if(rec.overlaps(rectangleMapObject)) {
-				screen.setLevel(mapObject.getName() + ".tmx");
-				System.out.println("DOOR COLLISION");
+				screen.setLevel(mapObject.getName());
 			}
 		}
 	}
