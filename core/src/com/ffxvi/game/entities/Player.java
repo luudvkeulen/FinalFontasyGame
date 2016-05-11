@@ -34,7 +34,7 @@ public class Player {
     protected float[] shapex;
     protected float[] shapey;
 
-    private Direction direction;
+    public Direction direction;
     private float animSpeed;
     private float stateTime;
     private Animation currentAnim,
@@ -104,8 +104,7 @@ public class Player {
         direction = Direction.RIGHT;
         this.speed = Player.WALK_SPEED;
         this.playerName = playerName;
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
-        sound.play();
+        
         modifiedgridsizex = gridsize - 32;
         modifiedgridsizey = gridsize - 16;
 
