@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerCharacter;
 
+
+
 public class PreGameScreen implements Screen {
 
 	private final MainClass game;
