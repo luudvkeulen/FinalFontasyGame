@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.entities.Bullet;
-import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class GameScreen implements Screen {
 	OrthogonalTiledMapRenderer renderer;
 	MainClass game;
 	Player mainPlayer;
+        
 	private ShapeRenderer shape;
 	private SpriteBatch batch;
 	public static MapObjects wallObjects;
@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 	}
 	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
-		mainPlayer = new Player(game, character, playerName, this);
+		mainPlayer = new Player(game, character, playerName);
 		mainPlayer.setPos(64, 64);
 		
 		playerLabel.setText(playerName);

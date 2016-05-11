@@ -22,19 +22,16 @@ public class Player {
 	protected float x;
 	protected float y;
 
-	protected float dx;
-	protected float dy;
+    protected float dx;
+    protected float dy;
 
-	protected float radians;
-	protected static final float WALK_SPEED = 5;
-	protected static final float RUN_SPEED = 8;
-	protected float rotationSpeed;
+    protected float radians;
+    protected static final float WALK_SPEED = 5;
+    protected static final float RUN_SPEED = 8;
+    protected float rotationSpeed;
 
-	protected int width;
-	protected int height;
-
-	protected float[] shapex;
-	protected float[] shapey;
+    protected float[] shapex;
+    protected float[] shapey;
 
 	public Direction direction;
 	private final float animSpeed = 0.05f;
@@ -107,20 +104,127 @@ public class Player {
 		}
 		currentAnim = null;
 	}
+=======
+
+    protected float x;
+    protected float y;
+
+    protected float dx;
+    protected float dy;
+
+    protected float radians;
+    protected static final float WALK_SPEED = 5;
+    protected static final float RUN_SPEED = 8;
+    protected float rotationSpeed;
+
+    protected float[] shapex;
+    protected float[] shapey;
+
+    private Direction direction;
+    private float animSpeed;
+    private float stateTime;
+    private Animation currentAnim,
+            walkUp, walkLeft, walkDown, walkRight,
+            slashUp, slashLeft, slashDown, slashRight;
+
+    private MainClass game;
+
+    private float shootCooldown = 0.5f;
+    //private final int maxShootDelay = 20;
+	private long shootStart = 0;
+>>>>>>> Temporary merge branch 2
 	
-	private void switchCharacter(PlayerCharacter character) {
-		switch (character) {
-			case SKELETON_DAGGER:
-				setAnimations("Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
-				break;
-			case SKELETON_HOODED_BOW:
-				setAnimations("Units/Skeleton_Hooded_Bow/Walk.png", "");
-				break;
-			case SKELETON_HOODED_DAGGER:
-				setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png", "Units/Skeleton_Hooded_Dagger/Slash.png");
-				break;
-		}
-	}
+	private boolean isUsingMelee = false;
+	/* Melee cooldown in seconds */
+	private float meleeCooldown = 1.0f;
+	/* Melee start in nanoseconds */
+	private long meleeStart = 0;
+	
+    private int gridsize = 64;
+    private int modifiedgridsizex;
+    private int modifiedgridsizey;
+    private float speed;
+    private final String playerName;
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public String getName() {
+        return this.playerName;
+    }
+
+    public Animation getCurrentAnim() {
+        return currentAnim;
+    }
+
+    public void setPos(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     *
+     * @param walkingAnim Filename of the walking animations, located in assets
+     */
+    public Player(MainClass game, PlayerCharacter character, String playerName) {
+        animSpeed = 0.1f;
+        stateTime = 0f;
+
+        switch (character) {
+            case SKELETON_DAGGER:
+                setAnimations("Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
+                break;
+            case SKELETON_HOODED_BOW:
+                setAnimations("Units/Skeleton_Hooded_Bow/Walk.png", "Units/Skeleton_Hooded_Bow/Slash.png");
+                break;
+            case SKELETON_HOODED_DAGGER:
+                setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png", "Units/Skeleton_Hooded_Dagger/Slash.png");
+                break;
+        }
+        currentAnim = new Animation(0, walkDown.getKeyFrame(0));
+        this.game = game;
+        direction = Direction.RIGHT;
+        this.speed = Player.WALK_SPEED;
+        this.playerName = playerName;
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
+        sound.play();
+        modifiedgridsizex = gridsize - 32;
+        modifiedgridsizey = gridsize - 16;
+
+    }
+
+    /**
+     *
+     * @param walkingAnim Filename of the walking animations, located in assets
+     */
+    private void setAnimations(String walkingAnim, String slashingAnim) {
+        if (!walkingAnim.equals("")) {
+            setWalkingAnimations(walkingAnim);
+        }
+        if (!slashingAnim.equals("")) {
+            setSlashingAnimations(slashingAnim);
+        }
+        currentAnim = null;
+    }
+
+    private void switchCharacter(PlayerCharacter character) {
+        switch (character) {
+            case SKELETON_DAGGER:
+                setAnimations("Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
+                break;
+            case SKELETON_HOODED_BOW:
+                setAnimations("Units/Skeleton_Hooded_Bow/Walk.png", "");
+                break;
+            case SKELETON_HOODED_DAGGER:
+                setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png", "Units/Skeleton_Hooded_Dagger/Slash.png");
+                break;
+        }
+    }
 
 	/**
 	 *
@@ -234,65 +338,38 @@ public class Player {
 			return;
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
-				|| Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-			this.speed = Player.RUN_SPEED;
-		}
-		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
-				&& !Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-			this.speed = Player.WALK_SPEED;
-		}
+        if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
+                || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+            sprint(true);
+        }
+        if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
+                && !Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+            sprint(false);
+        }
+		
+		if (!this.isUsingMelee) {
+			if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
+				DirectionInput(Direction.LEFT);
 
-		if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-			currentAnim = walkLeft;
-			direction = Direction.LEFT;
-			Rectangle rec = new Rectangle(x + 16 - this.speed, y, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
-				x -= this.speed;
 			}
-			
-			checkDoorCollision(rec, GameScreen.doors);
-		}
-		if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-			currentAnim = walkRight;
-			direction = Direction.RIGHT;
-			Rectangle rec = new Rectangle(x + 16 + this.speed, y, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
-				x += this.speed;
+			if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
+				DirectionInput(Direction.RIGHT);
 			}
-			
-			checkDoorCollision(rec, GameScreen.doors);
-		}
 
-		if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-			currentAnim = walkUp;
-			direction = Direction.UP;
-			Rectangle rec = new Rectangle(x+ 16, y + this.speed, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
-				y += this.speed;
+			if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
+				DirectionInput(Direction.UP);
 			}
-			
-			checkDoorCollision(rec, GameScreen.doors);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-			currentAnim = walkDown;
-			direction = Direction.DOWN;
-			Rectangle rec = new Rectangle(x+ 16, y - this.speed, modifiedgridsizex, modifiedgridsizey);
-			if(!checkCollision(rec, GameScreen.wallObjects, GameScreen.objects)) {
-				y -= this.speed;
+			if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
+				DirectionInput(Direction.DOWN);
 			}
-			
-			checkDoorCollision(rec, GameScreen.doors);
-		}
 
-		if (!Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT)
-				&& !Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN)
-				&& !Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)
-				&& !Gdx.input.isKeyPressed(Keys.W) && !Gdx.input.isKeyPressed(Keys.S)) {
-			currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+			if (!Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT)
+					&& !Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN)
+					&& !Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)
+					&& !Gdx.input.isKeyPressed(Keys.W) && !Gdx.input.isKeyPressed(Keys.S)) {
+				currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+			}
 		}
-
-		this.shootDelay--;
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)
 				&& this.shootDelay <= 0) {
