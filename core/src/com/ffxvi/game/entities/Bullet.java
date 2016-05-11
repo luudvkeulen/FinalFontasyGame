@@ -59,6 +59,8 @@ public class Bullet {
 			}
 		}
 	}
+        
+        
 	
 	private boolean checkCollision(Rectangle rec, MapObjects objects) {
 		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {

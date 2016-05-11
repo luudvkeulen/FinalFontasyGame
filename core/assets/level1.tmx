@@ -29,8 +29,8 @@
   <object id="47" x="320" y="1472" width="448" height="320"/>
  </objectgroup>
  <objectgroup name="Door">
-  <object id="50" x="896" y="0" width="64" height="64"/>
-  <object id="51" x="1984" y="960" width="64" height="64"/>
-  <object id="52" x="0" y="960" width="64" height="64"/>
+  <object id="50" name="level2" x="896" y="0" width="64" height="64"/>
+  <object id="51" name="null" x="1984" y="960" width="64" height="64"/>
+  <object id="52" name="level3" x="0" y="960" width="64" height="64"/>
  </objectgroup>
 </map>

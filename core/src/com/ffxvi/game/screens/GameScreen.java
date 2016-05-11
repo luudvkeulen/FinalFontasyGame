@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -20,22 +21,27 @@ import com.ffxvi.game.entities.Bullet;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameScreen implements Screen {
 	TiledMap map;
 	OrthogonalTiledMapRenderer renderer;
 	MainClass game;
 	Player mainPlayer;
+        
 	private ShapeRenderer shape;
 	private SpriteBatch batch;
 	public static MapObjects wallObjects;
 	public static MapObjects objects;
+	public static MapObjects doors;
 	public static ArrayList<Bullet> bullets;
 	private final Stage stage;
 	private final Skin skin;
 	
 	private Label playerLabel;
 	private GlyphLayout layout;
+	private final String[] levels = new String[]{"level1", "level2", "level3"};
+	public String currentlevel = "";
 	
 	public GameScreen (MainClass game) {
 		this.game = game;
@@ -70,10 +76,44 @@ public class GameScreen implements Screen {
 	
 	@Override
 	public void show() {
-		map = new TmxMapLoader().load("DungeonMap.tmx");
+		int idx = new Random().nextInt(levels.length);
+		currentlevel = levels[idx];
+		String level = currentlevel + ".tmx";
+		map = new TmxMapLoader().load(level);
 		wallObjects = map.getLayers().get("WallObjects").getObjects();
 		objects = map.getLayers().get("Objects").getObjects();
+		doors = map.getLayers().get("Door").getObjects();
 		renderer = new OrthogonalTiledMapRenderer(map, 1f);
+		renderer.setView(camera);
+	}
+	
+	public void setLevel(String level) {
+		if(level.equals("null")) return;
+		map = new TmxMapLoader().load(level + ".tmx");
+		wallObjects = map.getLayers().get("WallObjects").getObjects();
+		objects = map.getLayers().get("Objects").getObjects();
+		doors = map.getLayers().get("Door").getObjects();
+		for(RectangleMapObject rmo : doors.getByType(RectangleMapObject.class)) {
+			if(rmo.getName().equals(currentlevel)) {
+				switch(mainPlayer.direction) {
+					case UP:
+						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y + 64);
+						break;
+					case DOWN:
+						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y - 64);
+						break;
+					case LEFT:
+						mainPlayer.setPos(rmo.getRectangle().x - 64, rmo.getRectangle().y );
+						break;
+					case RIGHT:
+						mainPlayer.setPos(rmo.getRectangle().x + 64, rmo.getRectangle().y );
+						break;
+				}
+				break;
+			}
+		}
+		renderer = new OrthogonalTiledMapRenderer(map, 1f);
+		currentlevel = level;
 		renderer.setView(camera);
 	}
 	
