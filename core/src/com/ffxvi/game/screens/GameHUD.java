@@ -9,10 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.*;
 
-/**
- *
- * @author Acer
- */
+
 public class GameHUD {
     public Stage stage;
     private Viewport viewport;
