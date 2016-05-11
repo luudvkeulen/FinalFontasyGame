@@ -12,12 +12,16 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.AmmoType;
+import com.ffxvi.game.models.Projectile;
+import com.ffxvi.game.models.RoomObjectType;
+import com.ffxvi.game.support.Vector;
 import org.junit.Assert;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
-import support.Vector;
 
 /**
  *

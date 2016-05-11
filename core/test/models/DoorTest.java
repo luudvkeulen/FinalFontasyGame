@@ -12,13 +12,19 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.customexceptions.DoorInSameRoomException;
+import com.ffxvi.game.models.Door;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.models.Room;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomObjectType;
+import com.ffxvi.game.models.RoomType;
+import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.*;
-import support.Vector;
 
 /**
  * This class tests the door class

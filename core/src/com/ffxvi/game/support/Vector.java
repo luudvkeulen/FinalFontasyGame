@@ -10,7 +10,7 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package support;
+package com.ffxvi.game.support;
 
 /**
  * Represents a mathmatical vector.

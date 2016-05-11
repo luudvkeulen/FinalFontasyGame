@@ -67,6 +67,9 @@ public class Player {
 
     /**
      *
+     * @param game
+     * @param character
+     * @param playerName
      * @param walkingAnim Filename of the walking animations, located in assets
      */
     public Player(MainClass game, PlayerCharacter character, String playerName) {

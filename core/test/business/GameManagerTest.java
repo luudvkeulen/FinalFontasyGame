@@ -12,8 +12,9 @@
  */
 package business;
 
-import customexceptions.GameInProgressException;
-import customexceptions.NoGameInProgressException;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.customexceptions.GameInProgressException;
+import com.ffxvi.game.customexceptions.NoGameInProgressException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
@@ -99,7 +100,10 @@ public class GameManagerTest {
             this.gameManager.startGame();
             this.gameManager.endGame();
 
-        } catch (GameInProgressException | NoGameInProgressException ex) {
+        }  catch (NoGameInProgressException ex) {
+        
+        }
+        catch (GameInProgressException ex) {
             Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -166,7 +170,9 @@ public class GameManagerTest {
             this.gameManager.startGame();
             this.gameManager.endGame();
             this.gameManager.startGame();
-        } catch (GameInProgressException | NoGameInProgressException ex) {
+        } catch (NoGameInProgressException ex) {
+            Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GameInProgressException ex) {
             Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -190,7 +196,9 @@ public class GameManagerTest {
         try {
             this.gameManager.startGame();
             this.gameManager.endGame();
-        } catch (GameInProgressException | NoGameInProgressException ex) {
+        } catch (NoGameInProgressException ex) {
+            Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GameInProgressException ex) {
             Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -235,7 +243,9 @@ public class GameManagerTest {
             this.gameManager.endGame();
             this.gameManager.startGame();
             this.gameManager.endGame();
-        } catch (GameInProgressException | NoGameInProgressException ex) {
+        } catch (NoGameInProgressException ex) {
+            Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GameInProgressException ex) {
             Logger.getLogger(GameManagerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 

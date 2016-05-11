@@ -12,8 +12,9 @@
  */
 package com.ffxvi.game.models;
 
+import com.ffxvi.game.support.Vector;
 import java.util.*;
-import support.Vector;
+
 
 /**
  * This class contains all the room properties. It contains the position,

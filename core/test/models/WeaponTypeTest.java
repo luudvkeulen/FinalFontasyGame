@@ -12,7 +12,9 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.AmmoType;
+import com.ffxvi.game.models.WeaponType;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;

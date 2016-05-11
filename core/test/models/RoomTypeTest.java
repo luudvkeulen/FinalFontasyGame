@@ -12,11 +12,14 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomObjectType;
+import com.ffxvi.game.models.RoomType;
+import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.*;
-import support.Vector;
 
 /**
  *

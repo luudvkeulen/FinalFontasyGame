@@ -12,7 +12,16 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.customexceptions.GameInProgressException;
+import com.ffxvi.game.models.AmmoType;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.models.Room;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomObjectType;
+import com.ffxvi.game.models.RoomType;
+import com.ffxvi.game.models.Weapon;
+import com.ffxvi.game.models.WeaponType;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import support.Vector;
+import com.ffxvi.game.support.Vector;
 
 /**
  *
@@ -526,8 +535,8 @@ public class PlayerTest {
         player.setMoveSpeed(10);
         Vector expectedResult = new Vector(1, 11);
         Vector result = player.getPosition();
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.x, result.x, 0);
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.y, result.y, 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getX(), result.getX(), 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getY(), result.getY(), 0);
     }
 
     /**
@@ -540,8 +549,8 @@ public class PlayerTest {
         Vector expectedResult = new Vector(1, -9);
         player.move(angle);
         Vector result = player.getPosition();
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.x, result.x, 0);
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.y, result.y, 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getX(), result.getX(), 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getY(), result.getY(), 0);
     }
 
     /**
@@ -554,8 +563,8 @@ public class PlayerTest {
         Vector expectedResult = new Vector(11, 1);
         player.move(angle);
         Vector result = player.getPosition();
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.x, result.x, 0);
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.y, result.y, 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getX(), result.getX(), 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getY(), result.getY(), 0);
     }
 
     /**
@@ -568,8 +577,8 @@ public class PlayerTest {
         Vector expectedResult = new Vector(-9, 1);
         player.move(angle);
         Vector result = player.getPosition();
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.x, result.x, 0);
-        assertEquals("Unit test works, player.move not yet implemented", expectedResult.y, result.y, 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getX(), result.getX(), 0);
+        assertEquals("Unit test works, player.move not yet implemented", expectedResult.getY(), result.getY(), 0);
     }
 
     /**
@@ -583,8 +592,8 @@ public class PlayerTest {
         Vector expectedResult = new Vector(11, 1);
         player.move(angle);
         Vector result = player.getPosition();
-        assertEquals(expectedResult.x, result.x, 0);
-        assertEquals(expectedResult.y, result.y, 0);
+        assertEquals(expectedResult.getX(), result.getX(), 0);
+        assertEquals(expectedResult.getY(), result.getY(), 0);
     }
 
     /**
@@ -598,8 +607,8 @@ public class PlayerTest {
         Vector expectedResult = new Vector(11, 1);
         player.move(angle);
         Vector result = player.getPosition();
-        assertEquals(expectedResult.x, result.x, 0);
-        assertEquals(expectedResult.y, result.y, 0);
+        assertEquals(expectedResult.getX(), result.getX(), 0);
+        assertEquals(expectedResult.getY(), result.getY(), 0);
     }
     
     /**
@@ -890,7 +899,7 @@ public class PlayerTest {
                 animationString, ammoType);
 
         Weapon weapon = new Weapon(type);
-        weapon.setOwner(player);
+        
         player.setWeapon(weapon);
 
         Assert.assertTrue(player.fire());

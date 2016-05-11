@@ -12,11 +12,19 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.AmmoType;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.models.Room;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomType;
+import com.ffxvi.game.models.Weapon;
+import com.ffxvi.game.models.WeaponType;
+import com.ffxvi.game.support.Vector;
 import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
-import support.Vector;
 
 /**
  *
@@ -31,8 +39,7 @@ public class WeaponTest {
 
     /**
      * Initializes the weapon field so the testing can begin.
-     *
-     * @throws SlickException
+  
      */
     @Before
     public void initialize() {
@@ -54,8 +61,8 @@ public class WeaponTest {
         Room room = new Room(roomPosition, roomType);
 
         Player owner = new Player("Erik Janssen", 100, position, "AnimationString", room);
-
-        weapon.setOwner(owner);
+        owner.setWeapon(weapon);
+    
     }
 
     /**
@@ -100,7 +107,7 @@ public class WeaponTest {
         Room room = new Room(new Vector(2, 2), roomType);
         Player p1 = new Player("Joel", 100, new Vector(1, 1), "AnimationString", room);
 
-        weapon.setOwner(p1);
+        p1.setWeapon(weapon);
         assertEquals(p1, weapon.getOwner());
     }
 
@@ -201,7 +208,7 @@ public class WeaponTest {
 
         Player owner = new Player("Erik Janssen", 100, position, "AnimationString", room);
 
-        newWeapon.setOwner(owner);
+        owner.setWeapon(newWeapon);
 
         junit.framework.Assert.assertEquals(this.weapon.hashCode(), newWeapon.hashCode());
     }
@@ -230,7 +237,7 @@ public class WeaponTest {
 
         Player owner = new Player("Erik Janssen", 100, position, "AnimationString", room);
 
-        newWeapon.setOwner(owner);
+        owner.setWeapon(newWeapon);
 
         junit.framework.Assert.assertFalse(this.weapon.hashCode() == newWeapon.hashCode());
     }
@@ -259,7 +266,7 @@ public class WeaponTest {
 
         Player owner = new Player("Erik Janssen", 100, position, "AnimationString", room);
 
-        newWeapon.setOwner(owner);
+        owner.setWeapon(newWeapon);
 
         junit.framework.Assert.assertTrue(this.weapon.equals(newWeapon));
     }
@@ -308,7 +315,7 @@ public class WeaponTest {
 
         Player owner = new Player("Erik Janssen", 100, position, "AnimationString", room);
 
-        newWeapon.setOwner(owner);
+        owner.setWeapon(newWeapon);
 
         junit.framework.Assert.assertFalse(this.weapon.equals(newWeapon));
     }
@@ -337,7 +344,7 @@ public class WeaponTest {
 
         Player owner = new Player("Erik Janssen", 100, position, "AnimationString", room);
 
-        newWeapon.setOwner(owner);
+        owner.setWeapon(newWeapon);
 
         junit.framework.Assert.assertFalse(this.weapon.equals(newWeapon));
     }
@@ -366,7 +373,7 @@ public class WeaponTest {
 
         Player owner = new Player("Erica Janssen", 100, position, "AnimationString", room);
 
-        newWeapon.setOwner(owner);
+        owner.setWeapon(newWeapon);
 
         junit.framework.Assert.assertFalse(this.weapon.equals(newWeapon));
     }

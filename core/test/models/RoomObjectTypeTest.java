@@ -12,7 +12,8 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.RoomObjectType;
 import org.junit.*;
 import static org.junit.Assert.*;
 

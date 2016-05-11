@@ -12,14 +12,20 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.AmmoType;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.models.Projectile;
+import com.ffxvi.game.models.Room;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomObjectType;
+import com.ffxvi.game.models.RoomType;
+import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import junit.framework.Assert;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.fail;
-import support.Vector;
+
 
 /**
  *

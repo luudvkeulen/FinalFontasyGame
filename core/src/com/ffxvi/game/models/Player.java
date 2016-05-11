@@ -12,9 +12,10 @@
  */
 package com.ffxvi.game.models;
 
+import com.ffxvi.game.support.Vector;
 import java.util.HashMap;
 import java.util.Objects;
-import support.Vector;
+
 
 /**
  * Contains a player of a game, which can be either a player or a spectator.

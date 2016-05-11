@@ -12,8 +12,9 @@
  */
 package com.ffxvi.game.models;
 
+import com.ffxvi.game.support.Vector;
 import java.util.Objects;
-import support.Vector;
+
 
 /**
  * This class contains all the properties for the Projectile. It contains the

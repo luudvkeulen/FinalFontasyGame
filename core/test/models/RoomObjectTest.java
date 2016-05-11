@@ -12,10 +12,13 @@
  */
 package models;
 
-import com.ffxvi.game.*;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomObjectType;
+import com.ffxvi.game.support.Vector;
 import org.junit.*;
 import static org.junit.Assert.*;
-import support.Vector;
+
 
 /**
  *

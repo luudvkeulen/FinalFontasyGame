@@ -12,6 +12,13 @@
  */
 package business;
 
+import com.ffxvi.game.business.Game;
+import com.ffxvi.game.business.GameManager;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.models.Room;
+import com.ffxvi.game.models.RoomObject;
+import com.ffxvi.game.models.RoomType;
+import com.ffxvi.game.support.Vector;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,11 +26,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import junit.framework.Assert;
-import com.ffxvi.game.*;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import support.Vector;
+
+
 
 /**
  *
@@ -89,7 +96,7 @@ public class GameTest {
         this.game.addRoom(new Room(position, roomType));
 
         String playerName = "Erik Janssen";
-        this.game.addPlayer(playerName);
+        this.game.addPlayer(playerName, "testAnimation");
 
         ArrayList<String> alExpected = new ArrayList<String>();
         alExpected.add(playerName);
@@ -116,9 +123,9 @@ public class GameTest {
         String playerName2 = "Erica Janssen";
         String playerName3 = "Peter Peeters";
 
-        this.game.addPlayer(playerName1);
-        this.game.addPlayer(playerName2);
-        this.game.addPlayer(playerName3);
+        this.game.addPlayer(playerName1, "testAnimation");
+        this.game.addPlayer(playerName2, "testAnimation");
+        this.game.addPlayer(playerName3, "testAnimation");
 
         ArrayList<String> alExpected = new ArrayList<String>();
         alExpected.add(playerName1);
@@ -163,7 +170,7 @@ public class GameTest {
         Room room = new Room(location, roomType);
         this.game.addRoom(room);
 
-        ArrayList<Room> rooms = new ArrayList<>();
+        ArrayList<Room> rooms = new ArrayList<Room>();
         rooms.add(room);
 
         Assert.assertTrue(this.listsRoomsAreEqual(rooms, this.game.getRooms()));
@@ -190,7 +197,7 @@ public class GameTest {
         this.game.addRoom(room2);
         this.game.addRoom(room3);
 
-        List<Room> rooms = new ArrayList<>();
+        List<Room> rooms = new ArrayList<Room>();
         rooms.add(room1);
         rooms.add(room2);
         rooms.add(room3);
@@ -471,7 +478,7 @@ public class GameTest {
         this.game.addRoom(new Room(position, roomType));
 
         String playerName = "Erik Janssen";
-        Assert.assertTrue(this.game.addPlayer(playerName));
+        Assert.assertTrue(this.game.addPlayer(playerName,"testAnimation"));
         Assert.assertTrue(this.playerNameExistsInList(playerName, this.game.getPlayers()));
     }
 
@@ -500,9 +507,9 @@ public class GameTest {
         this.game.addRoom(new Room(position, roomType));
 
         String playerName = "Erik Janssen";
-        this.game.addPlayer(playerName);
+        this.game.addPlayer(playerName,"testAnimation");
 
-        Assert.assertFalse(this.game.addPlayer(playerName));
+        Assert.assertFalse(this.game.addPlayer(playerName,"testAnimation"));
         Assert.assertTrue(this.playerNameExistsInList(playerName, this.game.getPlayers()));
     }
 
@@ -531,7 +538,7 @@ public class GameTest {
         this.game.addRoom(new Room(position, roomType));
 
         String playerName = "erik JANssen";
-        Assert.assertTrue(this.game.addPlayer(playerName));
+        Assert.assertTrue(this.game.addPlayer(playerName,"testAnimation"));
         Assert.assertTrue(this.playerNameExistsInList(playerName, this.game.getPlayers()));
     }
 
@@ -554,7 +561,7 @@ public class GameTest {
          */
 
         String playerName = "";
-        this.game.addPlayer(playerName);
+        this.game.addPlayer(playerName,"testAnimation");
     }
 
     /**
@@ -576,7 +583,7 @@ public class GameTest {
          */
 
         String playerName = "   ";
-        this.game.addPlayer(playerName);
+        this.game.addPlayer(playerName,"testAnimation");
     }
 
     /**
@@ -597,7 +604,7 @@ public class GameTest {
          * Otherwise, return true.
          */
 
-        this.game.addPlayer(null);
+        this.game.addPlayer(null,null);
     }
 
     /**
@@ -622,7 +629,7 @@ public class GameTest {
 
         String playerName = "Erik Janssen";
 
-        this.game.addPlayer(playerName);
+        this.game.addPlayer(playerName,"testAnimation");
         this.game.removePlayer(playerName);
 
         Assert.assertFalse(this.playerNameExistsInList(playerName, this.game.getPlayers()));
@@ -1109,7 +1116,7 @@ public class GameTest {
 
         Game newGame = new Game(startTime, name);
         newGame.addRoom(room);
-        newGame.addPlayer("Erik Janssen");
+        newGame.addPlayer("Erik Janssen","testAnimation");
 
         Assert.assertFalse(this.game.equals(newGame));
     }
