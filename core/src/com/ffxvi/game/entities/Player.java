@@ -43,6 +43,8 @@ public class Player {
 	private float speed;
 	private final String playerName;
 	private final GameScreen screen;
+	private float shootCooldown = 0.5f;
+	private long shootStart = 0;
 
 	public float getX() {
 		return x;
@@ -219,7 +221,7 @@ public class Player {
 		}
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-				&& this.shootDelay <= 0) {
+				&& System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000) {
 			// Reset the shoot delay
 			fire();
 		}
@@ -230,7 +232,8 @@ public class Player {
 	}
 
 	private void fire() {
-		this.shootDelay = this.maxShootDelay;
+		// Reset the shoot delay
+		this.shootStart = System.nanoTime();
 
 		// Create a vector3 with the player's coordinates
 		Vector3 playerPos = new Vector3(this.x, this.y, 0);
@@ -239,13 +242,13 @@ public class Player {
 		camera.project(playerPos);
 
 		// Create a vector2 with the mouse coordinates
-		Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
+		Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY() + 50);
 
 		// Set the speed of the bullet
 		float speed2 = 15.0f;
 
 		// Calculate the direction of the bullet using arctan
-		float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y, mousePos.x - playerPos.x));
+		float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize/3), mousePos.x - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth()/2)));
 
 		// Create a bullet inside the player with the direction and speed
 		GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
