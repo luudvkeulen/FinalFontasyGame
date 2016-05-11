@@ -15,8 +15,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
+import com.ffxvi.game.models.AmmoType;
+import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
+import com.ffxvi.game.support.Vector;
 
 public class Player {
 
@@ -198,14 +201,18 @@ public class Player {
 			// Create a vector2 with the mouse coordinates
 			Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY() + 50);
 
-			// Set the speed of the bullet
-			float speed2 = 15.0f;
+			
 
 			// Calculate the direction of the bullet using arctan
 			float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize/3), mousePos.x - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth()/2)));
-
+                       
+                        //Normalize the dir to 0-359 degrees
+                        if (dir<0) {
+                            dir+=360;
+                        }
+                         
 			// Create a bullet inside the player with the direction and speed
-			GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
+			GameScreen.addProjectile(new Projectile(new Vector(this.x + (gridsize / 2), this.y + (gridsize / 2)), dir, new AmmoType(10, 30, "animationstring")));
 		}
 	}
 	

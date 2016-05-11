@@ -20,6 +20,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
+import java.io.Console;
 import java.util.Objects;
 
 /**
@@ -66,8 +67,10 @@ public class Projectile {
             throw new IllegalArgumentException("The position of this projectile can not be null.");
         }
 
-        if (rotation < 0 || rotation > 359) {
-            throw new IllegalArgumentException("The rotation of the projectile must be in the range 0-359");
+        if (rotation < 0 || rotation > 360) {
+            System.out.println(rotation);
+            throw new IllegalArgumentException("The rotation of the projectile must be in the range 0-360");
+            
         }
 
         if (ammoType == null) {

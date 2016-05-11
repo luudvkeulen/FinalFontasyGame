@@ -17,11 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
-import com.ffxvi.game.entities.Bullet;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.logics.InputManager;
+import com.ffxvi.game.models.Projectile;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -36,7 +36,7 @@ public class GameScreen implements Screen {
 	public static MapObjects wallObjects;
 	public static MapObjects objects;
 	public static MapObjects doors;
-	public static ArrayList<Bullet> bullets;
+	public static ArrayList<Projectile> projectiles;
 	private final Stage stage;
 	private final Skin skin;
 	
@@ -63,7 +63,7 @@ public class GameScreen implements Screen {
 		batch = new SpriteBatch();
 //		mainPlayer.setPos(camera.position.x, camera.position.y);
 		//mainPlayer.setPos(64, 64);
-		bullets = new ArrayList();
+		projectiles = new ArrayList();
 		this.playerLabel = new Label("", skin);
 		stage.addActor(playerLabel);
 		
@@ -122,12 +122,12 @@ public class GameScreen implements Screen {
 		renderer.setView(camera);
 	}
 	
-	public static void addBullet(Bullet bullet) {
-		bullets.add(bullet);
+	public static void addProjectile(Projectile projectile) {
+		projectiles.add(projectile);
 	}
 	
-	public static void removeBullet(Bullet bullet) {
-		bullets.remove(bullet);
+	public static void removeProjectile(Projectile projectile) {
+		projectiles.remove(projectile);
 	}
 
 	@Override
@@ -155,12 +155,12 @@ public class GameScreen implements Screen {
 			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 			stage.draw();
 
-			for (Bullet b : bullets) {
-				if (b.doRemove) {
-					b = null;
+			for (Projectile p : projectiles) {
+				if (p.doRemove) {
+					p = null;
 				} else {
-					b.update();
-					b.render(shape, camera);
+					p.update();
+					p.render(shape, camera);
 				}
 			}
 		}
