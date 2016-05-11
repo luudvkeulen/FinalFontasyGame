@@ -66,7 +66,15 @@ public class Player {
 		this.x = x;
 		this.y = y;
 	}
-
+	
+	public void setSprint(boolean isSprinting) {
+		if (isSprinting) {
+			this.speed = Player.RUN_SPEED;
+		} else {
+			this.speed = Player.WALK_SPEED;
+		}
+	}
+	
 	/**
 	 *
 	 * @param game
@@ -191,11 +199,11 @@ public class Player {
 
 		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
 				|| Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-			sprint(true);
+			setSprint(true);
 		}
 		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
 				&& !Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-			sprint(false);
+			setSprint(false);
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
@@ -231,7 +239,7 @@ public class Player {
 		}
 	}
 
-	private void fire() {
+	public void fire() {
 		// Reset the shoot delay
 		this.shootStart = System.nanoTime();
 
@@ -278,14 +286,6 @@ public class Player {
 			case DOWN:
 				y -= this.speed;
 				break;
-		}
-	}
-
-	private void sprint(boolean toggle) {
-		if (toggle) {
-			this.speed = Player.RUN_SPEED;
-		} else {
-			this.speed = Player.WALK_SPEED;
 		}
 	}
 
