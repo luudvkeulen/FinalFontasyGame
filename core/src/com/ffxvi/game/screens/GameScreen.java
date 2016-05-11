@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.entities.Bullet;
+import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import java.util.ArrayList;
@@ -39,7 +41,8 @@ public class GameScreen implements Screen {
 	
 	private Label playerLabel;
 	private GlyphLayout layout;
-	private final String[] levels = new String[]{"level1", "level2"};
+	private final String[] levels = new String[]{"level1", "level2", "level3"};
+	public String currentlevel = "";
 	
 	public GameScreen (MainClass game) {
 		this.game = game;
@@ -75,8 +78,8 @@ public class GameScreen implements Screen {
 	@Override
 	public void show() {
 		int idx = new Random().nextInt(levels.length);
-		String level = levels[idx] + ".tmx";
-		
+		currentlevel = levels[idx];
+		String level = currentlevel + ".tmx";
 		map = new TmxMapLoader().load(level);
 		wallObjects = map.getLayers().get("WallObjects").getObjects();
 		objects = map.getLayers().get("Objects").getObjects();
@@ -86,11 +89,32 @@ public class GameScreen implements Screen {
 	}
 	
 	public void setLevel(String level) {
-		map = new TmxMapLoader().load(level);
+		if(level.equals("null")) return;
+		map = new TmxMapLoader().load(level + ".tmx");
 		wallObjects = map.getLayers().get("WallObjects").getObjects();
 		objects = map.getLayers().get("Objects").getObjects();
 		doors = map.getLayers().get("Door").getObjects();
+		for(RectangleMapObject rmo : doors.getByType(RectangleMapObject.class)) {
+			if(rmo.getName().equals(currentlevel)) {
+				switch(mainPlayer.direction) {
+					case UP:
+						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y + 64);
+						break;
+					case DOWN:
+						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y - 64);
+						break;
+					case LEFT:
+						mainPlayer.setPos(rmo.getRectangle().x - 64, rmo.getRectangle().y );
+						break;
+					case RIGHT:
+						mainPlayer.setPos(rmo.getRectangle().x + 64, rmo.getRectangle().y );
+						break;
+				}
+				break;
+			}
+		}
 		renderer = new OrthogonalTiledMapRenderer(map, 1f);
+		currentlevel = level;
 		renderer.setView(camera);
 	}
 	
