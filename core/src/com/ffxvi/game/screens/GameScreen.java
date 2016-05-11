@@ -18,8 +18,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.entities.Bullet;
+import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
+import com.ffxvi.game.logics.InputManager;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -42,6 +44,7 @@ public class GameScreen implements Screen {
 	private GlyphLayout layout;
 	private final String[] levels = new String[]{"level1", "level2", "level3"};
 	public String currentlevel = "";
+	private InputManager inputManager;
 	
 	public GameScreen (MainClass game) {
 		this.game = game;
@@ -72,6 +75,8 @@ public class GameScreen implements Screen {
 		mainPlayer.setPos(64, 64);
 		
 		playerLabel.setText(playerName);
+		
+		inputManager = new InputManager(game, mainPlayer);
 	}
 	
 	@Override
@@ -87,7 +92,7 @@ public class GameScreen implements Screen {
 		renderer.setView(camera);
 	}
 	
-	public void setLevel(String level) {
+	public void setLevel(String level, Direction dir) {
 		if(level.equals("null")) return;
 		map = new TmxMapLoader().load(level + ".tmx");
 		wallObjects = map.getLayers().get("WallObjects").getObjects();
@@ -95,7 +100,7 @@ public class GameScreen implements Screen {
 		doors = map.getLayers().get("Door").getObjects();
 		for(RectangleMapObject rmo : doors.getByType(RectangleMapObject.class)) {
 			if(rmo.getName().equals(currentlevel)) {
-				switch(mainPlayer.direction) {
+				switch(dir) {
 					case UP:
 						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y + 64);
 						break;
@@ -144,6 +149,7 @@ public class GameScreen implements Screen {
 			batch.begin();
 			mainPlayer.render(batch);
 			mainPlayer.update();
+			inputManager.checkInput();
 			batch.end();
 			
 			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -161,27 +167,17 @@ public class GameScreen implements Screen {
 	}
 
 	@Override
-	public void resize(int i, int i1) {
-		
-	}
+	public void resize(int i, int i1) {}
 
 	@Override
-	public void pause() {
-		
-	}
+	public void pause() {}
 
 	@Override
-	public void resume() {
-		
-	}
+	public void resume() {}
 
 	@Override
-	public void hide() {
-
-	}
+	public void hide() {}
 
 	@Override
-	public void dispose() {
-		
-	}
+	public void dispose() {}
 }

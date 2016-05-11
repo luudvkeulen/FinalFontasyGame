@@ -75,6 +75,10 @@ public class Player {
 		}
 	}
 	
+	public void setIdle() {
+		currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+	}
+	
 	/**
 	 *
 	 * @param game
@@ -108,6 +112,10 @@ public class Player {
 		modifiedgridsizex = gridsize - 32;
 		modifiedgridsizey = gridsize - 16;
 
+	}
+	
+	private boolean canFire() {
+		return System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000;
 	}
 
 	/**
@@ -163,113 +171,56 @@ public class Player {
 		return false;
 	}
 	
-	private void checkDoorCollision(Rectangle rec, MapObjects objects) {
+	private void checkDoorCollision(Rectangle rec, MapObjects objects, Direction dir) {
 		for(RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if(rec.overlaps(rectangleMapObject)) {
-				screen.setLevel(mapObject.getName());
+				screen.setLevel(mapObject.getName(), dir);
 			}
 		}
 	}
 
 	public void update() {
-
-		checkInputs();
 		this.shootDelay--;
-
-	}
-
-	private void checkInputs() {
-		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
-			game.setScreen(new MenuScreen(game));
-			return;
-		}
-
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
-			switchCharacter(PlayerCharacter.SKELETON_HOODED_DAGGER);
-			setCurrentWalkingAnimation(direction);
-			return;
-		}
-
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
-			switchCharacter(PlayerCharacter.SKELETON_HOODED_BOW);
-			setCurrentWalkingAnimation(direction);
-			return;
-		}
-
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
-				|| Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-			setSprint(true);
-		}
-		if (!Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)
-				&& !Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-			setSprint(false);
-		}
-
-		if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
-			DirectionInput(Direction.LEFT);
-
-		}
-		if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
-			DirectionInput(Direction.RIGHT);
-		}
-
-		if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
-			DirectionInput(Direction.UP);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)) {
-			DirectionInput(Direction.DOWN);
-		}
-
-		if (!Gdx.input.isKeyPressed(Keys.LEFT) && !Gdx.input.isKeyPressed(Keys.RIGHT)
-				&& !Gdx.input.isKeyPressed(Keys.UP) && !Gdx.input.isKeyPressed(Keys.DOWN)
-				&& !Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)
-				&& !Gdx.input.isKeyPressed(Keys.W) && !Gdx.input.isKeyPressed(Keys.S)) {
-			currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
-		}
-
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-				&& System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000) {
-			// Reset the shoot delay
-			fire();
-		}
-
-		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-			setCurrentSlashingAnimation(direction);
-		}
 	}
 
 	public void fire() {
-		// Reset the shoot delay
-		this.shootStart = System.nanoTime();
+		if(canFire()) {
+			// Reset the shoot delay
+			this.shootStart = System.nanoTime();
 
-		// Create a vector3 with the player's coordinates
-		Vector3 playerPos = new Vector3(this.x, this.y, 0);
+			// Create a vector3 with the player's coordinates
+			Vector3 playerPos = new Vector3(this.x, this.y, 0);
 
-		// Project the position to the camera
-		camera.project(playerPos);
+			// Project the position to the camera
+			camera.project(playerPos);
 
-		// Create a vector2 with the mouse coordinates
-		Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY() + 50);
+			// Create a vector2 with the mouse coordinates
+			Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY() + 50);
 
-		// Set the speed of the bullet
-		float speed2 = 15.0f;
+			// Set the speed of the bullet
+			float speed2 = 15.0f;
 
-		// Calculate the direction of the bullet using arctan
-		float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize/3), mousePos.x - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth()/2)));
+			// Calculate the direction of the bullet using arctan
+			float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize/3), mousePos.x - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth()/2)));
 
-		// Create a bullet inside the player with the direction and speed
-		GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
+			// Create a bullet inside the player with the direction and speed
+			GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
+		}
+	}
+	
+	public void slash() {
+		setCurrentSlashingAnimation(direction);
 	}
 
-	private void DirectionInput(Direction direction) {
+	public void DirectionInput(Direction direction) {
 		this.direction = direction;
 		setCurrentWalkingAnimation(direction);
 		if (!checkCollision(movingCollisionBox(direction), GameScreen.wallObjects, GameScreen.objects)) {
 			Move(direction);
 		}
 		
-		checkDoorCollision(movingCollisionBox(direction), GameScreen.doors);
+		checkDoorCollision(movingCollisionBox(direction), GameScreen.doors, direction);
 	}
 
 	private void Move(Direction direction) {

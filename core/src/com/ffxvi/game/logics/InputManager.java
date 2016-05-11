@@ -1,8 +1,9 @@
-package com.ffxvi.logics;
+package com.ffxvi.game.logics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.screens.MenuScreen;
 
@@ -35,43 +36,41 @@ public class InputManager {
 
 		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
 				|| Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-			//sprint(true);
+			mainPlayer.setSprint(true);
 		}
 		if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
 				&& !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-			//sprint(false);
+			mainPlayer.setSprint(false);
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			//DirectionInput(Direction.LEFT);
+			mainPlayer.DirectionInput(Direction.LEFT);
 
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			//DirectionInput(Direction.RIGHT);
+			mainPlayer.DirectionInput(Direction.RIGHT);
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-			//DirectionInput(Direction.UP);
+			mainPlayer.DirectionInput(Direction.UP);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-			//DirectionInput(Direction.DOWN);
+			mainPlayer.DirectionInput(Direction.DOWN);
 		}
 
 		if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)
 				&& !Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)
 				&& !Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)
 				&& !Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.S)) {
-			//currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+			mainPlayer.setIdle();
 		}
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			// Reset the shoot delay
-			//System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000
-			//fire();
+			mainPlayer.fire();
 		}
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-			//setCurrentSlashingAnimation(direction);
+			mainPlayer.slash();
 		}
 	}
 }
