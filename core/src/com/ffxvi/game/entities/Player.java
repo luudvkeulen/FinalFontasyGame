@@ -27,7 +27,7 @@ public class Player {
     protected static final float RUN_SPEED = 8;
 
 
-    private Direction direction;
+    public Direction direction;
     private float animSpeed;
     private float stateTime;
     private Animation currentAnim,
@@ -92,8 +92,8 @@ public class Player {
         direction = Direction.RIGHT;
         this.speed = Player.WALK_SPEED;
         this.playerName = playerName;
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
-        sound.play();
+        //Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
+       // sound.play();
         modifiedgridsizex = gridsize - 32;
         modifiedgridsizey = gridsize - 16;
 

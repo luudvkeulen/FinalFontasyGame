@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.entities.Bullet;
-import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import java.util.ArrayList;
