@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 	}
 	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
-		mainPlayer = new Player(game, character, playerName);
+		mainPlayer = new Player(game, character, playerName, this);
 		mainPlayer.setPos(64, 64);
 		
 		playerLabel.setText(playerName);
