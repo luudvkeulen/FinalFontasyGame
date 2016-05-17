@@ -78,7 +78,8 @@ public class MenuScreen implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				game.getScreen().dispose();
-				game.setScreen(new PreGameScreen(game));
+//				game.setScreen(new PreGameScreen(game));
+				game.setScreen(new ServerBrowser(game));
 			}
 		});
 		stage.addActor(playButton);
