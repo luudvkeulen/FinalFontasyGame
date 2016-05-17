@@ -29,11 +29,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerCharacter;
+import com.ffxvi.game.serverlist.ServerRetriever;
+import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerBrowser implements Screen {
 	
-	private Skin skin;
 	private SpriteBatch batch;
 	private Stage stage;
 	
@@ -47,6 +51,7 @@ public class ServerBrowser implements Screen {
 	
 	// TEMP SERVER LIST
 	private List servers;
+	ServerRetriever serverRetriever;
 	
 	
 	
@@ -61,6 +66,11 @@ public class ServerBrowser implements Screen {
 
 	@Override
 	public void show() {
+		try {
+			this.serverRetriever = new ServerRetriever();
+		} catch (IOException ex) {
+			Logger.getLogger(ServerBrowser.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		
 		this.stage = new Stage();
 		
@@ -68,12 +78,12 @@ public class ServerBrowser implements Screen {
 		
 		
 		
-		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 		
 		
 		
 		// TEMP SERVER LIST
-		this.servers = new List(this.skin);
+		this.servers = new List(skin);
 		this.servers.setItems(new String[] {});
 		
 		
@@ -93,33 +103,50 @@ public class ServerBrowser implements Screen {
 		BitmapFont bfont=new BitmapFont();
 		//bfont.scale(1);
 		skin.add("default",bfont);
-		
-		
 		this.scrollPane = new ScrollPane(servers, skin);
 		
+		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);
+		textButtonStyle.down = skin.newDrawable("white", Color.WHITE);
+		textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
+
+		textButtonStyle.font = skin.getFont("default");
+
+		skin.add("default", textButtonStyle);
 		
-		table = new Table(this.skin);
+		table = new Table(skin);
 		this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		this.scrollPane.setSmoothScrolling(false);
 		this.table.add(this.scrollPane).size(800, 600);
 		table.debug();
 		
-		
 		this.stage.addActor(this.table);
 		
-		this.refreshServers();
+		
+		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
+		final TextButton playButton = new TextButton("PLAY",textButtonStyle);
+		playButton.setPosition((stage.getWidth()/2) - (playButton.getWidth()/2), /*(stage.getHeight()) - (playButton.getHeight()/2) - 10*/ 10);
+		playButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				game.getScreen().dispose();
+				game.setScreen(new PreGameScreen(game));
+			}
+		});
+		stage.addActor(playButton);
+		
+//		try {
+//			this.refreshServers();
+//		} catch (RemoteException ex) {
+//			Logger.getLogger(ServerBrowser.class.getName()).log(Level.SEVERE, null, ex);
+//		}
 	}
 	
-	private void refreshServers() {
-		String[] randomIps = new String[20];
+	private void refreshServers() throws RemoteException {
+		String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
 		
-		Random rnd = new Random();
-		
-		for (int i = 0; i < randomIps.length; i++) {
-			randomIps[i] = "192.168." + (rnd.nextInt(89) + 10) + "." + (rnd.nextInt(890) + 10) + ":" + (rnd.nextInt(100) + 3000);
-		}
-		
-		this.servers.setItems(randomIps);
+		this.servers.setItems(serverAddresses);
 	}
 
 	@Override
