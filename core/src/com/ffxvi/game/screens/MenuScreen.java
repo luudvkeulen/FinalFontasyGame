@@ -125,7 +125,6 @@ public class MenuScreen implements Screen {
 		
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		stage.draw();
-		//Table.drawDebug(stage);
 	}
 
 	@Override
