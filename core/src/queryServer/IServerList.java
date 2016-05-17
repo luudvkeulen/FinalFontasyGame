@@ -1,4 +1,4 @@
-package com.ffxvi.game.serverlist;
+package queryServer;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

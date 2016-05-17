@@ -136,11 +136,11 @@ public class ServerBrowser implements Screen {
 		});
 		stage.addActor(playButton);
 		
-//		try {
-//			this.refreshServers();
-//		} catch (RemoteException ex) {
-//			Logger.getLogger(ServerBrowser.class.getName()).log(Level.SEVERE, null, ex);
-//		}
+		try {
+			this.refreshServers();
+		} catch (RemoteException ex) {
+			Logger.getLogger(ServerBrowser.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 	
 	private void refreshServers() throws RemoteException {
