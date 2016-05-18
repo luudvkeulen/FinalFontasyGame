@@ -13,7 +13,13 @@ import com.ffxvi.game.support.Vector;
 public class InputManager
 {
 
-    private final float DEADZONE = 0.3f;
+    private static final float DEADZONE = 0.3f;
+    private static final int LEFT_AXIS_X = 1;
+    private static final int LEFT_AXIS_Y = 0;
+    private static final int RIGHT_AXIS_X = 3;
+    private static final int RIGHT_AXIS_Y = 2;
+    private static final int TRIGGERS = 4;
+
     private final MainClass game;
     private final Player mainPlayer;
 
@@ -137,20 +143,8 @@ public class InputManager
         {
             Controller controller = Controllers.getControllers().first();
 
-            float y = controller.getAxis(0);
-
-            if (y < -DEADZONE)
-            {
-                mainPlayer.DirectionInput(Direction.UP);
-                returnValue = true;
-            }
-            else if (y > DEADZONE)
-            {
-                mainPlayer.DirectionInput(Direction.DOWN);
-                returnValue = true;
-            }
-
-            float x = controller.getAxis(1);
+            float x = controller.getAxis(LEFT_AXIS_X);
+            float y = controller.getAxis(LEFT_AXIS_Y);
 
             if (x < -DEADZONE)
             {
@@ -162,14 +156,25 @@ public class InputManager
                 mainPlayer.DirectionInput(Direction.RIGHT);
                 returnValue = true;
             }
+
+            if (y < -DEADZONE)
+            {
+                mainPlayer.DirectionInput(Direction.UP);
+                returnValue = true;
+            }
+            else if (y > DEADZONE)
+            {
+                mainPlayer.DirectionInput(Direction.DOWN);
+                returnValue = true;
+            }
             else if (!(x > DEADZONE || y < -DEADZONE || y > DEADZONE || x < -DEADZONE))
             {
                 mainPlayer.setIdle();
 
             }
 
-            x = controller.getAxis(3);
-            y = controller.getAxis(2);
+            x = controller.getAxis(RIGHT_AXIS_X);
+            y = controller.getAxis(RIGHT_AXIS_Y);
 
             if (y > DEADZONE || y < -DEADZONE || x > DEADZONE || x < -DEADZONE)
             {
@@ -178,7 +183,7 @@ public class InputManager
                 returnValue = true;
             }
 
-            float shouldShoot = controller.getAxis(4);
+            float shouldShoot = controller.getAxis(TRIGGERS);
 
             this.mainPlayer.setSprint(false);
 
