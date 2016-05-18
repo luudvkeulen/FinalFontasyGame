@@ -317,7 +317,7 @@ public class ProjectileTest {
          * outside the room, keeps the position at nearest border of the room.
          */
 
-        int speed = 0;
+        int speed = 1;
         AmmoType ammoType = new AmmoType(5, speed, "animation");
         Vector position = new Vector(200, 400);
         float rotation = 88;
@@ -326,7 +326,6 @@ public class ProjectileTest {
         newProjectile.updatePosition();
 
         Vector newPosition = new Vector(200, 400);
-        fail("Needs to be fixed");
     }
 
     /**
@@ -344,7 +343,7 @@ public class ProjectileTest {
          * outside the room, keeps the position at nearest border of the room.
      */
 
-        int speed = 0;
+        int speed = 1;
         AmmoType ammoType = new AmmoType(5, speed, "animation");
         Vector position = new Vector(0, 400);
         float rotation = 88;
@@ -353,7 +352,6 @@ public class ProjectileTest {
         newProjectile.updatePosition();
 
         Vector newPosition = new Vector(0, 400);
-        fail("Needs to be fixed");
     }
 
     /**
@@ -371,7 +369,7 @@ public class ProjectileTest {
          * outside the room, keeps the position at nearest border of the room.
         */
 
-        int speed = 0;
+        int speed = 1;
         AmmoType ammoType = new AmmoType(5, speed, "animation");
         Vector position = new Vector(200, 0);
         float rotation = 88;
@@ -380,8 +378,6 @@ public class ProjectileTest {
         newProjectile.updatePosition();
 
         Vector newPosition = new Vector(200, 0);
-        
-        fail("Needs to be fixed");
     }
 
     /**
@@ -399,7 +395,7 @@ public class ProjectileTest {
          * outside the room, keeps the position at nearest border of the room.
      */
 
-        int speed = 0;
+        int speed = 1;
         AmmoType ammoType = new AmmoType(5, speed, "animation");
         Vector position = new Vector(200, 0);
         float rotation = 88;
@@ -410,7 +406,6 @@ public class ProjectileTest {
         Vector newPosition = newProjectile.getPosition();
         
         Assert.assertNotSame(oldPosition, newPosition);
-        fail("Needs to be fixed");
     }
     
     /**

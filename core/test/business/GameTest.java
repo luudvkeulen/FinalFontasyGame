@@ -12,6 +12,7 @@
  */
 package business;
 
+
 import com.ffxvi.game.business.Game;
 import com.ffxvi.game.business.GameManager;
 import com.ffxvi.game.models.Player;
@@ -374,7 +375,7 @@ public class GameTest {
 
         String name = "";
 
-        new Game(startTime, name);
+        Game g = new Game(startTime, name);
     }
 
     /**
@@ -402,7 +403,7 @@ public class GameTest {
 
         String name = "         ";
 
-        new Game(startTime, name);
+        Game g = new Game(startTime, name);
     }
 
     /**
@@ -421,7 +422,7 @@ public class GameTest {
 
         String name = "Unofficial Game Server";
 
-        new Game(null, name);
+        Game g = new Game(null, name);
     }
 
     /**
@@ -447,7 +448,7 @@ public class GameTest {
             Logger.getLogger(GameTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        new Game(startTime, null);
+        Game g = new Game(startTime, null);
     }
 
     /**
@@ -1067,7 +1068,6 @@ public class GameTest {
      */
     @Test
     public void testEqualsObjectOtherClass() {
-
         Assert.assertFalse(this.game.equals(GameManager.getInstance()));
     }
 
@@ -1177,7 +1177,6 @@ public class GameTest {
      */
     @Test
     public void testEqualsObjectNull() {
-
         Assert.assertFalse(this.game.equals(null));
     }
 

@@ -109,14 +109,14 @@ public class GameManager
 
         this.currentGame = null;
 
-        try
-        {
-            this.loadProperties(filePath);
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try
+//        {
+//            this.loadProperties(filePath);
+//        }
+//        catch (IOException ex)
+//        {
+//            Logger.getLogger(GameManager.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     /**

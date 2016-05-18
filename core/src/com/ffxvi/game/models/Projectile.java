@@ -67,9 +67,9 @@ public class Projectile {
             throw new IllegalArgumentException("The position of this projectile can not be null.");
         }
 
-        if (rotation < 0 || rotation > 360) {
+        if (rotation < 0 || rotation >= 360) {
             System.out.println(rotation);
-            throw new IllegalArgumentException("The rotation of the projectile must be in the range 0-360");
+            throw new IllegalArgumentException("The rotation of the projectile must be >= 0 & < 360");
             
         }
 

@@ -155,8 +155,11 @@ public class Room {
             if (playerPosition == null) {
                 playerPosition = this.getSpawnPositionForPlayer();
             }
+            
+            
 
             if (validPlacement(playerPosition) && !this.isPositionBlocked(playerPosition)) {
+                player.setPosition(playerPosition);
                 for (Player p : this.players) {
                     if (p.getName().equals(player.getName())) {
                         return false;
