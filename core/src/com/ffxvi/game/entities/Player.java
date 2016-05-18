@@ -16,13 +16,14 @@ import com.ffxvi.game.models.AmmoType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
-import com.ffxvi.game.support.Vector;
-
+import com.ffxvi.game.support.Vector;<<<<<<< HEAD
 public class Player extends SimplePlayer {
 
     protected static final float WALK_SPEED = 5;
     protected static final float RUN_SPEED = 8;
 
+
+    private float aimDirection;
     private float animSpeed;
     private float stateTime;
     private Animation currentAnim,
@@ -94,6 +95,54 @@ public class Player extends SimplePlayer {
         } else {
             this.speed = Player.WALK_SPEED;
         }
+
+
+    public boolean setAimDirection(Vector position)
+    {
+        // Create a vector3 with the player's coordinates
+        Vector3 playerPos = new Vector3(this.x, this.y, 0);
+
+        // Project the position to the camera
+        camera.project(playerPos);
+        float mouseX = position.getX();
+        float mouseY = position.getY();
+        Vector mousePos = new Vector(mouseX, mouseY);
+
+        // Calculate the direction of the bullet using arctan
+        float dir = (float) Math.toDegrees(Math.atan2(mousePos.getY() - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize / 3), mousePos.getX() - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth() / 2)));
+
+        if (this.aimDirection == dir)
+        {
+            return false;
+        }
+
+        if (dir < 0)
+        {
+            dir += 360;
+        }
+
+        this.aimDirection = dir;
+
+        return true;
+    }
+
+    public void setAimDirection(float controllerInputX, float controllerInputY)
+    {
+        if (controllerInputX == 0 && controllerInputY == 0)
+        {
+            throw new IllegalArgumentException("inputX and inputY can't both be 0.");
+        }
+
+        float angle = (float) Math.toDegrees(Math.atan2(controllerInputX, controllerInputY));
+
+        angle -= 90;
+
+        if (angle < 0)
+        {
+            angle += 360;
+        }
+
+        this.aimDirection = angle;
     }
 
     /**
@@ -109,7 +158,6 @@ public class Player extends SimplePlayer {
         animSpeed = 0.05f;
         stateTime = 0f;
         this.screen = screen;
-
         switchCharacter(character);
         currentAnim = new Animation(0, walkDown.getKeyFrame(0));
         direction = Direction.RIGHT;
@@ -120,6 +168,7 @@ public class Player extends SimplePlayer {
         int gridsize = Utils.gridSize;
         modifiedgridsizex = gridsize - 32;
         modifiedgridsizey = gridsize - 16;
+		this.aimDirection = 0;
 
     }
     
@@ -166,11 +215,9 @@ public class Player extends SimplePlayer {
     public Vector getPosition() {
         return this.position;
     }
-    
-    
-    
-    
-    private boolean canFire() {
+
+    private boolean canFire()
+    {
         return System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000;
     }
 
@@ -178,11 +225,14 @@ public class Player extends SimplePlayer {
      *
      * @param walkingAnim Filename of the walking animations, located in assets
      */
-    private void setAnimations(String walkingAnim, String slashingAnim) {
-        if (!walkingAnim.equals("")) {
+    private void setAnimations(String walkingAnim, String slashingAnim)
+    {
+        if (!walkingAnim.equals(""))
+        {
             setWalkingAnimations(walkingAnim);
         }
-        if (!slashingAnim.equals("")) {
+        if (!slashingAnim.equals(""))
+        {
             setSlashingAnimations(slashingAnim);
         }
         currentAnim = null;
@@ -201,6 +251,7 @@ public class Player extends SimplePlayer {
                 break;
         }
     }
+
 
     public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(camera.combined);
@@ -236,50 +287,40 @@ public class Player extends SimplePlayer {
         }
     }
 
-    public void update() {
+    public void update()
+    {
         this.shootDelay--;
     }
 
-    public void fire() {
-        if (canFire()) {
+    public void fire()
+    {
+        if (canFire())
+        {
             // Reset the shoot delay
             this.shootStart = System.nanoTime();
 
-            // Create a vector3 with the player's coordinates
-            Vector3 playerPos = new Vector3(this.x, this.y, 0);
-
-            // Project the position to the camera
-            camera.project(playerPos);
-
-            // Create a vector2 with the mouse coordinates
-            Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY() + 50);
-
-            // Calculate the direction of the bullet using arctan
-            float dir = (float) Math.toDegrees(Math.atan2(mousePos.y - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (Utils.gridSize / 3), mousePos.x - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth() / 2)));
-
-            //Normalize the dir to 0-359 degrees
-            if (dir < 0) {
-                dir += 360;
-            }
-
             // Create a bullet inside the player with the direction and speed
-            GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedgridsizex), this.y + (modifiedgridsizey / 2)), dir, new AmmoType(10, 30, "animationstring")));
+            GameScreen.addProjectile(new Projectile(new Projectile(new Vector(this.x + (modifiedgridsizex), this.y + (modifiedgridsizey / 2)), dir, new AmmoType(10, 30, "animationstring")));
         }
     }
 
-    public void slash() {
+    public void slash()
+    {
         setCurrentSlashingAnimation(direction);
     }
 
-    public void DirectionInput(Direction direction) {
+    public void DirectionInput(Direction direction)
+    {
         this.direction = direction;
         setCurrentWalkingAnimation(direction);
-        if (!checkCollision(movingCollisionBox(direction), GameScreen.wallObjects, GameScreen.objects)) {
+        if (!checkCollision(movingCollisionBox(direction), GameScreen.wallObjects, GameScreen.objects))
+        {
             Move(direction);
         }
 
         checkDoorCollision(movingCollisionBox(direction), GameScreen.doors, direction);
     }
+
 
     private void Move(Direction direction) {
         switch (direction) {
@@ -303,7 +344,6 @@ public class Player extends SimplePlayer {
         switch (direction) {
             case LEFT:
                 currentAnim = walkLeft;
-
                 break;
             case RIGHT:
                 currentAnim = walkRight;
@@ -335,6 +375,7 @@ public class Player extends SimplePlayer {
         }
     }
 
+
     public void setIdle() {
         animation = PlayerAnimation.IDLE;
         currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
@@ -346,6 +387,7 @@ public class Player extends SimplePlayer {
      * @param walkingAnim Filename of the walking animations, located in assets
      */
     private void setWalkingAnimations(String walkingAnim) {
+
         float walkSpeed = animSpeed * 1f;
         int walkSheet_Cols = 9;
         int walkSheet_Rows = 4;
@@ -363,6 +405,7 @@ public class Player extends SimplePlayer {
      * @param slashingAnim Filename of the walking animations, located in assets
      */
     private void setSlashingAnimations(String slashingAnim) {
+
         float slashSpeed = animSpeed * 0.5f;
         int slashSheet_Cols = 6;
         int slashSheet_Rows = 4;
@@ -374,9 +417,12 @@ public class Player extends SimplePlayer {
         slashRight = new Animation(slashSpeed, anims[3]);
     }
 
-    private Rectangle movingCollisionBox(Direction direction) {
+
+    private Rectangle movingCollisionBox(Direction direction)
+    {
         Rectangle rec = null;
-        switch (direction) {
+        switch (direction)
+        {
             case LEFT:
                 rec = new Rectangle(x + 16 - this.speed, y, modifiedgridsizex, modifiedgridsizey);
                 break;
