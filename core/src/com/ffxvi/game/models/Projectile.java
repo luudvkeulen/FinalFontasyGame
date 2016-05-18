@@ -49,10 +49,10 @@ public class Projectile {
      */
     private float speed;
 
-    public long startTime;
-    public long despawnDelay = 30;
-    public boolean doRemove;
-    public boolean canCollide;
+    private long startTime;
+    private long despawnDelay = 30;
+    private boolean doRemove;
+    private boolean canCollide;
 
     /**
      * Initializes a new projectile object.
@@ -164,6 +164,15 @@ public class Projectile {
      */
     public AmmoType getAmmoType() {
         return this.ammoType;
+    }
+    
+    /**
+     * Gets the do-remove boolean from this class.
+     * 
+     * @return A boolean which says if a projectile can be destroyed.
+     */
+    public boolean getDoRemove() {
+        return this.doRemove;
     }
 
     /**
