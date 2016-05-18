@@ -41,7 +41,11 @@ public class GameScreen implements Screen {
 	private final Skin skin;
 	
 	private Label playerLabel;
-	private GlyphLayout layout;
+	private Label healthLabel1;
+	private Label healthLabel2;
+	private GlyphLayout playerLayout;
+	private GlyphLayout healthLayout1;
+	private GlyphLayout healthLayout2;
 	private final String[] levels = new String[]{"level1", "level2", "level3"};
 	public String currentlevel = "";
 	private InputManager inputManager;
@@ -65,9 +69,12 @@ public class GameScreen implements Screen {
 		//mainPlayer.setPos(64, 64);
 		projectiles = new ArrayList();
 		this.playerLabel = new Label("", skin);
+		this.healthLabel1 = this.healthLabel2 = new Label("100", skin);
+		stage.addActor(healthLabel1);
+		stage.addActor(healthLabel2);
 		stage.addActor(playerLabel);
 		
-		this.layout = new GlyphLayout();
+		this.playerLayout = new GlyphLayout();
 	}
 	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
@@ -142,9 +149,14 @@ public class GameScreen implements Screen {
 			// Set the playerLabel position to the position of the player
 			Vector3 playerPos = new Vector3(mainPlayer.getX(), mainPlayer.getY(), 0);
 			camera.project(playerPos);
-			layout.setText(skin.getFont("default"), mainPlayer.getName());
-			float playerLabelWidth = layout.width;
+			playerLayout.setText(skin.getFont("default"), mainPlayer.getName());
+			
+			float playerLabelWidth = playerLayout.width;
 			playerLabel.setPosition(playerPos.x + 32 - (playerLabelWidth/2), playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight());
+			
+			healthLayout1.setText(skin.getFont("default"), "100");
+			float healthLabel1 = healthLayout1.width;
+			this.healthLabel1.setPosition(playerPos.x + 32 - (playerLabelWidth/2), playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight());
 			
 			batch.begin();
 			mainPlayer.render(batch);
