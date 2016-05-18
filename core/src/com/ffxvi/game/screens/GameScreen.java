@@ -22,6 +22,7 @@ import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Projectile;
+import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -71,8 +72,8 @@ public class GameScreen implements Screen {
 	}
 	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
-		mainPlayer = new Player(game, character, playerName, this);
-		mainPlayer.setPos(64, 64);
+		mainPlayer = new Player(character, playerName, new Vector(64f,64f),this);
+		mainPlayer.setPosition(64, 64);
 		
 		playerLabel.setText(playerName);
 		
@@ -102,16 +103,16 @@ public class GameScreen implements Screen {
 			if(rmo.getName().equals(currentlevel)) {
 				switch(dir) {
 					case UP:
-						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y + 64);
+						mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
 						break;
 					case DOWN:
-						mainPlayer.setPos(rmo.getRectangle().x, rmo.getRectangle().y - 64);
+						mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y - 64);
 						break;
 					case LEFT:
-						mainPlayer.setPos(rmo.getRectangle().x - 64, rmo.getRectangle().y );
+						mainPlayer.setPosition(rmo.getRectangle().x - 64, rmo.getRectangle().y );
 						break;
 					case RIGHT:
-						mainPlayer.setPos(rmo.getRectangle().x + 64, rmo.getRectangle().y );
+						mainPlayer.setPosition(rmo.getRectangle().x + 64, rmo.getRectangle().y );
 						break;
 				}
 				break;
