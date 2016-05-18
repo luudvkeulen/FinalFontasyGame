@@ -78,10 +78,26 @@ public class Server {
 	}
 	
 	/**
-	 * Send the given message to all connected clients
-	 * @param message the message that's to be sent to all connected clients
+	 * Send a message to all connected players
+	 * @param message the message to send
 	 */
-	public void send(String message){
+	public void sendAll(String message){
+		for (InetSocketAddress targetIP : players){
+			if (targetIP != null){
+				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, targetIP);
+				sendSingle(message, targetIP);
+			}
+		}
+		System.out.println(String.format("SENT \"%1$s\" TO CLIENTS", message));
+	}
+	
+	/**
+	 * Send a message to a certain InetSocketAddress
+	 * @param message the message to send
+	 * @param targetIP the address to send the message to
+	 */
+	public void sendSingle(String message, InetSocketAddress targetIP){
+		// Pick a random open DatagramSocket to send the DatagramPacket
 		DatagramSocket sendingSocket = null;
 		try {
 			sendingSocket = new DatagramSocket();
@@ -89,22 +105,21 @@ public class Server {
 			Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		
+		// Empty the byte array to prevent messy data
 		sendData = new byte[1024];
+		// Convert the object to bytes and put it in the byte array
 		sendData = message.getBytes();
+		// Create the DatagramPacket to send
+		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, targetIP);
 		
-		for (InetSocketAddress targetIP : players){
-			if (targetIP != null){
-				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, targetIP);
-				try {
-					sendingSocket.send(sendPacket);
-				} catch (IOException ex) {
-					Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
+		// Send the DatagramPacket through the DatagramSocket
+		try {
+			sendingSocket.send(sendPacket);
+		} catch (IOException ex) {
+			Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		
-		System.out.println(String.format("SENT \"%1$s\" TO CLIENTS", message));
-		
+		// Close the socket
 		sendingSocket.close();
 	}
 }
