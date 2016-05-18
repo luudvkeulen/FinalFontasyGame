@@ -174,11 +174,11 @@ public class GameScreen implements Screen {
 			
 			float playerLabelWidth = playerLabel1.getWidth();
 			playerLabel1.setAlignment((int)playerLabelWidth/2);
-			playerLabel1.setPosition(playerPos.x + 32, playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight() + 12);
+			playerLabel1.setPosition(playerPos.x + 32, playerPos.y + mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
 			
 			float healthLabel1width = healthLabel1.getWidth();
 			healthLabel1.setAlignment((int)(healthLabel1width /2));
-			healthLabel1.setPosition(playerPos.x + 16, playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight() - 18);
+			healthLabel1.setPosition(playerPos.x + 16, playerPos.y + mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
 			
 			healthLabel2.setPosition(0, healthLabel2.getHeight());
 			
