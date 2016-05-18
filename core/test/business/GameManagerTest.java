@@ -28,7 +28,7 @@ import org.junit.Test;
 public class GameManagerTest {
 
     /**
-     * A game manager object used for testing.
+     * A game manager object used for testing. 
      */
     private GameManager gameManager;
 
