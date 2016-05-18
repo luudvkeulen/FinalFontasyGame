@@ -112,11 +112,11 @@ public class ServerBrowser implements Screen {
 		stage.addActor(playButton);
 		
 		/* Draw server overview */
-		try {
+		/*try {
 			this.serverRetriever = new ServerRetriever();
 		} catch (IOException ex) {
 			Logger.getLogger(ServerBrowser.class.getName()).log(Level.SEVERE, null, ex);
-		}
+		}*/
 		
 		this.servers = new List(skin);
 		servers.getSelection().setMultiple(true);
@@ -141,9 +141,9 @@ public class ServerBrowser implements Screen {
 	}
 	
 	private void refreshServers() throws RemoteException {
-		String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
+		//String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
 		
-		this.servers.setItems(serverAddresses);
+		//this.servers.setItems(serverAddresses);
 	}
 
 	@Override

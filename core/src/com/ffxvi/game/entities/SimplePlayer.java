@@ -24,10 +24,9 @@ public class SimplePlayer {
 	protected Direction direction;
 	
 	protected PlayerAnimation animation;
-	private int modifiedgridsizex;
-	private int modifiedgridsizey;
+
 	
-	public SimplePlayer(String playerName, float posX, float posY, int gridSize) {
+	public SimplePlayer(String playerName, float posX, float posY) {
 		this.playerName = playerName;
 		hitPoints = 100;
 		score = 0;
@@ -36,7 +35,6 @@ public class SimplePlayer {
 		speed = 0.0f;
 		direction = DOWN;
 		animation = IDLE;
-		modifiedgridsizex = gridSize - 32;
-		modifiedgridsizey = gridSize - 16;
+		
 	}
 }

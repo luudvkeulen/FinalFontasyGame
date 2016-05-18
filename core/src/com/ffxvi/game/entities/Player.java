@@ -1,9 +1,6 @@
 package com.ffxvi.game.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,80 +15,86 @@ import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.models.AmmoType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
-import com.ffxvi.game.screens.MenuScreen;
+import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
-
-public class Player
-{
-
-    protected float x;
-    protected float y;
+public class Player extends SimplePlayer {
 
     protected static final float WALK_SPEED = 5;
     protected static final float RUN_SPEED = 8;
 
+
     private float aimDirection;
-    public Direction direction;
     private float animSpeed;
     private float stateTime;
     private Animation currentAnim,
             walkUp, walkLeft, walkDown, walkRight,
             slashUp, slashLeft, slashDown, slashRight;
 
-    private MainClass game;
-
     private int shootDelay = 0;
-    private final int maxShootDelay = 10;
-    private int gridsize = 64;
+
     private int modifiedgridsizex;
     private int modifiedgridsizey;
-    private float speed;
-    private final String playerName;
+
     private final GameScreen screen;
     private float shootCooldown = 0.5f;
     private long shootStart = 0;
-
-    public float getX()
-    {
+    private Vector position;
+    public float getX() {
         return x;
     }
 
-    public float getY()
-    {
+    public float getY() {
         return y;
     }
 
-    public String getName()
-    {
-        return this.playerName;
-    }
+    
 
-    public Animation getCurrentAnim()
-    {
+    public Animation getCurrentAnim() {
         return currentAnim;
     }
 
-    public void setPos(float x, float y)
-    {
+    public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
     }
+    
+    /**
+     * Sets the players position.
+     *
+     * @param position The player's position.
+     */
+    public void setPosition(Vector position) {
+        this.position = position;
+    }
+    
+    /**
+     * Gets the players movement speed.
+     *
+     * @return The movementspeed of the player.
+     */
+    public float getMoveSpeed() {
+        return speed;
+    }
+    
+    /**
+     * Sets the players movement speed.
+     *
+     * @param moveSpeed The movementspeed of the player.
+     */
+    public void setMoveSpeed(float moveSpeed) {
+        if (moveSpeed < 0) {
+            throw new IllegalArgumentException();
+        }
 
-    public void setSprint(boolean isSprinting)
-    {
-        if (isSprinting)
-        {
-            this.speed = Player.RUN_SPEED;
-        }
-        else
-        {
-            this.speed = Player.WALK_SPEED;
-        }
+        this.speed = moveSpeed;
     }
 
-    public void setIdle()
-    {
-        currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+    public void setSprint(boolean isSprinting) {
+        if (isSprinting) {
+            this.speed = Player.RUN_SPEED;
+        } else {
+            this.speed = Player.WALK_SPEED;
+        }
     }
 
     public boolean setAimDirection(Vector position)
@@ -106,7 +109,7 @@ public class Player
         Vector mousePos = new Vector(mouseX, mouseY);
 
         // Calculate the direction of the bullet using arctan
-        float dir = (float) Math.toDegrees(Math.atan2(mousePos.getY() - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize / 3), mousePos.getX() - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth() / 2)));
+        float dir = (float) Math.toDegrees(Math.atan2(mousePos.getY() - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (Utils.gridSize / 3), mousePos.getX() - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth() / 2)));
 
         if (this.aimDirection == dir)
         {
@@ -149,34 +152,68 @@ public class Player
      * @param playerName
      * @param walkingAnim Filename of the walking animations, located in assets
      */
-    public Player(MainClass game, PlayerCharacter character, String playerName, GameScreen screen)
-    {
+    public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen) {
+        super(playerName, position.getX(), position.getY());
+        this.position = position;
         animSpeed = 0.05f;
         stateTime = 0f;
         this.screen = screen;
-
-        switch (character)
-        {
-            case SKELETON_DAGGER:
-                setAnimations("Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
-                break;
-            case SKELETON_HOODED_BOW:
-                setAnimations("Units/Skeleton_Hooded_Bow/Walk.png", "Units/Skeleton_Hooded_Bow/Slash.png");
-                break;
-            case SKELETON_HOODED_DAGGER:
-                setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png", "Units/Skeleton_Hooded_Dagger/Slash.png");
-                break;
-        }
+        switchCharacter(character);
         currentAnim = new Animation(0, walkDown.getKeyFrame(0));
-        this.game = game;
         direction = Direction.RIGHT;
         this.speed = Player.WALK_SPEED;
-        this.playerName = playerName;
+
         //Sound sound = Gdx.audio.newSound(Gdx.files.internal("extra.mp3"));
         // sound.play();
+        int gridsize = Utils.gridSize;
         modifiedgridsizex = gridsize - 32;
         modifiedgridsizey = gridsize - 16;
-        this.aimDirection = 0;
+		this.aimDirection = 0;
+
+    }
+    
+    public String getName() {
+        return playerName;
+    }
+    /**
+     * Gets the player score.
+     *
+     * @return The score of the player.
+     */
+    public int getScore() {
+        return score;
+    }
+    
+    /**
+     * Sets the players score.
+     *
+     * @param score The score to set.
+     */
+    public void setScore(int score) {
+        if (score < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        this.score = score;
+
+    }
+    
+    /**
+     * Gets the player's hitpoints.
+     *
+     * @return Returns the amount of hitpoints of the player.
+     */
+    public int getHitPoints() {
+        return this.hitPoints;
+    }
+    
+    /**
+     * Gets the players position.
+     *
+     * @return The position of the player.
+     */
+    public Vector getPosition() {
+        return this.position;
     }
 
     private boolean canFire()
@@ -201,10 +238,8 @@ public class Player
         currentAnim = null;
     }
 
-    private void switchCharacter(PlayerCharacter character)
-    {
-        switch (character)
-        {
+    private void switchCharacter(PlayerCharacter character) {
+        switch (character) {
             case SKELETON_DAGGER:
                 setAnimations("Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
                 break;
@@ -217,30 +252,25 @@ public class Player
         }
     }
 
-    public void render(SpriteBatch batch)
-    {
+
+    public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(camera.combined);
         stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = currentAnim.getKeyFrame(stateTime, true);
-        batch.draw(currentFrame, x, y, gridsize, gridsize);
+        batch.draw(currentFrame, x, y, Utils.gridSize, Utils.gridSize);
     }
 
-    private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects)
-    {
-        for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class))
-        {
+    private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects) {
+        for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
             Rectangle rectangleMapObject = mapObject.getRectangle();
-            if (rec.overlaps(rectangleMapObject))
-            {
+            if (rec.overlaps(rectangleMapObject)) {
                 return true;
             }
         }
 
-        for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class))
-        {
+        for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class)) {
             Rectangle rectangleMapObject = mapObject.getRectangle();
-            if (rec.overlaps(rectangleMapObject))
-            {
+            if (rec.overlaps(rectangleMapObject)) {
                 return true;
             }
         }
@@ -248,13 +278,10 @@ public class Player
         return false;
     }
 
-    private void checkDoorCollision(Rectangle rec, MapObjects objects, Direction dir)
-    {
-        for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class))
-        {
+    private void checkDoorCollision(Rectangle rec, MapObjects objects, Direction dir) {
+        for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
             Rectangle rectangleMapObject = mapObject.getRectangle();
-            if (rec.overlaps(rectangleMapObject))
-            {
+            if (rec.overlaps(rectangleMapObject)) {
                 screen.setLevel(mapObject.getName(), dir);
             }
         }
@@ -273,7 +300,7 @@ public class Player
             this.shootStart = System.nanoTime();
 
             // Create a bullet inside the player with the direction and speed
-            GameScreen.addProjectile(new Projectile(new Vector(this.x + (gridsize / 2), this.y + (gridsize / 2)), this.aimDirection, new AmmoType(10, 30, "animationstring")));
+            GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedgridsizex), this.y + (modifiedgridsizey / 2)), this.aimDirection, new AmmoType(10, 30, "animationstring")));
         }
     }
 
@@ -294,10 +321,9 @@ public class Player
         checkDoorCollision(movingCollisionBox(direction), GameScreen.doors, direction);
     }
 
-    private void Move(Direction direction)
-    {
-        switch (direction)
-        {
+
+    private void Move(Direction direction) {
+        switch (direction) {
             case LEFT:
                 x -= this.speed;
                 break;
@@ -313,10 +339,9 @@ public class Player
         }
     }
 
-    private void setCurrentWalkingAnimation(Direction direction)
-    {
-        switch (direction)
-        {
+    private void setCurrentWalkingAnimation(Direction direction) {
+        animation = PlayerAnimation.WALKING;
+        switch (direction) {
             case LEFT:
                 currentAnim = walkLeft;
                 break;
@@ -332,10 +357,9 @@ public class Player
         }
     }
 
-    private void setCurrentSlashingAnimation(Direction direction)
-    {
-        switch (direction)
-        {
+    private void setCurrentSlashingAnimation(Direction direction) {
+        animation = PlayerAnimation.SLASHING;
+        switch (direction) {
             case LEFT:
                 currentAnim = slashLeft;
                 break;
@@ -351,12 +375,19 @@ public class Player
         }
     }
 
+
+    public void setIdle() {
+        animation = PlayerAnimation.IDLE;
+        currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
+    }
+
     /**
+     * This methods gets called once to load the animations
      *
      * @param walkingAnim Filename of the walking animations, located in assets
      */
-    private void setWalkingAnimations(String walkingAnim)
-    {
+    private void setWalkingAnimations(String walkingAnim) {
+
         float walkSpeed = animSpeed * 1f;
         int walkSheet_Cols = 9;
         int walkSheet_Rows = 4;
@@ -368,8 +399,13 @@ public class Player
         walkRight = new Animation(walkSpeed, anims[3]);
     }
 
-    private void setSlashingAnimations(String slashingAnim)
-    {
+    /**
+     * This methods gets called once to load the animations
+     *
+     * @param slashingAnim Filename of the walking animations, located in assets
+     */
+    private void setSlashingAnimations(String slashingAnim) {
+
         float slashSpeed = animSpeed * 0.5f;
         int slashSheet_Cols = 6;
         int slashSheet_Rows = 4;
@@ -380,6 +416,7 @@ public class Player
         slashDown = new Animation(slashSpeed, anims[2]);
         slashRight = new Animation(slashSpeed, anims[3]);
     }
+
 
     private Rectangle movingCollisionBox(Direction direction)
     {
