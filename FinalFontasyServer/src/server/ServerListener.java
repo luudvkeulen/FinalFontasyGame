@@ -5,13 +5,13 @@
  */
 package server;
 
+import com.ffxvi.game.entities.SimplePlayer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.entities.SimplePlayer;
 
 /**
  *
