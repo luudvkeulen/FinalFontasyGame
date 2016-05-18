@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ffxvi.game.entities;
+package server.entities;
 
-import static com.ffxvi.game.entities.Direction.*;
-import static com.ffxvi.game.entities.PlayerAnimation.*;
+import static server.entities.Direction.*;
+import static server.entities.PlayerAnimation.*;
 
 /**
  *
@@ -24,9 +24,10 @@ public class SimplePlayer {
 	protected Direction direction;
 	
 	protected PlayerAnimation animation;
-
+	private int modifiedgridsizex;
+	private int modifiedgridsizey;
 	
-	public SimplePlayer(String playerName, float posX, float posY) {
+	public SimplePlayer(String playerName, float posX, float posY, int gridSize) {
 		this.playerName = playerName;
 		hitPoints = 100;
 		score = 0;
@@ -35,6 +36,7 @@ public class SimplePlayer {
 		speed = 0.0f;
 		direction = DOWN;
 		animation = IDLE;
-		
+		modifiedgridsizex = gridSize - 32;
+		modifiedgridsizey = gridSize - 16;
 	}
 }
