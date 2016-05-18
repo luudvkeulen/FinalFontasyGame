@@ -12,10 +12,10 @@ import com.ffxvi.game.support.Vector;
 
 public class InputManager
 {
+
     private final float DEADZONE = 0.3f;
     private final MainClass game;
     private final Player mainPlayer;
-    
 
     public InputManager(MainClass game, Player mainPlayer)
     {
@@ -63,7 +63,7 @@ public class InputManager
         {
             if (rightPressed)
             {
-                mainPlayer();
+                mainPlayer.setIdle();
             }
             else
             {
@@ -112,10 +112,10 @@ public class InputManager
 
         int mouseX = Gdx.input.getX();
         int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
-        
+
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
         {
-            this.mainPlayer.setAimDirection(new Vector((float)mouseX, (float)mouseY));
+            this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
             mainPlayer.fire();
             returnValue = true;
         }
@@ -125,7 +125,7 @@ public class InputManager
             mainPlayer.slash();
             returnValue = true;
         }
-        
+
         return returnValue;
     }
 
@@ -165,7 +165,7 @@ public class InputManager
             else if (!(x > DEADZONE || y < -DEADZONE || y > DEADZONE || x < -DEADZONE))
             {
                 mainPlayer.setIdle();
-                
+
             }
 
             x = controller.getAxis(3);
@@ -180,9 +180,11 @@ public class InputManager
 
             float shouldShoot = controller.getAxis(4);
 
+            this.mainPlayer.setSprint(false);
+
             if (shouldShoot < -DEADZONE)
             {
-                this.mainPlayer.fire();
+                this.mainPlayer.setSprint(true);
                 returnValue = true;
             }
             else if (shouldShoot > DEADZONE)
@@ -191,7 +193,7 @@ public class InputManager
                 returnValue = true;
             }
         }
-        
+
         return returnValue;
     }
 }
