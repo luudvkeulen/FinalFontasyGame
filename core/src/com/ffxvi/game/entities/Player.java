@@ -16,7 +16,7 @@ import com.ffxvi.game.models.AmmoType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
-import com.ffxvi.game.support.Vector;<<<<<<< HEAD
+import com.ffxvi.game.support.Vector;
 public class Player extends SimplePlayer {
 
     protected static final float WALK_SPEED = 5;
@@ -95,7 +95,7 @@ public class Player extends SimplePlayer {
         } else {
             this.speed = Player.WALK_SPEED;
         }
-
+    }
 
     public boolean setAimDirection(Vector position)
     {
@@ -109,7 +109,7 @@ public class Player extends SimplePlayer {
         Vector mousePos = new Vector(mouseX, mouseY);
 
         // Calculate the direction of the bullet using arctan
-        float dir = (float) Math.toDegrees(Math.atan2(mousePos.getY() - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (gridsize / 3), mousePos.getX() - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth() / 2)));
+        float dir = (float) Math.toDegrees(Math.atan2(mousePos.getY() - playerPos.y - (this.currentAnim.getKeyFrame(stateTime).getRegionHeight()) - (Utils.gridSize / 3), mousePos.getX() - playerPos.x - (this.currentAnim.getKeyFrame(stateTime).getRegionWidth() / 2)));
 
         if (this.aimDirection == dir)
         {
@@ -300,7 +300,7 @@ public class Player extends SimplePlayer {
             this.shootStart = System.nanoTime();
 
             // Create a bullet inside the player with the direction and speed
-            GameScreen.addProjectile(new Projectile(new Projectile(new Vector(this.x + (modifiedgridsizex), this.y + (modifiedgridsizey / 2)), dir, new AmmoType(10, 30, "animationstring")));
+            GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedgridsizex), this.y + (modifiedgridsizey / 2)), this.aimDirection, new AmmoType(10, 30, "animationstring")));
         }
     }
 
