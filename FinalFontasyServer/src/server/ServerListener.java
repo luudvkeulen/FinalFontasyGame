@@ -86,6 +86,8 @@ public class ServerListener implements Runnable {
 				receiveString((String)object, receivePacket);
 			} else if (object instanceof SimplePlayer){
 				receivePlayer((SimplePlayer)object, receivePacket);
+			} else {
+				server.sendSingle("Invalid data received", new InetSocketAddress(receivePacket.getAddress(), 1337));
 			}
 		}
 	}
@@ -99,7 +101,7 @@ public class ServerListener implements Runnable {
 	}
 	
 	/**
-	 * Deserializes a received byte array
+	 * De-serializes a received byte array
 	 * @param bytes the received byte array
 	 * @return the Object created from the byte array
 	 * @throws IOException when the input stream gets disrupted
@@ -145,7 +147,7 @@ public class ServerListener implements Runnable {
 			server.disconnectPlayer(packet.getAddress());
 		} else {
 			// Reply the capitalized received String
-			server.send(message.toUpperCase());
+			server.sendAll(message.toUpperCase());
 		}
 	}
 	
