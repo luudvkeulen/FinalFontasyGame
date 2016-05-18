@@ -2,6 +2,7 @@ package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -40,12 +41,11 @@ public class GameScreen implements Screen {
 	private final Stage stage;
 	private final Skin skin;
 	
-	private Label playerLabel;
+	private Label playerLabel1;
+	private Label playerLabel2;
 	private Label healthLabel1;
 	private Label healthLabel2;
-	private GlyphLayout playerLayout;
-	private GlyphLayout healthLayout1;
-	private GlyphLayout healthLayout2;
+	private Label scoreLabel;
 	private final String[] levels = new String[]{"level1", "level2", "level3"};
 	public String currentlevel = "";
 	private InputManager inputManager;
@@ -62,26 +62,47 @@ public class GameScreen implements Screen {
 		//bfont.scale(1);
 		skin.add("default",bfont);
 		
+		BitmapFont bfontred = new BitmapFont();
+		bfontred.setColor(Color.RED);
+		skin.add("red", bfontred);
+		
 		//mainPlayer = new Player(game, "Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
 		shape = new ShapeRenderer();
 		batch = new SpriteBatch();
 //		mainPlayer.setPos(camera.position.x, camera.position.y);
 		//mainPlayer.setPos(64, 64);
 		projectiles = new ArrayList();
-		this.playerLabel = new Label("", skin);
-		this.healthLabel1 = this.healthLabel2 = new Label("100", skin);
+		this.playerLabel1 = new Label("", skin);
+		this.playerLabel2 = new Label("", skin);
+		this.healthLabel1 = new Label("100", skin);
+		this.healthLabel2  = new Label("100", skin);
+		this.scoreLabel = new Label("5000 xp", skin);
+		
+		healthLabel2.setFontScale(2);
+		playerLabel2.setFontScale(2);
+		scoreLabel.setFontScale(2);
+		
+		healthLabel1.setColor(Color.RED);
+		healthLabel2.setColor(Color.RED);
+		scoreLabel.setColor(Color.YELLOW);
+		
+		playerLabel2.setHeight(20);
+		scoreLabel.setHeight(20);
+		healthLabel2.setHeight(20);
+		
 		stage.addActor(healthLabel1);
 		stage.addActor(healthLabel2);
-		stage.addActor(playerLabel);
-		
-		this.playerLayout = new GlyphLayout();
+		stage.addActor(playerLabel1);
+		stage.addActor(playerLabel2);
+		stage.addActor(scoreLabel);
 	}
 	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
 		mainPlayer = new Player(game, character, playerName, this);
 		mainPlayer.setPos(64, 64);
 		
-		playerLabel.setText(playerName);
+		playerLabel1.setText(playerName);
+		playerLabel2.setText(playerName);
 		
 		inputManager = new InputManager(game, mainPlayer);
 	}
@@ -149,14 +170,21 @@ public class GameScreen implements Screen {
 			// Set the playerLabel position to the position of the player
 			Vector3 playerPos = new Vector3(mainPlayer.getX(), mainPlayer.getY(), 0);
 			camera.project(playerPos);
-			playerLayout.setText(skin.getFont("default"), mainPlayer.getName());
 			
-			float playerLabelWidth = playerLayout.width;
-			playerLabel.setPosition(playerPos.x + 32 - (playerLabelWidth/2), playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight());
+			float playerLabelWidth = playerLabel1.getWidth();
+			playerLabel1.setAlignment((int)playerLabelWidth/2);
+			playerLabel1.setPosition(playerPos.x + 32, playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight() + 12);
 			
-			healthLayout1.setText(skin.getFont("default"), "100");
-			float healthLabel1 = healthLayout1.width;
-			this.healthLabel1.setPosition(playerPos.x + 32 - (playerLabelWidth/2), playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight());
+			float healthLabel1width = healthLabel1.getWidth();
+			healthLabel1.setAlignment((int)(healthLabel1width /2));
+			healthLabel1.setPosition(playerPos.x + 16, playerPos.y + mainPlayer.getCurrentAnim().getKeyFrame(0).getRegionHeight() - 18);
+			
+			healthLabel2.setPosition(0, healthLabel2.getHeight());
+			
+			playerLabel2.setAlignment((int)playerLabel2.getWidth() / 2);
+			playerLabel2.setPosition(Gdx.graphics.getWidth() / 2,  playerLabel2.getHeight());
+			
+			scoreLabel.setPosition(Gdx.graphics.getWidth() - (scoreLabel.getWidth() * 2), scoreLabel.getHeight());
 			
 			batch.begin();
 			mainPlayer.render(batch);
