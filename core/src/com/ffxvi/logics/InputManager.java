@@ -1,77 +1,197 @@
-package com.ffxvi.logics;
+package com.ffxvi.game.logics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.screens.MenuScreen;
+import com.ffxvi.game.support.Vector;
 
-public class InputManager {
-	private final MainClass game;
-	private final Player mainPlayer;
-	
-	public InputManager(MainClass game, Player mainPlayer) {
-		this.game = game;
-		this.mainPlayer = mainPlayer;
-	}
-	
-	public void checkInput() {
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			game.setScreen(new MenuScreen(game));
-			return;
-		}
+public class InputManager
+{
+    private final float DEADZONE = 0.3f;
+    private final MainClass game;
+    private final Player mainPlayer;
+    
 
-		/*if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-			//switchCharacter(PlayerCharacter.SKELETON_HOODED_DAGGER);
-			//setCurrentWalkingAnimation(direction);
-			return;
-		}
+    public InputManager(MainClass game, Player mainPlayer)
+    {
+        this.game = game;
+        this.mainPlayer = mainPlayer;
+    }
 
-		if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-			//switchCharacter(PlayerCharacter.SKELETON_HOODED_BOW);
-			//setCurrentWalkingAnimation(direction);
-			return;
-		}*/
+    public void checkInput()
+    {
+        if (!this.checkControllerInput())
+        {
+            this.checkKeyboardInput();
+        }
+    }
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-				|| Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-			//sprint(true);
-		}
-		if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-				&& !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-			//sprint(false);
-		}
+    public boolean checkKeyboardInput()
+    {
+        boolean returnValue = false;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        {
+            game.setScreen(new MenuScreen(game));
+            return returnValue;
+        }
 
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			//DirectionInput(Direction.LEFT);
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+                || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+        {
+            mainPlayer.setSprint(true);
+            returnValue = true;
+        }
 
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			//DirectionInput(Direction.RIGHT);
-		}
+        if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+                && !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+        {
+            mainPlayer.setSprint(false);
+            returnValue = true;
+        }
 
-		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-			//DirectionInput(Direction.UP);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-			//DirectionInput(Direction.DOWN);
-		}
+        boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                || Gdx.input.isKeyPressed(Input.Keys.A);
+        boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                || Gdx.input.isKeyPressed(Input.Keys.D);
 
-		if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-				&& !Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)
-				&& !Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)
-				&& !Gdx.input.isKeyPressed(Input.Keys.W) && !Gdx.input.isKeyPressed(Input.Keys.S)) {
-			//currentAnim = new Animation(0, currentAnim.getKeyFrame(0));
-		}
+        if (leftPressed)
+        {
+            if (rightPressed)
+            {
+                mainPlayer();
+            }
+            else
+            {
+                mainPlayer.DirectionInput(Direction.LEFT);
+                returnValue = true;
+            }
+        }
+        else if (rightPressed)
+        {
+            mainPlayer.DirectionInput(Direction.RIGHT);
+            returnValue = true;
+        }
 
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			// Reset the shoot delay
-			//System.nanoTime() - this.shootStart > this.shootCooldown * 1000000000
-			//fire();
-		}
+        boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP)
+                || Gdx.input.isKeyPressed(Input.Keys.W);
+        boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN)
+                || Gdx.input.isKeyPressed(Input.Keys.S);
 
-		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-			//setCurrentSlashingAnimation(direction);
-		}
-	}
+        if (upPressed)
+        {
+            if (downPressed)
+            {
+                // To prevent setting the animation to idle when both up and down are pressed, but not both left and right
+                if (!(leftPressed || rightPressed))
+                {
+                    mainPlayer.setIdle();
+                }
+            }
+            else
+            {
+                mainPlayer.DirectionInput(Direction.UP);
+                returnValue = true;
+            }
+        }
+        else if (downPressed)
+        {
+            mainPlayer.DirectionInput(Direction.DOWN);
+            returnValue = true;
+        }
+
+        if (!leftPressed && !rightPressed && !upPressed && !downPressed)
+        {
+            mainPlayer.setIdle();
+            returnValue = true;
+        }
+
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
+        
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+        {
+            this.mainPlayer.setAimDirection(new Vector((float)mouseX, (float)mouseY));
+            mainPlayer.fire();
+            returnValue = true;
+        }
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
+        {
+            mainPlayer.slash();
+            returnValue = true;
+        }
+        
+        return returnValue;
+    }
+
+    private boolean checkControllerInput()
+    {
+        Boolean returnValue = false;
+
+        if (Controllers.getControllers().size > 0)
+        {
+            Controller controller = Controllers.getControllers().first();
+
+            float y = controller.getAxis(0);
+
+            if (y < -DEADZONE)
+            {
+                mainPlayer.DirectionInput(Direction.UP);
+                returnValue = true;
+            }
+            else if (y > DEADZONE)
+            {
+                mainPlayer.DirectionInput(Direction.DOWN);
+                returnValue = true;
+            }
+
+            float x = controller.getAxis(1);
+
+            if (x < -DEADZONE)
+            {
+                mainPlayer.DirectionInput(Direction.LEFT);
+                returnValue = true;
+            }
+            else if (x > DEADZONE)
+            {
+                mainPlayer.DirectionInput(Direction.RIGHT);
+                returnValue = true;
+            }
+            else if (!(x > DEADZONE || y < -DEADZONE || y > DEADZONE || x < -DEADZONE))
+            {
+                mainPlayer.setIdle();
+                
+            }
+
+            x = controller.getAxis(3);
+            y = controller.getAxis(2);
+
+            if (y > DEADZONE || y < -DEADZONE || x > DEADZONE || x < -DEADZONE)
+            {
+                this.mainPlayer.setAimDirection(x, y);
+                this.mainPlayer.fire();
+                returnValue = true;
+            }
+
+            float shouldShoot = controller.getAxis(4);
+
+            if (shouldShoot < -DEADZONE)
+            {
+                this.mainPlayer.fire();
+                returnValue = true;
+            }
+            else if (shouldShoot > DEADZONE)
+            {
+                this.mainPlayer.slash();
+                returnValue = true;
+            }
+        }
+        
+        return returnValue;
+    }
 }

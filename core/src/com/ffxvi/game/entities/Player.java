@@ -262,7 +262,7 @@ public class Player {
 		GameScreen.addBullet(new Bullet(this.x + (gridsize / 2), this.y + (gridsize / 2), dir, speed2));
 	}
 
-	private void DirectionInput(Direction direction) {
+	public void DirectionInput(Direction direction) {
 		this.direction = direction;
 		setCurrentWalkingAnimation(direction);
 		if (!checkCollision(movingCollisionBox(direction), GameScreen.wallObjects, GameScreen.objects)) {
