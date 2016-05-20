@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
@@ -16,15 +15,18 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
+import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameScreen implements Screen {
@@ -32,7 +34,11 @@ public class GameScreen implements Screen {
 	OrthogonalTiledMapRenderer renderer;
 	MainClass game;
 	Player mainPlayer;
-        
+	
+	//Chat related
+	private List<Label> oldchatlabels;
+	private final ChatManager chatManager;
+	
 	private ShapeRenderer shape;
 	private SpriteBatch batch;
 	public static MapObjects wallObjects;
@@ -42,11 +48,14 @@ public class GameScreen implements Screen {
 	private final Stage stage;
 	private final Skin skin;
 	
-	private Label playerLabel1;
-	private Label playerLabel2;
-	private Label healthLabel1;
-	private Label healthLabel2;
-	private Label scoreLabel;
+	//HUD Related
+	private final Label playerLabel1;
+	private final Label playerLabel2;
+	private final Label healthLabel1;
+	private final Label healthLabel2;
+	private final Label scoreLabel;
+	private final TextField textfield;
+	
 	private final String[] levels = new String[]{"level1", "level2", "level3"};
 	public String currentlevel = "";
 	private InputManager inputManager;
@@ -54,6 +63,7 @@ public class GameScreen implements Screen {
 	public GameScreen (MainClass game) {
 		this.game = game;
 		this.stage = new Stage();
+		this.chatManager = new ChatManager();
 		Gdx.input.setInputProcessor(stage);
 		
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -63,39 +73,46 @@ public class GameScreen implements Screen {
 		//bfont.scale(1);
 		skin.add("default",bfont);
 		
-		BitmapFont bfontred = new BitmapFont();
-		bfontred.setColor(Color.RED);
-		skin.add("red", bfontred);
-		
 		//mainPlayer = new Player(game, "Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
 		shape = new ShapeRenderer();
 		batch = new SpriteBatch();
 //		mainPlayer.setPos(camera.position.x, camera.position.y);
 		//mainPlayer.setPos(64, 64);
 		projectiles = new ArrayList();
+		
+		textfield = new TextField("", skin);
+		textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
+		textfield.setWidth(300);
+		stage.addActor(textfield);
+		
+		//Setup labels
+		////Setup label variables
 		this.playerLabel1 = new Label("", skin);
 		this.playerLabel2 = new Label("", skin);
 		this.healthLabel1 = new Label("100", skin);
 		this.healthLabel2  = new Label("100", skin);
 		this.scoreLabel = new Label("5000 xp", skin);
-		
+		////Setup label fontscales
 		healthLabel2.setFontScale(2);
 		playerLabel2.setFontScale(2);
 		scoreLabel.setFontScale(2);
-		
+		////Setup label colors
 		healthLabel1.setColor(Color.RED);
 		healthLabel2.setColor(Color.RED);
 		scoreLabel.setColor(Color.YELLOW);
-		
+		////Setup label height
 		playerLabel2.setHeight(20);
 		scoreLabel.setHeight(20);
 		healthLabel2.setHeight(20);
-		
+		////Add labels to stage
 		stage.addActor(healthLabel1);
 		stage.addActor(healthLabel2);
 		stage.addActor(playerLabel1);
 		stage.addActor(playerLabel2);
 		stage.addActor(scoreLabel);
+		
+		
+		oldchatlabels = new ArrayList();
 	}
 	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
@@ -119,6 +136,8 @@ public class GameScreen implements Screen {
 		doors = map.getLayers().get("Door").getObjects();
 		renderer = new OrthogonalTiledMapRenderer(map, 1f);
 		renderer.setView(camera);
+		
+		stage.setKeyboardFocus(null);
 	}
 	
 	public void setLevel(String level, Direction dir) {
@@ -192,6 +211,25 @@ public class GameScreen implements Screen {
 			mainPlayer.update();
 			inputManager.checkInput();
 			batch.end();
+			
+			
+			//Remove old chat labels
+			for(Label l : oldchatlabels) {
+				l.remove();
+			}
+			oldchatlabels.clear();
+			//Generate testmessage
+			chatManager.testMessage();
+			//Draw new labels
+			int counter = 0;
+			int spacing = 15;
+			for(Label label : chatManager.getMessages()) {
+				label.setPosition(10, Gdx.graphics.getHeight() - label.getHeight() - (counter * spacing));
+				oldchatlabels.add(label);
+				stage.addActor(label);
+				
+				counter++;
+			}
 			
 			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 			stage.draw();
