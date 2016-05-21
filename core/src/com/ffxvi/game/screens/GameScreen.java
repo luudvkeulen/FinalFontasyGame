@@ -81,7 +81,6 @@ public class GameScreen implements Screen {
 		
 		// Store the default libgdx font under the name "default".
 		BitmapFont bfont=new BitmapFont();
-		//bfont.scale(1);
 		skin.add("default",bfont);
 		
 		shape = new ShapeRenderer();
@@ -153,13 +152,6 @@ public class GameScreen implements Screen {
 		renderer.setView(camera);
 		
 		stage.setKeyboardFocus(null);
-		//currentlevel = levels[idx];
-		//String level = currentlevel + ".tmx";
-		//this.map = new Map(level, idx);
-		//renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
-		//renderer.setView(camera);
-		
-		//stage.setKeyboardFocus(null);
 	}
 	
 	public void setLevel(int mapId, Direction dir) {
@@ -174,7 +166,6 @@ public class GameScreen implements Screen {
 		if(oldMap == map) return;
 		
 		for(RectangleMapObject rmo : map.getDoors().getByType(RectangleMapObject.class)) {
-			//if(rmo.getName().equals(map.getId())) {
 			if(Integer.parseInt(rmo.getName()) == oldMap.getId()) {
 				switch(dir) {
 					case UP:
