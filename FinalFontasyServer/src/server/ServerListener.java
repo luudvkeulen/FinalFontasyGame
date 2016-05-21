@@ -29,7 +29,8 @@ public class ServerListener implements Runnable {
 	 * Initiate this runnable
 	 * @param listenOnPort the port that the server will use for listening
 	 */
-	public ServerListener(int listenOnPort){
+	public ServerListener(Server server, int listenOnPort){
+		this.server = server;
 		listening = true;
 		listenerPort = listenOnPort;
 	}
@@ -47,8 +48,6 @@ public class ServerListener implements Runnable {
 	 */
 	@Override
 	public void run(){
-		server = FinalFontasyServer.server;
-		
 		// Declare the socket that is to be used by the server for listening
 		listenerSocket = null;
 		try {
@@ -85,7 +84,9 @@ public class ServerListener implements Runnable {
 			if (object instanceof String){
 				receiveString((String)object, receivePacket);
 			} else if (object instanceof SimplePlayer){
-				receivePlayer((SimplePlayer)object, receivePacket);
+				receivePlayer(receivePacket, (SimplePlayer)object);
+//			} else if (object instanceof SimpleProjectile){
+				// TODO need SimpleProjectile class
 			} else {
 				server.sendSingle("Invalid data received", new InetSocketAddress(receivePacket.getAddress(), 1337));
 			}
@@ -93,7 +94,7 @@ public class ServerListener implements Runnable {
 	}
 	
 	/**
-	 * Close the socket, only use this to stop the server!
+	 * Close the socket that the server is listening on, only use this to stop the server!
 	 */
 	public void stopListening(){
 		listening = false;
@@ -104,7 +105,7 @@ public class ServerListener implements Runnable {
 	 * De-serializes a received byte array
 	 * @param bytes the received byte array
 	 * @return the Object created from the byte array
-	 * @throws IOException when the input stream gets disrupted
+	 * @throws IOException when the InputStream gets disrupted
 	 * @throws ClassNotFoundException when the class that the byte array is supposed to become, cannot be found
 	 */
 	private Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
@@ -130,24 +131,18 @@ public class ServerListener implements Runnable {
 		InetSocketAddress playerAddress = new InetSocketAddress(packet.getAddress(), 1337);
 		
 		if (message.equals("CONNECTING")){
-		// Add the client to the connected clients list
-			for (int player = 0; player < server.getPlayerAddresses().length; player++){
-				InetSocketAddress address = server.getPlayerAddresses()[player];
-				if (address != null){
-					if (address.equals(playerAddress)){
-						break;
-					}
-				} else {
-					address = playerAddress;
-					break;
-				}
+			// Add the client to the connected clients list
+			if (server.connectPlayer(playerAddress)){
+				server.sendSingle("CONNECTED", playerAddress);
 			}
 		} else if (message.equals("DISCONNECTING")){
 			// Remove the client from the connected clients list
-			server.disconnectPlayer(packet.getAddress());
+			if (server.disconnectPlayer(playerAddress)){
+				server.sendSingle("DISCONNECTED", playerAddress);
+			}
 		} else {
 			// Reply the capitalized received String
-			server.sendAll(message.toUpperCase());
+			server.sendAll(message.toUpperCase(), packet.getAddress());
 		}
 	}
 	
@@ -157,7 +152,14 @@ public class ServerListener implements Runnable {
 	 * @param data the received SimplePlayer
 	 * @param packet the received DatagramPacket
 	 */
-	private void receivePlayer(SimplePlayer data, DatagramPacket packet){
-		
+	private void receivePlayer(DatagramPacket packet, SimplePlayer data){
+		for (InetSocketAddress address : server.getPlayerAddresses()){
+			if (address != null){
+				if (address.getAddress().equals(packet.getAddress())){
+					server.receivePlayer(address, data);
+					return;
+				}
+			}
+		}
 	}
 }

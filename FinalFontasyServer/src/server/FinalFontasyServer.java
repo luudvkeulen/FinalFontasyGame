@@ -14,8 +14,6 @@ import java.util.*;
  * @author Robin
  */
 public class FinalFontasyServer {
-	
-	public static Server server;
 
 	/**
 	 * @param args the command line arguments
@@ -32,7 +30,7 @@ public class FinalFontasyServer {
 		String input = "";
 		
 		// Start the server
-		server = new Server(1338);
+		Server server = new Server(1338);
 		
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
 		boolean stop = false;
@@ -48,7 +46,7 @@ public class FinalFontasyServer {
 				// Stop the server
 				case "stop":
 					stop = true;
-					server.stopListening();
+					server.stop();
 					System.out.println("---Shutting down the Final Fontasy XVI server---");
 					break;
 				// Display the port that the server is listening on
