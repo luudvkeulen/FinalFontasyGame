@@ -6,6 +6,7 @@
 package com.ffxvi.game.entities;
 
 import static com.ffxvi.game.entities.Direction.*;
+import static com.ffxvi.game.entities.PlayerCharacter.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 
 /**
@@ -23,8 +24,8 @@ public class SimplePlayer {
 	protected float speed; 
 	protected Direction direction;
 	
+	protected PlayerCharacter skin;
 	protected PlayerAnimation animation;
-
 	
 	public SimplePlayer(String playerName, float posX, float posY) {
 		this.playerName = playerName;
@@ -35,6 +36,5 @@ public class SimplePlayer {
 		speed = 0.0f;
 		direction = DOWN;
 		animation = IDLE;
-		
 	}
 }
