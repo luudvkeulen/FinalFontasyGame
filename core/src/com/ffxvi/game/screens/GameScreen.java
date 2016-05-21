@@ -23,6 +23,8 @@ import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
+import com.ffxvi.game.models.Map;
+import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
@@ -30,20 +32,21 @@ import java.util.List;
 import java.util.Random;
 
 public class GameScreen implements Screen {
-	TiledMap map;
-	OrthogonalTiledMapRenderer renderer;
 	MainClass game;
 	Player mainPlayer;
 	
+	//Map related
+	OrthogonalTiledMapRenderer renderer;
+	private static Map map;
+	private final List<Map> maps;
+	private final List<MapType> mapTypes;
+	
 	//Chat related
-	private List<Label> oldchatlabels;
+	private final List<Label> oldchatlabels;
 	private final ChatManager chatManager;
 	
 	private ShapeRenderer shape;
 	private SpriteBatch batch;
-	public static MapObjects wallObjects;
-	public static MapObjects objects;
-	public static MapObjects doors;
 	public static ArrayList<Projectile> projectiles;
 	private final Stage stage;
 	private final Skin skin;
@@ -56,14 +59,22 @@ public class GameScreen implements Screen {
 	private final Label scoreLabel;
 	private final TextField textfield;
 	
-	private final String[] levels = new String[]{"level1", "level2", "level3"};
-	public String currentlevel = "";
 	private InputManager inputManager;
+	
+	public static Map getCurrentMap() {
+		return map;
+	}
 	
 	public GameScreen (MainClass game) {
 		this.game = game;
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
+		
+		//Setup map stuff
+		this.maps = new ArrayList();
+		this.mapTypes  = new ArrayList();
+		loadMaps();
+		
 		Gdx.input.setInputProcessor(stage);
 		
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -73,11 +84,9 @@ public class GameScreen implements Screen {
 		//bfont.scale(1);
 		skin.add("default",bfont);
 		
-		//mainPlayer = new Player(game, "Units/Skeleton_Dagger/Walk.png", "Units/Skeleton_Dagger/Slash.png");
 		shape = new ShapeRenderer();
 		batch = new SpriteBatch();
-//		mainPlayer.setPos(camera.position.x, camera.position.y);
-		//mainPlayer.setPos(64, 64);
+
 		projectiles = new ArrayList();
 		
 		textfield = new TextField("", skin);
@@ -115,6 +124,16 @@ public class GameScreen implements Screen {
 		oldchatlabels = new ArrayList();
 	}
 	
+	private void loadMaps() {
+		mapTypes.add(new MapType(1, "level1"));
+		mapTypes.add(new MapType(2, "level2"));
+		mapTypes.add(new MapType(3, "level3"));
+		
+		for (MapType mapType : mapTypes) {
+			maps.add(new Map(mapType.getName() + ".tmx", mapType.getId()));
+		}
+	}
+	
 	public void AddPlayer(String playerName, PlayerCharacter character) {
 		mainPlayer = new Player(character, playerName, new Vector(64f,64f),this);
 		mainPlayer.setPosition(64, 64);
@@ -127,27 +146,36 @@ public class GameScreen implements Screen {
 	
 	@Override
 	public void show() {
-		int idx = new Random().nextInt(levels.length);
-		currentlevel = levels[idx];
-		String level = currentlevel + ".tmx";
-		map = new TmxMapLoader().load(level);
-		wallObjects = map.getLayers().get("WallObjects").getObjects();
-		objects = map.getLayers().get("Objects").getObjects();
-		doors = map.getLayers().get("Door").getObjects();
-		renderer = new OrthogonalTiledMapRenderer(map, 1f);
+		int idx = new Random().nextInt(maps.size());
+		map = maps.get(idx);
+		
+		renderer = new OrthogonalTiledMapRenderer(map.getMap(), 1f);
 		renderer.setView(camera);
 		
 		stage.setKeyboardFocus(null);
+		//currentlevel = levels[idx];
+		//String level = currentlevel + ".tmx";
+		//this.map = new Map(level, idx);
+		//renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
+		//renderer.setView(camera);
+		
+		//stage.setKeyboardFocus(null);
 	}
 	
-	public void setLevel(String level, Direction dir) {
-		if(level.equals("null")) return;
-		map = new TmxMapLoader().load(level + ".tmx");
-		wallObjects = map.getLayers().get("WallObjects").getObjects();
-		objects = map.getLayers().get("Objects").getObjects();
-		doors = map.getLayers().get("Door").getObjects();
-		for(RectangleMapObject rmo : doors.getByType(RectangleMapObject.class)) {
-			if(rmo.getName().equals(currentlevel)) {
+	public void setLevel(int mapId, Direction dir) {
+		if(mapId == 0) return;
+		Map oldMap = map;
+		for(Map m : maps) {
+			if(m.getId() == mapId) {
+				map = m;
+			}
+		}
+		
+		if(oldMap == map) return;
+		
+		for(RectangleMapObject rmo : map.getDoors().getByType(RectangleMapObject.class)) {
+			//if(rmo.getName().equals(map.getId())) {
+			if(Integer.parseInt(rmo.getName()) == oldMap.getId()) {
 				switch(dir) {
 					case UP:
 						mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
@@ -163,10 +191,9 @@ public class GameScreen implements Screen {
 						break;
 				}
 				break;
-			}
+			} 
 		}
-		renderer = new OrthogonalTiledMapRenderer(map, 1f);
-		currentlevel = level;
+		renderer = new OrthogonalTiledMapRenderer(map.getMap(), 1f);
 		renderer.setView(camera);
 	}
 	

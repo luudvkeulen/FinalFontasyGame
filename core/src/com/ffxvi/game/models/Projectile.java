@@ -95,8 +95,8 @@ public class Projectile {
             /* Only check collisions if the bullet is allowed to collide */
             if (this.canCollide) {
                 Rectangle rec = new Rectangle(position.getX(), position.getY(), 10, 10);
-                boolean collision = checkCollision(rec, GameScreen.wallObjects);
-
+                //boolean collision = checkCollision(rec, GameScreen.wallObjects);
+		boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
                 /* If to check if there's a collision */
                 if (collision) {
                     position.setX(position.getX() - (speed * (float) Math.cos(rotation * Math.PI / 180)));
