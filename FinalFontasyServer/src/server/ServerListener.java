@@ -27,6 +27,7 @@ public class ServerListener implements Runnable {
 	
 	/**
 	 * Initiate this runnable
+	 * @param server the server that created this runnable, used for sending data
 	 * @param listenOnPort the port that the server will use for listening
 	 */
 	public ServerListener(Server server, int listenOnPort){
@@ -80,9 +81,9 @@ public class ServerListener implements Runnable {
 				Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			
-			// Check the type of the received object and treat it accordinly
+			// Check the type of the received object and treat it accordingly
 			if (object instanceof String){
-				receiveString((String)object, receivePacket);
+				receiveString(receivePacket, (String)object);
 			} else if (object instanceof SimplePlayer){
 				receivePlayer(receivePacket, (SimplePlayer)object);
 //			} else if (object instanceof SimpleProjectile){
@@ -122,10 +123,10 @@ public class ServerListener implements Runnable {
 	 * and isn't already connected. Removes a client from the connected clients
 	 * list when receiving DISCONNECTING. Otherwise a capitalized version of the
 	 * received String will be replied to the sender. 
-	 * @param data the received String
 	 * @param packet the received DatagramPacket
+	 * @param data the received String
 	 */
-	private void receiveString(String data, DatagramPacket packet){
+	private void receiveString(DatagramPacket packet, String data){
 		String message = data.trim();
 		System.out.println(String.format("CLIENT AT %1$s SENT: %2$s", packet.getSocketAddress().toString(), message));
 		InetSocketAddress playerAddress = new InetSocketAddress(packet.getAddress(), 1337);
@@ -149,8 +150,8 @@ public class ServerListener implements Runnable {
 	/**
 	 * Treats received player data the way it is supposed to be treated
 	 * by sending the client's player data to all the other clients
-	 * @param data the received SimplePlayer
 	 * @param packet the received DatagramPacket
+	 * @param data the received SimplePlayer
 	 */
 	private void receivePlayer(DatagramPacket packet, SimplePlayer data){
 		for (InetSocketAddress address : server.getPlayerAddresses()){

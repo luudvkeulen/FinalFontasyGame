@@ -8,12 +8,13 @@ package com.ffxvi.game.entities;
 import static com.ffxvi.game.entities.Direction.*;
 import static com.ffxvi.game.entities.PlayerCharacter.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
+import java.io.Serializable;
 
 /**
  *
  * @author Robin
  */
-public class SimplePlayer {
+public class SimplePlayer implements Serializable {
 	
 	protected final String playerName;
 	protected int hitPoints;
@@ -36,5 +37,17 @@ public class SimplePlayer {
 		speed = 0.0f;
 		direction = DOWN;
 		animation = IDLE;
+	}
+	
+	public SimplePlayer(Player player){
+		playerName = player.playerName;
+		hitPoints = player.hitPoints;
+		score = player.score;
+		x = player.x;
+		y = player.y;
+		speed = player.speed;
+		direction = player.direction;
+		skin = player.skin;
+		animation = player.animation;
 	}
 }

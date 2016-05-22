@@ -11,14 +11,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -85,14 +83,14 @@ public class Server {
 					if (address != null){
 						HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
 						dataMapWithoutSender.remove(address);
-						Collection<SimplePlayer> dataListWithoutSender = dataMapWithoutSender.values();
+						Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
 						sendSingle(dataListWithoutSender, address);
 					}
 				}
 			}
 		};
 		// Execute the TimerTask once every 0.02 seconds (20 milliseconds)
-		updateTimer.scheduleAtFixedRate(tt, 0, 20);
+		updateTimer.scheduleAtFixedRate(tt, 0, 2000);
 	}
 	
 	/**
@@ -208,7 +206,7 @@ public class Server {
 	 * @return the serialized Object turned into a byte array
 	 * @throws IOException when the OutputStream gets disrupted
 	 */
-	private byte[] serialize(Object obj) throws IOException {
+	public byte[] serialize(Object obj) throws IOException {
         try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
             try(ObjectOutputStream o = new ObjectOutputStream(b)){
                 o.writeObject(obj);
@@ -219,5 +217,6 @@ public class Server {
 	
 	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer player){
 		playerData.put(playerAddress, player);
+		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
 	}
 }
