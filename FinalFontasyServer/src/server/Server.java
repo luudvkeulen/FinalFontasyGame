@@ -68,6 +68,8 @@ public class Server {
 		serverListener = new ServerListener(this, listenerPort);
 		Thread listenerThread = new Thread(serverListener);
 		listenerThread.start();
+		// Start the updateTimer
+		startTimer();
 	}
 	
 	/**
