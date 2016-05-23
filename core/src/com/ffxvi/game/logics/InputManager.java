@@ -9,8 +9,9 @@ import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
+import java.util.Observable;
 
-public class InputManager
+public class InputManager extends Observable
 {
 
     private static final float DEADZONE = 0.3f;
@@ -34,6 +35,17 @@ public class InputManager
         if (!this.checkControllerInput())
         {
             this.checkKeyboardInput();
+        }
+        
+        this.checkGUIInput();
+    }
+    
+    public void checkGUIInput()
+    {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
+        {
+            this.setChanged();
+            this.notifyObservers();
         }
     }
 
