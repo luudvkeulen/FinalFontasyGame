@@ -5,9 +5,11 @@
  */
 package server;
 
-import server.Server;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,6 +25,12 @@ public class FinalFontasyServer {
 		System.out.println("\033[H\033[2J");
 		// Write a welcome message
 		System.out.println("\n---Welcome to the Final Fontasy XVI server---");
+		
+		try {
+			new ServerSubscriber();
+		} catch (IOException ex) {
+			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		
 		Scanner sc = new Scanner(System.in);
 		Scanner lineSc;
