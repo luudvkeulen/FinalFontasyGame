@@ -90,7 +90,7 @@ public class Server {
 			}
 		};
 		// Execute the TimerTask once every 0.02 seconds (20 milliseconds)
-		updateTimer.scheduleAtFixedRate(tt, 0, 100);
+		updateTimer.scheduleAtFixedRate(tt, 0, 20);
 	}
 	
 	/**
