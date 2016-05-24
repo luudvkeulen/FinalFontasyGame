@@ -6,7 +6,6 @@
 package com.ffxvi.game.entities;
 
 import static com.ffxvi.game.entities.Direction.*;
-import static com.ffxvi.game.entities.PlayerCharacter.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 import java.io.Serializable;
 
@@ -23,8 +22,8 @@ public class SimplePlayer implements Serializable {
 	protected float x;
 	protected float y;
 	protected float speed; 
-	protected Direction direction;
 	
+	protected Direction direction;
 	protected PlayerCharacter skin;
 	protected PlayerAnimation animation;
 	

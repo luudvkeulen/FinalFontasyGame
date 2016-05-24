@@ -99,9 +99,9 @@ public class Weapon {
         if (currentAmmo <= 0) {
             return false;
         } else {
-            Projectile newProjectile = new Projectile(owner.getPosition(), owner.getRotation(), weaponType.getAmmoType());
-            getOwner().getRoom().spawnProjectile(newProjectile);
-            currentAmmo -= 1;
+          //  Projectile newProjectile = new Projectile(owner.getPosition(), owner.getRotation(), weaponType.getAmmoType());
+           // getOwner().getRoom().spawnProjectile(newProjectile);
+          //  currentAmmo -= 1;
             return true;
         }
     }
