@@ -10,53 +10,41 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.chat;
+package server.chat;
 
 import java.io.*;
 import java.net.*;
+import server.Server;
 
 /**
  * This class represents the ChatSender.
  * It has the responsibility of making sure 
- * the messages are send to the gameserver.
+ * the messages are send to the clients.
  * 
  * @author Guido
  */
 public class ChatSender {
     
     /**
-     * The socket where to connect to(Gameserver).
-     * May not be null.
+     * The server which contains all the players.
      */
-    Socket socket;
-
-    /**
-     * The printwriter which sends the message to the socket's
-     * output stream. May not be null.
-     */
-    PrintWriter out;
+    Server server;
     
     /**
-     * The constructor of this class. Initializes all the
-     * variables which are located in this class.
-     * @param serverIP The IP of the server, this may not be null
-     * or empty.
+     * This is the constructor of the class ChatSender.
+     * It initializes the fields.
+     * @param server The server which contains all the players.
      * 
-     * @param serverPort The server's port which this class can connect to.
-     * It may not be null.
-     * 
-     * @throws IOException Throws IOException when this method couldn't connect
-     * to the server.
+     * @throws IllegalArgumentException when server is null.
      */
-    public ChatSender(String serverIP, int serverPort) throws IOException {
-        if (serverIP == null || serverIP.trim().equals("")) {
+    public ChatSender(Server server) {
+        if (server == null) {
             throw new IllegalArgumentException();
         }
         
-        socket = new Socket (serverIP, serverPort);
-        out = new PrintWriter (socket.getOutputStream(), true);
-        
-        sendTextMessage(new ChatTextMessage("pleeyer", "beright"));
+        else {
+            this.server = server;
+        }
     }
     
     /**
@@ -65,20 +53,25 @@ public class ChatSender {
      * 
      * @param textMessage The textmessage which needs to be send. This may
      * not be null.
+     * @throws java.io.IOException when socket can't get initialized.
      * 
-     * @throws IllegalArgumentException Throws exception when textmessage is null.
+     * @throws IllegalArgumentException Throws exception when textmessage is null or empty.
      */
-    public void sendTextMessage(ChatTextMessage textMessage) {
-        if (textMessage == null) {
+    public void sendTextMessage(String textMessage) throws IOException {
+        if (textMessage == null || textMessage.trim().equals("")) {
             throw new IllegalArgumentException();
         }
         
-        if (out != null) {
-            out.println(textMessage.toString());
-        }
-        
-        else {
-            System.out.println("There is no connection with the server");
+        for (InetSocketAddress i : server.getPlayerAddresses()) {
+            String clientIP = i.getAddress().toString();
+            int port = i.getPort();
+            
+            Socket clientSocket = new Socket(clientIP, port);
+            DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+            
+            out.writeBytes(textMessage);
+            out.close();
+            clientSocket.close();
         }
     }
 }

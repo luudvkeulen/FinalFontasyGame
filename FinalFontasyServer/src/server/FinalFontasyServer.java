@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.chat.ChatListener;
 
 /**
  *
@@ -39,6 +40,14 @@ public class FinalFontasyServer {
 		
 		// Start the server
 		Server server = new Server(1338);
+                
+                try {
+                    //Start the chatserver
+                    ChatListener chatListener = new ChatListener(server, 1338);
+                    new Thread(chatListener).start();
+                } catch (IOException ex) {
+                    Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
 		
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
 		boolean stop = false;

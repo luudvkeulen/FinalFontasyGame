@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ffxvi.game.chat;
+package server.chat;
 
+import com.ffxvi.game.entities.SimplePlayer;
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.Server;
+import server.ServerListener;
 
 /**
  *
@@ -16,32 +19,23 @@ import java.util.logging.Logger;
  */
 public class ChatListener implements Runnable{
     
-    /**
-     * The socket of the listener.
-     * Gets initialized in the constructor.
-     */
+    private boolean listening;
+    private int listenerPort;
     ServerSocket serverSocket;
-    
+    private Server server;
+
     /**
-     * The listener's socket.
+     * Initiate this runnable
+     * @param server the server that created this runnable, used for sending data
+     * @param listenOnPort the port that the server will use for listening
+     * @throws java.io.IOException throws exception when serverSocket cannot 
+     * be initialized.
      */
-    Socket socket;
-    
-    /**
-     * The bufferedreader who reads the input.
-     */
-    BufferedReader in;
-    
-    /**
-     * The constructor of this class.
-     * Initializes all the variables in this class.
-     * @throws IOException throws exception when the listener
-     * couldn't initialize itself.
-     */
-    public ChatListener() throws IOException {
-        serverSocket = new ServerSocket (1234);
-        socket = serverSocket.accept();
-        in = new BufferedReader (new InputStreamReader (socket.getInputStream ()));
+    public ChatListener(Server server, int listenOnPort) throws IOException{
+        this.server = server;
+        this.listening = true;
+        this.listenerPort = listenOnPort;
+        this.serverSocket = new ServerSocket(listenOnPort);
     }
 
     /**
@@ -51,19 +45,25 @@ public class ChatListener implements Runnable{
      * sending it to the GUI.
      */
     @Override
-    public void run() {
-        while (true) {
-            try {
-                String receivedMessage = in.readLine();
-                //TODO: PUT MESSAGE IN GUI
-                System.out.println ("Received message: " + receivedMessage);
-            } 
+    public void run(){
+        try {
+            ChatSender sender = new ChatSender(server);
             
-            catch (IOException ex) {
-                System.out.println("Got error while retrieving message:" 
-                    + ex.getMessage());
+            while (listening) {
+                Socket connectionSocket = serverSocket.accept();
+                BufferedReader inFromClient = 
+                        new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+                sender.sendTextMessage(inFromClient.readLine());
             }
+        } catch (IOException ex) {
+            Logger.getLogger(ChatListener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    /**
+     * Call this to stop the thread from running.
+     */
+    public void stopListener() {
+        listening = false;
+    }
 }
