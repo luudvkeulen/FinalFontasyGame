@@ -21,7 +21,7 @@ public class Bullet {
 	public boolean canCollide;
 	public long startTime;
 	/* delay in seconds */
-	public long despawnDelay = 30;
+	public long despawnDelay = 10;
 	
 	public Bullet(float x, float y, float dir, float speed) {
 		this.x = x;
@@ -29,7 +29,7 @@ public class Bullet {
 		this.dir = dir;
 		this.speed = speed;
 		this.canCollide = true;
-		this.startTime = System.nanoTime();
+		this.startTime = 0;
 	}
 	
 	public void update() {
@@ -50,11 +50,13 @@ public class Bullet {
 					this.y -= this.speed * Math.sin(this.dir * Math.PI/180);
 					this.canCollide = false;
 					this.speed = 0;
+					this.startTime = System.nanoTime();
 				}
 			}
 			
 			/* Check if the bullet should be despawned */
-			if (System.nanoTime() - startTime > despawnDelay * 1000000000) {
+			if (startTime > 0 &&
+				System.nanoTime() - startTime > despawnDelay * 1000000000) {
 				this.doRemove = true;
 			}
 		}
