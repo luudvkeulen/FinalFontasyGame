@@ -30,6 +30,14 @@ public class SimplePlayer implements Serializable {
 	
 	protected int roomId;
 	
+	public float getX() {
+		return x;
+	}
+	
+	public float getY() {
+		return y;
+	}
+	
 	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
 		this.playerName = playerName;
 		hitPoints = 100;

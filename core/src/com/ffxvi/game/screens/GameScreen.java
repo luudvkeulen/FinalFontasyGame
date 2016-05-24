@@ -15,28 +15,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.MainClass.camera;
+import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
+import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.support.Vector;
-import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
-import javafx.scene.input.MouseEvent;
 
 public class GameScreen implements Screen, Observer {
 
 	MainClass game;
 	Player mainPlayer;
 
+	//Multiplayer
+	List<SimplePlayer> multiplayers = new ArrayList();
+	Client client;
+	
 	//Map related
 	OrthogonalTiledMapRenderer renderer;
 	private static Map map;
@@ -71,6 +76,8 @@ public class GameScreen implements Screen, Observer {
 		this.game = game;
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
+		
+		this.client = new Client("localhost", 1338, 1337, this);
 
 		//Setup map stuff
 		this.maps = new ArrayList();
@@ -140,12 +147,17 @@ public class GameScreen implements Screen, Observer {
 		
 		mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, map.getId());
 		mainPlayer.setPosition(64, 64);
+		client.send(new SimplePlayer(mainPlayer));
 
 		playerLabel1.setText(playerName);
 		playerLabel2.setText(playerName);
 
 		inputManager = new InputManager(game, mainPlayer);
 		this.inputManager.addObserver(this);
+	}
+	
+	public void addMultiPlayers(Collection<SimplePlayer> multiplayers) {
+		this.multiplayers = (List<SimplePlayer>)multiplayers;
 	}
 
 	@Override
@@ -206,6 +218,7 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		if (this.mainPlayer != null) {
+			client.send(new SimplePlayer(mainPlayer));
 			camera.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
 			camera.update();
 
@@ -231,6 +244,15 @@ public class GameScreen implements Screen, Observer {
 
 			scoreLabel.setPosition(Gdx.graphics.getWidth() - (scoreLabel.getWidth() * 2), scoreLabel.getHeight());
 
+			//Render other players
+			for(SimplePlayer splayer : multiplayers) {
+				ShapeRenderer srenderer = new ShapeRenderer();
+				srenderer.setAutoShapeType(true);
+				srenderer.begin();
+				srenderer.circle(splayer.getX(), splayer.getY(), 10);
+				srenderer.end();
+			}
+			
 			batch.begin();
 			mainPlayer.render(batch);
 			mainPlayer.update();

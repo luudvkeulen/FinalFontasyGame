@@ -82,7 +82,7 @@ public class Server {
 				for (InetSocketAddress address : players){
 					if (address != null){
 						HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
-						dataMapWithoutSender.remove(address);
+						//dataMapWithoutSender.remove(address);
 						Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
 						sendSingle(dataListWithoutSender, address);
 					}
@@ -90,7 +90,7 @@ public class Server {
 			}
 		};
 		// Execute the TimerTask once every 0.02 seconds (20 milliseconds)
-		updateTimer.scheduleAtFixedRate(tt, 0, 2000);
+		updateTimer.scheduleAtFixedRate(tt, 0, 100);
 	}
 	
 	/**
