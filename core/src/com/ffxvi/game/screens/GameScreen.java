@@ -249,7 +249,7 @@ public class GameScreen implements Screen, Observer {
 				ShapeRenderer srenderer = new ShapeRenderer();
 				srenderer.setAutoShapeType(true);
 				srenderer.begin();
-				srenderer.circle(splayer.getX(), splayer.getY(), 10);
+				srenderer.circle((splayer.getX()/mainPlayer.getX()) + Gdx.graphics.getWidth()/2, (splayer.getY()/mainPlayer.getY()) + Gdx.graphics.getHeight()/2, 10);
 				srenderer.end();
 			}
 			
