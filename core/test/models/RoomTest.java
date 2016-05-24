@@ -916,7 +916,7 @@ public class RoomTest {
      * the player is null by checking if the spawnPlayer method throws an
      * IllegalArgumentException.
      */
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSpawnPlayerNull() {
         /**
          * Adds a player to this room.

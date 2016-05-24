@@ -49,10 +49,10 @@ public class Projectile {
      */
     private float speed;
 
-    public long startTime;
-    public long despawnDelay = 30;
-    public boolean doRemove;
-    public boolean canCollide;
+    private long startTime;
+    private long despawnDelay = 30;
+    private boolean doRemove;
+    private boolean canCollide;
 
     /**
      * Initializes a new projectile object.
@@ -67,9 +67,9 @@ public class Projectile {
             throw new IllegalArgumentException("The position of this projectile can not be null.");
         }
 
-        if (rotation < 0 || rotation > 360) {
+        if (rotation < 0 || rotation >= 360) {
             System.out.println(rotation);
-            throw new IllegalArgumentException("The rotation of the projectile must be in the range 0-360");
+            throw new IllegalArgumentException("The rotation of the projectile must be >= 0 & < 360");
             
         }
 
@@ -164,6 +164,15 @@ public class Projectile {
      */
     public AmmoType getAmmoType() {
         return this.ammoType;
+    }
+    
+    /**
+     * Gets the do-remove boolean from this class.
+     * 
+     * @return A boolean which says if a projectile can be destroyed.
+     */
+    public boolean getDoRemove() {
+        return this.doRemove;
     }
 
     /**

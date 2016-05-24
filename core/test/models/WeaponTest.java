@@ -127,7 +127,7 @@ public class WeaponTest {
         int ammoAfter = weapon.getCurrentAmmo();
         int projectilesAfter = weapon.getOwner().getRoom().getProjectiles().size();
 
-        assertTrue(ammoBefore < ammoAfter);
+        assertTrue(ammoBefore > ammoAfter);
         assertTrue(projectilesAfter > projectilesBefore);
 
     }
