@@ -434,7 +434,7 @@ public class Player extends SimplePlayer {
 			this.shootStart = System.nanoTime();
 
 			// Create a bullet inside the player with the direction and speed
-			GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)), this.aimDirection, new AmmoType(10, 30, "animationstring")));
+			GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)), 30, this.aimDirection, this.roomId, this.playerName));
 		}
 	}
 
