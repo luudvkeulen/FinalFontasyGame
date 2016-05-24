@@ -40,10 +40,6 @@ public class Projectile extends SimpleProjectile{
      */
     private float rotation;
 
-    /**
-     * The ammo type of this projectile.
-     */
-    private AmmoType ammoType;
 
     /**
      * The speed of this projectile.
@@ -75,14 +71,10 @@ public class Projectile extends SimpleProjectile{
             
         }
 
-        if (ammoType == null) {
-            throw new IllegalArgumentException("The ammotype of the projectile can not be null.");
-        }
 
         this.position = position;
         this.rotation = rotation;
-        this.ammoType = ammoType;
-        this.speed = ammoType.getSpeed();
+        this.speed = speed;
         this.canCollide = true;
         this.startTime = System.nanoTime();
     }
@@ -158,15 +150,6 @@ public class Projectile extends SimpleProjectile{
     public float getRotation() {
         return this.rotation;
     }
-
-    /**
-     * Gets the position in the room of this projectile.
-     *
-     * @return An AmmoType containing the ammo type of this projectile.
-     */
-    public AmmoType getAmmoType() {
-        return this.ammoType;
-    }
     
     /**
      * Gets the do-remove boolean from this class.
@@ -196,7 +179,6 @@ public class Projectile extends SimpleProjectile{
         int hash = 7;
         hash = 13 * hash + Objects.hashCode(this.position);
         hash = 13 * hash + Float.floatToIntBits(this.rotation);
-        hash = 13 * hash + Objects.hashCode(this.ammoType);
         return hash;
     }
 
@@ -218,7 +200,7 @@ public class Projectile extends SimpleProjectile{
         if (!Objects.equals(this.position, other.position)) {
             return false;
         }
-        return this.ammoType.equals(other.ammoType);
+        return true;
     }
 
 }
