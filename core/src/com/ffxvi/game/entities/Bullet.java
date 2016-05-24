@@ -42,7 +42,7 @@ public class Bullet {
 			/* Only check collisions if the bullet is allowed to collide */
 			if (this.canCollide) {
 				Rectangle rec = new Rectangle(this.x, this.y, 10, 10);
-				boolean collision = checkCollision(rec, GameScreen.wallObjects);
+				boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
 				
 				/* If to check if there's a collision */
 				if(collision) {
