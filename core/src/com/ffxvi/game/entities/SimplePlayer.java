@@ -28,7 +28,9 @@ public class SimplePlayer implements Serializable {
 	protected PlayerCharacter skin;
 	protected PlayerAnimation animation;
 	
-	public SimplePlayer(String playerName, float posX, float posY) {
+	protected int roomId;
+	
+	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
 		this.playerName = playerName;
 		hitPoints = 100;
 		score = 0;
@@ -37,6 +39,7 @@ public class SimplePlayer implements Serializable {
 		speed = 0.0f;
 		direction = DOWN;
 		animation = IDLE;
+		this.roomId = roomId;
 	}
 	
 	public SimplePlayer(Player player){
