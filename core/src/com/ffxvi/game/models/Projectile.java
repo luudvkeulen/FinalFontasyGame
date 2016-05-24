@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
 import java.io.Console;
@@ -27,7 +28,7 @@ import java.util.Objects;
  * This class contains all the properties for the Projectile. It contains the
  * position, rotation and AmmoType.
  */
-public class Projectile {
+public class Projectile extends SimpleProjectile{
 
     /**
      * Vector2f containing the position of the projectile.
@@ -62,7 +63,8 @@ public class Projectile {
      * rotation is not in the range 0-359, throws an IllegalArgumentException.
      * @param ammoType the type of ammo this projectile is.
      */
-    public Projectile(Vector position, float rotation, AmmoType ammoType) {
+    public Projectile(Vector position, float speed, float rotation, int roomId, String playerName) {
+		super(rotation, speed, position.getX(), position.getY(), playerName,  roomId);
         if (position == null) {
             throw new IllegalArgumentException("The position of this projectile can not be null.");
         }
