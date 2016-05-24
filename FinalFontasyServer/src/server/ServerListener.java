@@ -5,13 +5,13 @@
  */
 package server;
 
+import com.ffxvi.game.entities.SimplePlayer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.entities.SimplePlayer;
 
 /**
  *
@@ -27,9 +27,11 @@ public class ServerListener implements Runnable {
 	
 	/**
 	 * Initiate this runnable
+	 * @param server the server that created this runnable, used for sending data
 	 * @param listenOnPort the port that the server will use for listening
 	 */
-	public ServerListener(int listenOnPort){
+	public ServerListener(Server server, int listenOnPort){
+		this.server = server;
 		listening = true;
 		listenerPort = listenOnPort;
 	}
@@ -47,8 +49,6 @@ public class ServerListener implements Runnable {
 	 */
 	@Override
 	public void run(){
-		server = FinalFontasyServer.server;
-		
 		// Declare the socket that is to be used by the server for listening
 		listenerSocket = null;
 		try {
@@ -81,17 +81,21 @@ public class ServerListener implements Runnable {
 				Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			
-			// Check the type of the received object and treat it accordinly
+			// Check the type of the received object and treat it accordingly
 			if (object instanceof String){
-				receiveString((String)object, receivePacket);
+				receiveString(receivePacket, (String)object);
 			} else if (object instanceof SimplePlayer){
-				receivePlayer((SimplePlayer)object, receivePacket);
+				receivePlayer(receivePacket, (SimplePlayer)object);
+//			} else if (object instanceof SimpleProjectile){
+				// TODO need SimpleProjectile class
+			} else {
+				server.sendSingle("Invalid data received", new InetSocketAddress(receivePacket.getAddress(), 1337));
 			}
 		}
 	}
 	
 	/**
-	 * Close the socket, only use this to stop the server!
+	 * Close the socket that the server is listening on, only use this to stop the server!
 	 */
 	public void stopListening(){
 		listening = false;
@@ -99,10 +103,10 @@ public class ServerListener implements Runnable {
 	}
 	
 	/**
-	 * Deserializes a received byte array
+	 * De-serializes a received byte array
 	 * @param bytes the received byte array
 	 * @return the Object created from the byte array
-	 * @throws IOException when the input stream gets disrupted
+	 * @throws IOException when the InputStream gets disrupted
 	 * @throws ClassNotFoundException when the class that the byte array is supposed to become, cannot be found
 	 */
 	private Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
@@ -119,43 +123,44 @@ public class ServerListener implements Runnable {
 	 * and isn't already connected. Removes a client from the connected clients
 	 * list when receiving DISCONNECTING. Otherwise a capitalized version of the
 	 * received String will be replied to the sender. 
-	 * @param data the received String
 	 * @param packet the received DatagramPacket
+	 * @param data the received String
 	 */
-	private void receiveString(String data, DatagramPacket packet){
+	private void receiveString(DatagramPacket packet, String data){
 		String message = data.trim();
 		System.out.println(String.format("CLIENT AT %1$s SENT: %2$s", packet.getSocketAddress().toString(), message));
 		InetSocketAddress playerAddress = new InetSocketAddress(packet.getAddress(), 1337);
 		
 		if (message.equals("CONNECTING")){
-		// Add the client to the connected clients list
-			for (int player = 0; player < server.getPlayerAddresses().length; player++){
-				InetSocketAddress address = server.getPlayerAddresses()[player];
-				if (address != null){
-					if (address.equals(playerAddress)){
-						break;
-					}
-				} else {
-					address = playerAddress;
-					break;
-				}
+			// Add the client to the connected clients list
+			if (server.connectPlayer(playerAddress)){
+				server.sendSingle("CONNECTED", playerAddress);
 			}
 		} else if (message.equals("DISCONNECTING")){
 			// Remove the client from the connected clients list
-			server.disconnectPlayer(packet.getAddress());
+			if (server.disconnectPlayer(playerAddress)){
+				server.sendSingle("DISCONNECTED", playerAddress);
+			}
 		} else {
 			// Reply the capitalized received String
-			server.send(message.toUpperCase());
+			server.sendAll(message.toUpperCase(), packet.getAddress());
 		}
 	}
 	
 	/**
 	 * Treats received player data the way it is supposed to be treated
 	 * by sending the client's player data to all the other clients
-	 * @param data the received SimplePlayer
 	 * @param packet the received DatagramPacket
+	 * @param data the received SimplePlayer
 	 */
-	private void receivePlayer(SimplePlayer data, DatagramPacket packet){
-		
+	private void receivePlayer(DatagramPacket packet, SimplePlayer data){
+		for (InetSocketAddress address : server.getPlayerAddresses()){
+			if (address != null){
+				if (address.getAddress().equals(packet.getAddress())){
+					server.receivePlayer(address, data);
+					return;
+				}
+			}
+		}
 	}
 }

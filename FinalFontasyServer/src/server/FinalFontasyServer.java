@@ -5,17 +5,17 @@
  */
 package server;
 
-import server.Server;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Robin
  */
 public class FinalFontasyServer {
-	
-	public static Server server;
 
 	/**
 	 * @param args the command line arguments
@@ -26,13 +26,19 @@ public class FinalFontasyServer {
 		// Write a welcome message
 		System.out.println("\n---Welcome to the Final Fontasy XVI server---");
 		
+		try {
+			new ServerSubscriber();
+		} catch (IOException ex) {
+			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
 		Scanner sc = new Scanner(System.in);
 		Scanner lineSc;
 		String line = "";
 		String input = "";
 		
 		// Start the server
-		server = new Server(1338);
+		Server server = new Server(1338);
 		
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
 		boolean stop = false;
@@ -48,7 +54,7 @@ public class FinalFontasyServer {
 				// Stop the server
 				case "stop":
 					stop = true;
-					server.stopListening();
+					server.stop();
 					System.out.println("---Shutting down the Final Fontasy XVI server---");
 					break;
 				// Display the port that the server is listening on

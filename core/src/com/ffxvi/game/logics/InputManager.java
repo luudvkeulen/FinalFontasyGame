@@ -9,8 +9,9 @@ import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
+import java.util.Observable;
 
-public class InputManager
+public class InputManager extends Observable
 {
 
     private static final float DEADZONE = 0.3f;
@@ -34,6 +35,17 @@ public class InputManager
         if (!this.checkControllerInput())
         {
             this.checkKeyboardInput();
+        }
+        
+        this.checkGUIInput();
+    }
+    
+    public void checkGUIInput()
+    {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
+        {
+            this.setChanged();
+            this.notifyObservers();
         }
     }
 
@@ -73,13 +85,13 @@ public class InputManager
             }
             else
             {
-                mainPlayer.DirectionInput(Direction.LEFT);
+                mainPlayer.setDirection(Direction.LEFT);
                 returnValue = true;
             }
         }
         else if (rightPressed)
         {
-            mainPlayer.DirectionInput(Direction.RIGHT);
+            mainPlayer.setDirection(Direction.RIGHT);
             returnValue = true;
         }
 
@@ -100,13 +112,13 @@ public class InputManager
             }
             else
             {
-                mainPlayer.DirectionInput(Direction.UP);
+                mainPlayer.setDirection(Direction.UP);
                 returnValue = true;
             }
         }
         else if (downPressed)
         {
-            mainPlayer.DirectionInput(Direction.DOWN);
+            mainPlayer.setDirection(Direction.DOWN);
             returnValue = true;
         }
 
@@ -148,23 +160,23 @@ public class InputManager
 
             if (x < -DEADZONE)
             {
-                mainPlayer.DirectionInput(Direction.LEFT);
+                mainPlayer.setDirection(Direction.LEFT);
                 returnValue = true;
             }
             else if (x > DEADZONE)
             {
-                mainPlayer.DirectionInput(Direction.RIGHT);
+                mainPlayer.setDirection(Direction.RIGHT);
                 returnValue = true;
             }
 
             if (y < -DEADZONE)
             {
-                mainPlayer.DirectionInput(Direction.UP);
+                mainPlayer.setDirection(Direction.UP);
                 returnValue = true;
             }
             else if (y > DEADZONE)
             {
-                mainPlayer.DirectionInput(Direction.DOWN);
+                mainPlayer.setDirection(Direction.DOWN);
                 returnValue = true;
             }
             else if (!(x > DEADZONE || y < -DEADZONE || y > DEADZONE || x < -DEADZONE))
