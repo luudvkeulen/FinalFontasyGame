@@ -131,7 +131,7 @@ public class Server {
 	public boolean disconnectPlayer(InetSocketAddress ipAddress){
 		for (int i = 0; i < players.length; i++){
 			if (players[i].getAddress().equals(ipAddress)){
-				playerData.remove(ipAddress);
+				playerData.remove(players[i]);
 				players[i] = null;
 				return true;
 			}
