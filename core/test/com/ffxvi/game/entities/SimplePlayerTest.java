@@ -82,7 +82,7 @@ public class SimplePlayerTest {
         GameScreen gs = GameScreen.getInstance();
         int roomid = 1;
         
-        Player player = new Player(pc, name, pos, gs, roomid);
+        Player player = new Player(pc, name, pos, roomid);
         Assert.assertNotNull(player);
         
         SimplePlayer sPlayer = new SimplePlayer(player);
