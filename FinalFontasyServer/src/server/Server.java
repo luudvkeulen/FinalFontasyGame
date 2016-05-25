@@ -63,11 +63,9 @@ public class Server {
 		// Initialize the playerData HashMap
 		playerData = new HashMap(serverSize);
 		// Set the port to receive data on
-		Thread listenerThread = new Thread(serverListener);
-		listenerThread.start();
-		
-		//Subscribe to query server
 		serverListener = new ServerListener(this, listenerPort);
+		Thread listenerThread = new Thread(serverListener);
+		listenerThread.start();	
 		
 		// Start the updateTimer
 		startTimer();
@@ -85,7 +83,7 @@ public class Server {
 				for (InetSocketAddress address : players){
 					if (address != null){
 						HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
-						dataMapWithoutSender.remove(address);
+						//dataMapWithoutSender.remove(address);
 						Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
 						sendSingle(dataListWithoutSender, address);
 					}
