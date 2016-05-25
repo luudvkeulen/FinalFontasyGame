@@ -55,8 +55,6 @@ public class ChatSender {
         
         socket = new Socket (serverIP, serverPort);
         out = new PrintWriter (socket.getOutputStream(), true);
-        
-        sendTextMessage(new ChatTextMessage("pleeyer", "beright"));
     }
     
     /**

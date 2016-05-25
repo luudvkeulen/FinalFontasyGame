@@ -279,16 +279,16 @@ public class GameScreen implements Screen, Observer {
 
 			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 			stage.draw();
-                        /*
+                        
 			for (Projectile p : projectiles) {
-				if (p.doRemove) {
+				if (p.getDoRemove()) {
 					p = null;
 				} else {
 					p.update();
 					p.render(shape, camera);
 				}
 			}
-                        */
+                        
 		}
 	}
 	

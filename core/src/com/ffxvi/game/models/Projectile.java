@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
 import java.io.Console;
@@ -27,7 +28,7 @@ import java.util.Objects;
  * This class contains all the properties for the Projectile. It contains the
  * position, rotation and AmmoType.
  */
-public class Projectile {
+public class Projectile extends SimpleProjectile{
 
     /**
      * Vector2f containing the position of the projectile.
@@ -39,10 +40,6 @@ public class Projectile {
      */
     private float rotation;
 
-    /**
-     * The ammo type of this projectile.
-     */
-    private AmmoType ammoType;
 
     /**
      * The speed of this projectile.
@@ -62,7 +59,8 @@ public class Projectile {
      * rotation is not in the range 0-359, throws an IllegalArgumentException.
      * @param ammoType the type of ammo this projectile is.
      */
-    public Projectile(Vector position, float rotation, AmmoType ammoType) {
+    public Projectile(Vector position, float speed, float rotation, int roomId, String playerName) {
+		super(rotation, speed, position.getX(), position.getY(), playerName,  roomId);
         if (position == null) {
             throw new IllegalArgumentException("The position of this projectile can not be null.");
         }
@@ -73,14 +71,10 @@ public class Projectile {
             
         }
 
-        if (ammoType == null) {
-            throw new IllegalArgumentException("The ammotype of the projectile can not be null.");
-        }
 
         this.position = position;
         this.rotation = rotation;
-        this.ammoType = ammoType;
-        this.speed = ammoType.getSpeed();
+        this.speed = speed;
         this.canCollide = true;
         this.startTime = System.nanoTime();
     }
@@ -156,15 +150,6 @@ public class Projectile {
     public float getRotation() {
         return this.rotation;
     }
-
-    /**
-     * Gets the position in the room of this projectile.
-     *
-     * @return An AmmoType containing the ammo type of this projectile.
-     */
-    public AmmoType getAmmoType() {
-        return this.ammoType;
-    }
     
     /**
      * Gets the do-remove boolean from this class.
@@ -194,7 +179,6 @@ public class Projectile {
         int hash = 7;
         hash = 13 * hash + Objects.hashCode(this.position);
         hash = 13 * hash + Float.floatToIntBits(this.rotation);
-        hash = 13 * hash + Objects.hashCode(this.ammoType);
         return hash;
     }
 
@@ -216,7 +200,7 @@ public class Projectile {
         if (!Objects.equals(this.position, other.position)) {
             return false;
         }
-        return this.ammoType.equals(other.ammoType);
+        return true;
     }
 
 }
