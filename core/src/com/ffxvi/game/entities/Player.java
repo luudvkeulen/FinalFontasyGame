@@ -267,11 +267,20 @@ public class Player extends SimplePlayer {
 	
 	public Player(SimplePlayer simplePlayer, GameScreen screen){
 		super(simplePlayer.playerName, simplePlayer.x,simplePlayer.y,simplePlayer.roomId);
+		
+		this.x = simplePlayer.getX();
+		this.y = simplePlayer.getY();
 		this.screen = screen;
+		
 		this.animationSpeed = 0.05f;
+		this.stateTime = simplePlayer.stateTime;
+		this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+		
 		int gridsize = Utils.gridSize;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
+		
+		this.direction = simplePlayer.direction;
 	}
 
 	/**
