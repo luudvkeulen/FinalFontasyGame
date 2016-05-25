@@ -10,19 +10,21 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package support;
+package com.ffxvi.game.support;
 
 import com.ffxvi.game.business.GameManager;
-import com.ffxvi.game.support.Vector;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
+ * The class which we use to test the vector class.
  */
 public class VectorTest {
 
+    /**
+     * The vector which we use for testing
+     */
     private Vector vector;
 
     @Before

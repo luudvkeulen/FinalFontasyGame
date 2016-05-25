@@ -6,9 +6,13 @@
 package com.ffxvi.game.support;
 
 /**
- *
+ * This class only has a static int which shows
+ * the gridsize of a tiledmap.
  * @author Joel
  */
 public class Utils {
-     public static int gridSize = 64;
+    /**
+     * The gridsize of the grid of a tiledmap.
+     */
+     public final static int GRIDSIZE = 64;
 }

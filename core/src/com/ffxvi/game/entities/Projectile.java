@@ -1,3 +1,5 @@
+package com.ffxvi.game.entities;
+
 /*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
@@ -10,7 +12,7 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.models;
+
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,10 +20,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
-import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
-import java.io.Console;
 import java.util.Objects;
 
 /**

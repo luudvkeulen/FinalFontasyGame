@@ -10,63 +10,145 @@ import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.screens.PreGameScreen;
 
+/**
+ * The main controller of the game.
+ */
 public class MainClass extends Game implements ApplicationListener {
 
-	public static int WIDTH;
-	public static int HEIGHT;
-	public static OrthographicCamera camera;
-	public static Player mainPlayer;
-	private MenuScreen menuScreen;
-	private GameScreen gameScreen;
-	private PreGameScreen preGameScreen;
+    /**
+     * Holds the instance of MainClass.
+     */
+    private static final MainClass MAINCLASS = new MainClass();
 
-	public void setMenuScreen() {
-		menuScreen = new MenuScreen(this);
-		setScreen(menuScreen);
-	}
+    /**
+     * An int containing the width of the screen.
+     */
+    public static int WIDTH;
 
-	public void setGameScreen() {
-		gameScreen = new GameScreen(this);
-		setScreen(gameScreen);
-	}
+    /**
+     * An int containing the height of the screen.
+     */
+    public static int HEIGHT;
 
-	public void setPreGameScreen() {
-		preGameScreen = new PreGameScreen(this);
-		setScreen(preGameScreen);
-	}
+    /**
+     * The camera.
+     */
+    public static OrthographicCamera camera;
 
-	@Override
-	public void create() {
-		WIDTH = Gdx.graphics.getWidth();
-		HEIGHT = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera(WIDTH, HEIGHT);
-		setMenuScreen();
-	}
+    /**
+     * The main player of the client.
+     */
+    public static Player mainPlayer;
 
-	@Override
-	public void render() {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		super.render();
-	}
+    /**
+     * The screen of the menu.
+     */
+    private MenuScreen menuScreen;
 
-	@Override
-	public void resize(int w, int h) {
-		super.resize(w, h);
-	}
+    /**
+     * The screen of the game.
+     */
+    private GameScreen gameScreen;
 
-	@Override
-	public void pause() {
-		super.pause();
-	}
+    /**
+     * The screen which is shown before the game is shown.
+     */
+    private PreGameScreen preGameScreen;
 
-	@Override
-	public void resume() {
-		super.resume();
-	}
+    /**
+     * Sets the menu screen.
+     */
+    public void setMenuScreen() {
+        menuScreen = new MenuScreen();
+        setScreen(menuScreen);
+    }
 
-	@Override
-	public void dispose() {
-		super.dispose();
-	}
+    /**
+     * Sets the game screen.
+     */
+    public void setGameScreen() {
+        gameScreen = GameScreen.getInstance();
+        setScreen(gameScreen);
+    }
+
+    /**
+     * Sets the pre game screen.
+     */
+    public void setPreGameScreen() {
+        preGameScreen = new PreGameScreen();
+        setScreen(preGameScreen);
+    }
+
+    /**
+     * Private constructor for singleton.
+     */
+    private MainClass() {
+
+    }
+
+    /**
+     * Gets the instance of this class.
+     *
+     * @return The instance of this class.
+     */
+    public static MainClass getInstance() {
+        return MAINCLASS;
+    }
+
+    /**
+     * Creates the GUI for a new game.
+     */
+    @Override
+    public void create() {
+        WIDTH = Gdx.graphics.getWidth();
+        HEIGHT = Gdx.graphics.getHeight();
+        camera = new OrthographicCamera(WIDTH, HEIGHT);
+        setMenuScreen();
+    }
+
+    /**
+     * Is run when the screen should be rendered. This method contains all
+     * MainClass related drawing code.
+     */
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        super.render();
+    }
+
+    /**
+     * Resizes this screen to the given width and height.
+     *
+     * @param width the new width.
+     * @param height the new height.
+     */
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+    }
+
+    /**
+     * Pauses the game.
+     */
+    @Override
+    public void pause() {
+        super.pause();
+    }
+
+    /**
+     * Resumes the game.
+     */
+    @Override
+    public void resume() {
+        super.resume();
+    }
+
+    /**
+     * Disposes the game.
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
 }
