@@ -82,7 +82,7 @@ public class Server {
 				for (InetSocketAddress address : players){
 					if (address != null){
 						HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
-						//dataMapWithoutSender.remove(address);
+						dataMapWithoutSender.remove(address);
 						Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
 						sendSingle(dataListWithoutSender, address);
 					}
