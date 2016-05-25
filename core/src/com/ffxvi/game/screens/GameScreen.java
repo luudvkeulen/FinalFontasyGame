@@ -19,6 +19,7 @@ import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
+import com.ffxvi.game.entities.PlayerAnimation;
 import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.logics.ChatManager;
@@ -254,7 +255,11 @@ public class GameScreen implements Screen, Observer {
 				srenderer.begin();
 				srenderer.circle(splayer.getX(), splayer.getY(), 10);
 				srenderer.end();*/
-				batch.setProjectionMatrix(camera.combined);
+				SpriteBatch sbatch = new SpriteBatch();
+				sbatch.setProjectionMatrix(camera.combined);
+				sbatch.begin();
+				splayer.render(batch);
+				batch.end();
 			}
 			
 			batch.begin();
