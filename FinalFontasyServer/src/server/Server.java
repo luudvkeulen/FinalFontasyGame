@@ -82,17 +82,19 @@ public class Server {
 				// Send each connected player the data of all other players
 				for (InetSocketAddress address : players){
 					if (address != null){
-						HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
-						//dataMapWithoutSender.remove(address);
-						Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
-						// Remove the data from players that are not in the client's room from the Collection
-						int clientRoomId = playerData.get(address).getRoomId();
-						for (SimplePlayer sp : dataListWithoutSender){
-							if (sp.getRoomId() != clientRoomId){
-								dataListWithoutSender.remove(sp);
+						if (playerData.get(address) != null){
+							HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
+							//dataMapWithoutSender.remove(address);
+							Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
+							// Remove the data from players that are not in the client's room from the Collection
+							int clientRoomId = playerData.get(address).getRoomId();
+							for (SimplePlayer sp : dataListWithoutSender){
+								if (sp.getRoomId() != clientRoomId){
+									dataListWithoutSender.remove(sp);
+								}
 							}
+							sendSingle(dataListWithoutSender, address);
 						}
-						sendSingle(dataListWithoutSender, address);
 					}
 				}
 			}
