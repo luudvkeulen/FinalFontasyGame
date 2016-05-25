@@ -42,6 +42,10 @@ public class SimplePlayer implements Serializable {
 		return y;
 	}
 	
+	public Direction getDirection() {
+		return direction;
+	}
+	
 	public PlayerCharacter getSkin() {
 		return skin;
 	}
@@ -50,8 +54,8 @@ public class SimplePlayer implements Serializable {
 		return animation;
 	}
 	
-	public Direction getDirection() {
-		return direction;
+	public int getRoomId() {
+		return roomId;
 	}
 	
 	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
