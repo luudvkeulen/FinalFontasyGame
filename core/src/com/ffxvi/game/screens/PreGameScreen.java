@@ -15,137 +15,175 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 
-
-
+/**
+ * The screen which is shown before the game.
+ */
 public class PreGameScreen implements Screen {
 
-	private final MainClass game;
-	private final Stage stage;
-	private TextField txtUsername;
-	private Label label;
-	private final GlyphLayout layout;
-	
-	public PreGameScreen (final MainClass game) {
-		this.game = game;
-		this.stage = new Stage();
-		this.layout = new GlyphLayout();
-		Gdx.input.setInputProcessor(stage);
-		
-		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-		
-		// Store the default libgdx font under the name "default".
-		BitmapFont bfont=new BitmapFont();
-		//bfont.scale(1);
-		skin.add("default",bfont);
-		
-		// Create textfield
-		txtUsername = new TextField("Pepe", skin);
-		txtUsername.setSize(200, 40);
-		txtUsername.setPosition((stage.getWidth()/2)-(txtUsername.getWidth()/2), (stage.getHeight()/2) + 25);
-		
-		// Add the textfield to the stage
-		stage.addActor(txtUsername);
-		
-		// Create text
-		label = new Label("Voer een naam in:", skin);
-		layout.setText(skin.getFont("default"), label.getText());
-		label.setPosition((stage.getWidth()/2)-(layout.width/2), (stage.getHeight()/2) + 25 + txtUsername.getHeight());
-		// Add the label to the stage
-		stage.addActor(label);
-		
-		// Create new button
-		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", skin);
-		enterAsSkeletonDaggerButton.setSize(200, 50);
-		enterAsSkeletonDaggerButton.setPosition((stage.getWidth()/2)-(enterAsSkeletonDaggerButton.getWidth()/2), (stage.getHeight()/2) - 50);
-		enterAsSkeletonDaggerButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				enterGame(PlayerCharacter.SKELETON_DAGGER);
-			}
-		});
-		
-		// Add the button to the stage
-		stage.addActor(enterAsSkeletonDaggerButton);
-		
-		// Create new button
-		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", skin);
-		enterAsSkeletonHoodedBowButton.setSize(200, 50);
-		enterAsSkeletonHoodedBowButton.setPosition((stage.getWidth()/2)-(enterAsSkeletonHoodedBowButton.getWidth()/2), (stage.getHeight()/2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
-		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
-			}
-		});
-		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
-		enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
-		
-		// Add the button to the stage
-		stage.addActor(enterAsSkeletonHoodedBowButton);
-		
-		// Create new button
-		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", skin);
-		enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
-		enterAsSkeletonHoodedDaggerButton.setPosition((stage.getWidth()/2)-(enterAsSkeletonHoodedDaggerButton.getWidth()/2), (stage.getHeight()/2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight()*2));
-		enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				enterGame(PlayerCharacter.SKELETON_HOODED_DAGGER);
-			}
-		});
-		
-		// Add the button to the stage
-		stage.addActor(enterAsSkeletonHoodedDaggerButton);
-	}
-	
-	public void enterGame(PlayerCharacter character) {
-		game.getScreen().dispose();
-		GameScreen gameScreen = new GameScreen(game);
-		gameScreen.AddPlayer(txtUsername.getText(), character);
-		game.setScreen(gameScreen);
-	}
-	
-	@Override
-	public void show() {
-		
-	}
+    /**
+     * The game controller.
+     */
+    private final MainClass game;
 
-	@Override
-	public void render(float delta) {
-		// Draw background color
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		
-		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-		stage.draw();
-	}
+    /**
+     * The stage for the screen.
+     */
+    private final Stage stage;
 
-	@Override
-	public void resize(int width, int height) {
-		
-	}
+    /**
+     * A textfield for the username.
+     */
+    private final TextField txtUsername;
 
-	@Override
-	public void pause() {
-		
-	}
+    /**
+     * A label for the username.
+     */
+    private final Label label;
 
-	@Override
-	public void resume() {
-		
-	}
+    /**
+     * The layout.
+     */
+    private final GlyphLayout layout;
 
-	@Override
-	public void hide() {
-		
-	}
+    /**
+     * Initializes a new PreGamScreen.
+     */
+    public PreGameScreen() {
+        this.game = MainClass.getInstance();
+        this.stage = new Stage();
+        this.layout = new GlyphLayout();
+        Gdx.input.setInputProcessor(this.stage);
 
-	@Override
-	public void dispose() {
-		
-	}
-	
+        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        // Store the default libgdx font under the name "default".
+        BitmapFont bfont = new BitmapFont();
+        //bfont.scale(1);
+        skin.add("default", bfont);
+
+        // Create textfield
+        this.txtUsername = new TextField("Pepe", skin);
+        this.txtUsername.setSize(200, 40);
+        this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 25);
+
+        // Add the textfield to the stage
+        this.stage.addActor(this.txtUsername);
+
+        // Create text
+        this.label = new Label("Voer een naam in:", skin);
+        this.layout.setText(skin.getFont("default"), this.label.getText());
+        this.label.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
+        // Add the label to the stage
+        this.stage.addActor(this.label);
+
+        // Create new button
+        TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", skin);
+        enterAsSkeletonDaggerButton.setSize(200, 50);
+        enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50);
+        enterAsSkeletonDaggerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                enterGame(PlayerCharacter.SKELETON_DAGGER);
+            }
+        });
+
+        // Add the button to the stage
+        stage.addActor(enterAsSkeletonDaggerButton);
+
+        // Create new button
+        TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", skin);
+        enterAsSkeletonHoodedBowButton.setSize(200, 50);
+        enterAsSkeletonHoodedBowButton.setPosition((stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
+        enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+            }
+        });
+        enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
+        enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
+
+        // Add the button to the stage
+        stage.addActor(enterAsSkeletonHoodedBowButton);
+
+        // Create new button
+        TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", skin);
+        enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
+        enterAsSkeletonHoodedDaggerButton.setPosition((stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
+        enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                enterGame(PlayerCharacter.SKELETON_HOODED_DAGGER);
+            }
+        });
+
+        // Add the button to the stage
+        stage.addActor(enterAsSkeletonHoodedDaggerButton);
+    }
+
+    /**
+     * Makes the user enter the game.
+     *
+     * @param character The player character which was chosen by the user.
+     */
+    public void enterGame(PlayerCharacter character) {
+
+        if (character == null) {
+            throw new IllegalArgumentException("Character can not be null.");
+        }
+        
+        game.getScreen().dispose();
+        GameScreen gameScreen = new GameScreen();
+        gameScreen.addPlayer(txtUsername.getText(), character);
+        game.setScreen(gameScreen);
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    /**
+     * Is executed each time the screen is drawn. Contains all drawing logic for
+     * this screen.
+     *
+     * @param delta
+     */
+    @Override
+    public void render(float delta) {
+        // Draw background color
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
 }

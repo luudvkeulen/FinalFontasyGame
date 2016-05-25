@@ -14,207 +14,276 @@ import java.util.Observable;
 
 public class InputManager extends Observable
 {
+	/**
+	 * This float determines how much a analog stick needs to move before the input is used
+	 */
+    private static final float DEADZONE = 0.3f;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
+    private static final int LEFT_AXIS_X = 1;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
+    private static final int LEFT_AXIS_Y = 0;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
+    private static final int RIGHT_AXIS_X = 3;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
+    private static final int RIGHT_AXIS_Y = 2;
+	/**
+	 * The amount of triggers on the controller
+	 */
+    private static final int TRIGGERS = 4;
 
-	private static final float DEADZONE = 0.3f;
-	private static final int LEFT_AXIS_X = 1;
-	private static final int LEFT_AXIS_Y = 0;
-	private static final int RIGHT_AXIS_X = 3;
-	private static final int RIGHT_AXIS_Y = 2;
-	private static final int TRIGGERS = 4;
+	/**
+	 * The gameController
+	 */
+    private final MainClass game;
+	/**
+	 * The player thats is controlled by this instance of the game
+	 */
+    private final Player mainPlayer;
 
-	private final MainClass game;
-	private final Player mainPlayer;
+	/**
+	 * The Contructor which is used to create an inputManager
+	 * 
+	 * @param game The gameController
+	 * @param mainPlayer The player that needs to be moved by this inputManager
+	 */
+    public InputManager(MainClass game, Player mainPlayer)
+    {
+        this.game = game;
+        this.mainPlayer = mainPlayer;
+    }
 
-	public InputManager(MainClass game, Player mainPlayer)
-	{
-		this.game = game;
-		this.mainPlayer = mainPlayer;
-	}
+	/**
+	 * This method checks if the controller sends input by calling checkControllerInput. 
+	 * If that is not the case the checkKeyboardInput() method is called. 
+	 * This makes sure there cant be controller input when there is keyboard input and vice versa
+	 */
+    public void checkInput()
+    {
+        if (!this.checkControllerInput())
+        {
+            this.checkKeyboardInput();
+        }
+        
+        this.checkHUDInput();
+    }
+	
+	/**
+	 * Checks if the enter key is pressed. which in turn notifys the observers
+	 */
+    
+    public void checkHUDInput()
+    {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
+        {
+            this.setChanged();
+            this.notifyObservers();
+        }
+    }
 
-	public void checkInput()
-	{
-		if (!this.checkControllerInput())
-		{
-			this.checkKeyboardInput();
-		}
+	/**
+	 * This method checks if certain keys are pressed and calls the necessary methods in the mainPlayer or game
+	 * keys that are checked:
+	 * ESCAPE 
+	 * SHIFT_LEFT
+	 * LEFT
+	 * RIGHT
+	 * UP
+	 * DOWN
+	 * A
+	 * S
+	 * D
+	 * W
+	 * (mouse) buttons that are checked
+	 * LEFT
+	 * RIGHT
+	 * 
+	 * @return boolean If there has been keyboard input this tick, this will return true
+	 */
+    public boolean checkKeyboardInput()
+    {
+        boolean returnValue = false;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        {
+            game.setScreen(new MenuScreen());
+            return returnValue;
+        }
 
-		this.checkGUIInput();
-	}
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+                || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+        {
+            mainPlayer.setSprint(true);
+            returnValue = true;
+        }
 
-	public void checkGUIInput()
-	{
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
-		{
-			this.setChanged();
-			this.notifyObservers();
-		}
-	}
+        if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+                && !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+        {
+            mainPlayer.setSprint(false);
+            returnValue = true;
+        }
 
-	public boolean checkKeyboardInput()
-	{
-		boolean returnValue = false;
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-		{
-		if (game.getScreen() instanceof GameScreen) {
-			GameScreen.getClient().stop();
-		}
-			game.setScreen(new MenuScreen(game));
-			return returnValue;
-		}
+        boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                || Gdx.input.isKeyPressed(Input.Keys.A);
+        boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                || Gdx.input.isKeyPressed(Input.Keys.D);
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-				|| Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
-		{
-			mainPlayer.setSprint(true);
-			returnValue = true;
-		}
+        if (leftPressed)
+        {
+            if (rightPressed)
+            {
+				// to prevent setting the animation to right when right is pressed while left is held
+                mainPlayer.setIdle();
+            }
+            else
+            {
+                mainPlayer.setDirection(Direction.LEFT);
+                returnValue = true;
+            }
+        }
+        else if (rightPressed)
+        {
+            mainPlayer.setDirection(Direction.RIGHT);
+            returnValue = true;
+        }
 
-		if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-				&& !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
-		{
-			mainPlayer.setSprint(false);
-			returnValue = true;
-		}
+        boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP)
+                || Gdx.input.isKeyPressed(Input.Keys.W);
+        boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN)
+                || Gdx.input.isKeyPressed(Input.Keys.S);
 
-		boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT)
-				|| Gdx.input.isKeyPressed(Input.Keys.A);
-		boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-				|| Gdx.input.isKeyPressed(Input.Keys.D);
+        if (upPressed)
+        {
+            if (downPressed)
+            {
+                // To prevent setting the animation to idle when both up and down are pressed, but not both left and right
+                if (!(leftPressed || rightPressed))
+                {
+                    mainPlayer.setIdle();
+                }
+            }
+            else
+            {
+                mainPlayer.setDirection(Direction.UP);
+                returnValue = true;
+            }
+        }
+        else if (downPressed)
+        {
+            mainPlayer.setDirection(Direction.DOWN);
+            returnValue = true;
+        }
 
-		if (leftPressed)
-		{
-			if (rightPressed)
-			{
-				mainPlayer.setIdle();
-			}
-			else
-			{
-				mainPlayer.setDirection(Direction.LEFT);
-				returnValue = true;
-			}
-		}
-		else if (rightPressed)
-		{
-			mainPlayer.setDirection(Direction.RIGHT);
-			returnValue = true;
-		}
+        if (!leftPressed && !rightPressed && !upPressed && !downPressed)
+        {
+            mainPlayer.setIdle();
+            returnValue = true;
+        }
 
-		boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP)
-				|| Gdx.input.isKeyPressed(Input.Keys.W);
-		boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN)
-				|| Gdx.input.isKeyPressed(Input.Keys.S);
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
 
-		if (upPressed)
-		{
-			if (downPressed)
-			{
-				// To prevent setting the animation to idle when both up and down are pressed, but not both left and right
-				if (!(leftPressed || rightPressed))
-				{
-					mainPlayer.setIdle();
-				}
-			}
-			else
-			{
-				mainPlayer.setDirection(Direction.UP);
-				returnValue = true;
-			}
-		}
-		else if (downPressed)
-		{
-			mainPlayer.setDirection(Direction.DOWN);
-			returnValue = true;
-		}
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+        {
+            this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
+            mainPlayer.fire();
+            returnValue = true;
+        }
 
-		if (!leftPressed && !rightPressed && !upPressed && !downPressed)
-		{
-			mainPlayer.setIdle();
-			returnValue = true;
-		}
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
+        {
+            mainPlayer.slash();
+            returnValue = true;
+        }
 
-		int mouseX = Gdx.input.getX();
-		int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
+        return returnValue;
+    }
 
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
-		{
-			this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
-			mainPlayer.fire();
-			returnValue = true;
-		}
+	/**
+	 * This method checks if certain controller buttons are pressed and calls the necessary methods in the mainPlayer or game
+	 * buttons that are checked
+	 * --none
+	 * Axis that are checked
+	 * LEFT_AXIS_X
+	 * LEFT_AXIS_Y
+	 * RIGHT_AXIS_X
+	 * RIGHT_AXIS_Y
+	 * TRIGGERS
+	 * 
+	 * @return boolean If there has been controller input this tick, this will return true
+	 */
+    private boolean checkControllerInput()
+    {
+        Boolean returnValue = false;
 
-		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
-		{
-			mainPlayer.slash();
-			returnValue = true;
-		}
+        if (Controllers.getControllers().size > 0)
+        {
+            Controller controller = Controllers.getControllers().first();
 
-		return returnValue;
-	}
+            float x = controller.getAxis(LEFT_AXIS_X);
+            float y = controller.getAxis(LEFT_AXIS_Y);
 
-	private boolean checkControllerInput()
-	{
-		Boolean returnValue = false;
+            if (x < -DEADZONE)
+            {
+                mainPlayer.setDirection(Direction.LEFT);
+                returnValue = true;
+            }
+            else if (x > DEADZONE)
+            {
+                mainPlayer.setDirection(Direction.RIGHT);
+                returnValue = true;
+            }
 
-		if (Controllers.getControllers().size > 0)
-		{
-			Controller controller = Controllers.getControllers().first();
+            if (y < -DEADZONE)
+            {
+                mainPlayer.setDirection(Direction.UP);
+                returnValue = true;
+            }
+            else if (y > DEADZONE)
+            {
+                mainPlayer.setDirection(Direction.DOWN);
+                returnValue = true;
+            }
+            else if (!(x > DEADZONE || y < -DEADZONE || y > DEADZONE || x < -DEADZONE))
+            {
+                mainPlayer.setIdle();
 
-			float x = controller.getAxis(LEFT_AXIS_X);
-			float y = controller.getAxis(LEFT_AXIS_Y);
+            }
 
-			if (x < -DEADZONE)
-			{
-				mainPlayer.setDirection(Direction.LEFT);
-				returnValue = true;
-			}
-			else if (x > DEADZONE)
-			{
-				mainPlayer.setDirection(Direction.RIGHT);
-				returnValue = true;
-			}
+            x = controller.getAxis(RIGHT_AXIS_X);
+            y = controller.getAxis(RIGHT_AXIS_Y);
 
-			if (y < -DEADZONE)
-			{
-				mainPlayer.setDirection(Direction.UP);
-				returnValue = true;
-			}
-			else if (y > DEADZONE)
-			{
-				mainPlayer.setDirection(Direction.DOWN);
-				returnValue = true;
-			}
-			else if (!(x > DEADZONE || y < -DEADZONE || y > DEADZONE || x < -DEADZONE))
-			{
-				mainPlayer.setIdle();
+            if (y > DEADZONE || y < -DEADZONE || x > DEADZONE || x < -DEADZONE)
+            {
+                this.mainPlayer.setAimDirection(x, y);
+                this.mainPlayer.fire();
+                returnValue = true;
+            }
 
-			}
+            float shouldShoot = controller.getAxis(TRIGGERS);
 
-			x = controller.getAxis(RIGHT_AXIS_X);
-			y = controller.getAxis(RIGHT_AXIS_Y);
+            this.mainPlayer.setSprint(false);
 
-			if (y > DEADZONE || y < -DEADZONE || x > DEADZONE || x < -DEADZONE)
-			{
-				this.mainPlayer.setAimDirection(x, y);
-				this.mainPlayer.fire();
-				returnValue = true;
-			}
+            if (shouldShoot < -DEADZONE)
+            {
+                this.mainPlayer.setSprint(true);
+                returnValue = true;
+            }
+            else if (shouldShoot > DEADZONE)
+            {
+                this.mainPlayer.slash();
+                returnValue = true;
+            }
+        }
 
-			float shouldShoot = controller.getAxis(TRIGGERS);
+        return returnValue;
+    }
 
-			this.mainPlayer.setSprint(false);
-
-			if (shouldShoot < -DEADZONE)
-			{
-				this.mainPlayer.setSprint(true);
-				returnValue = true;
-			}
-			else if (shouldShoot > DEADZONE)
-			{
-				this.mainPlayer.slash();
-				returnValue = true;
-			}
-		}
-
-		return returnValue;
-	}
 }

@@ -36,307 +36,468 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The screen for the game.
+ *
+ */
 public class GameScreen implements Screen, Observer {
 
-        private static final GameScreen GAMESCREEN = null;
+    /**
+     * Holds the current instance of GameScreen.
+     */
+    private static final GameScreen GAMESCREEN = null;
+
+    /**
+     * The main class for the game.
+     */
+    private final MainClass game;
+
+    /**
+     * The main player of the game.
+     */
+    private Player mainPlayer;
+
+    //Multiplayer
+    /**
+     * The players which are in the room.
+     */
+    private List<SimplePlayer> multiplayers;
+
+    /**
+     * The code for this client.
+     */
+    private final Client client;
+
+    //Map related
+    /**
+     * The tile map renderer.
+     */
+    private OrthogonalTiledMapRenderer renderer;
+
+    /**
+     * The map of this screen.
+     */
+    private static Map map;
+
+    /**
+     * A list of all the maps in the game.
+     */
+    private final List<Map> maps;
+
+    /**
+     * A list of all the possible map types.
+     */
+    private final List<MapType> mapTypes;
+
+    //Chat related
+    /**
+     * The labels in which the chat messages are shown.
+     */
+    private final List<Label> oldchatlabels;
+
+    /**
+     * The controller class for chat related issues.
+     */
+    private final ChatManager chatManager;
+
+    /**
+     * The shape renderer.
+     */
+    private final ShapeRenderer shape;
+
+    /**
+     * A SpriteBatch which contains all the sprites which are used.
+     */
+    private final SpriteBatch batch;
+
+    /**
+     * An ArrayList containing all projectiles which are in the room.
+     */
+    public static ArrayList<Projectile> projectiles;
+
+    /**
+     * The stage.
+     */
+    private final Stage stage;
+
+    /**
+     * The skin.
+     */
+    private final Skin skin;
+
+    //HUD Related
+    private final Label playerLabel1;
+    private final Label playerLabel2;
+    private final Label healthLabel1;
+    private final Label healthLabel2;
+    private final Label scoreLabel;
+    private final TextField textfield;
+
+    /**
+     * A controller class which handles all the keyboard/mouse/controller input
+     * for the game.
+     */
+    private InputManager inputManager;
+
+    /**
+     * Gets the current map.
+     *
+     * @return The current map.
+     */
+    public static Map getCurrentMap() {
+        return map;
+    }
+
+    /**
+     * Initializes a new GameScreen.
+     */
+    public GameScreen() {
+        this.game = MainClass.getInstance();
+        this.stage = new Stage();
+        this.chatManager = new ChatManager();
+
+        this.client = new Client("192.168.1.1", 1338, 1337, this);
+
+        //Setup map stuff
+        this.maps = new ArrayList();
+        this.mapTypes = new ArrayList();
+        this.loadMaps();
+
+        Gdx.input.setInputProcessor(stage);
+
+        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        // Store the default libgdx font under the name "default".
+        BitmapFont bfont = new BitmapFont();
+        this.skin.add("default", bfont);
+
+        this.shape = new ShapeRenderer();
+        this.batch = new SpriteBatch();
+
+        GameScreen.projectiles = new ArrayList();
+
+        this.textfield = new TextField("", skin);
+        this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
+        this.textfield.setWidth(300);
+        this.stage.addActor(this.textfield);
+
+        //Setup labels
+        ////Setup label variables
+        this.playerLabel1 = new Label("", this.skin);
+        this.playerLabel2 = new Label("", this.skin);
+        this.healthLabel1 = new Label("100", this.skin);
+        this.healthLabel2 = new Label("100", this.skin);
+        this.scoreLabel = new Label("5000", this.skin);
+        ////Setup label fontscales
+        this.healthLabel2.setFontScale(2);
+        this.playerLabel2.setFontScale(2);
+        this.scoreLabel.setFontScale(2);
+        ////Setup label colors
+        this.healthLabel1.setColor(Color.RED);
+        this.healthLabel2.setColor(Color.RED);
+        this.scoreLabel.setColor(Color.YELLOW);
+        ////Setup label height
+        this.playerLabel2.setHeight(20);
+        this.scoreLabel.setHeight(20);
+        this.healthLabel2.setHeight(20);
+        ////Add labels to stage
+        this.stage.addActor(this.healthLabel1);
+        this.stage.addActor(this.healthLabel2);
+        this.stage.addActor(this.playerLabel1);
+        this.stage.addActor(this.playerLabel2);
+        this.stage.addActor(this.scoreLabel);
+
+        this.oldchatlabels = new ArrayList();
+    }
+
+    /**
+     * Gets the current instance of this class.
+     *
+     * @return The current instance of this class.
+     */
+    public static GameScreen getInstance() {
+        return GAMESCREEN;
+    }
+
+    /**
+     * Loads all the maps for this game.
+     */
+    private void loadMaps() {
+        this.mapTypes.add(new MapType(1, "level1"));
+        this.mapTypes.add(new MapType(2, "level2"));
+        this.mapTypes.add(new MapType(3, "level3"));
+
+        for (MapType mapType : this.mapTypes) {
+            this.maps.add(new Map(mapType.getName() + ".tmx", mapType.getId()));
+        }
+    }
+
+    /**
+     * Adds a player to this screen.
+     *
+     * @param playerName The name of the player. When an empty String (excluding
+     * spaces), an IllegalArgumentException is thrown.
+     * @param character The character of this player.
+     */
+    public void addPlayer(String playerName, PlayerCharacter character) {
         
-	MainClass game;
-	Player mainPlayer;
-
-	//Multiplayer
-	List<SimplePlayer> multiplayers = new ArrayList();
-	static Client client;
-	
-	//Map related
-	OrthogonalTiledMapRenderer renderer;
-	private static Map map;
-	private final List<Map> maps;
-	private final List<MapType> mapTypes;
-
-	//Chat related
-	private final List<Label> oldchatlabels;
-	private final ChatManager chatManager;
-
-	private ShapeRenderer shape;
-	private SpriteBatch batch;
-	public static ArrayList<Projectile> projectiles;
-	private final Stage stage;
-	private final Skin skin;
-
-	//HUD Related
-	private final Label playerLabel1;
-	private final Label playerLabel2;
-	private final Label healthLabel1;
-	private final Label healthLabel2;
-	private final Label scoreLabel;
-	private final TextField textfield;
-
-	private InputManager inputManager;
-
-	public static Map getCurrentMap() {
-		return map;
-	}
-	
-	public static Client getClient() {
-		return client;
-	}
-
-	public GameScreen(MainClass game) {
-		this.game = game;
-		this.stage = new Stage();
-		this.chatManager = new ChatManager();
-		
-		this.client = new Client("192.168.1.1", 1338, 1337, this);
-
-		//Setup map stuff
-		this.maps = new ArrayList();
-		this.mapTypes = new ArrayList();
-		loadMaps();
-
-		Gdx.input.setInputProcessor(stage);
-
-		skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-		// Store the default libgdx font under the name "default".
-		BitmapFont bfont = new BitmapFont();
-		skin.add("default", bfont);
-
-		shape = new ShapeRenderer();
-		batch = new SpriteBatch();
-
-		projectiles = new ArrayList();
-
-		textfield = new TextField("", skin);
-		textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
-		textfield.setWidth(300);
-		stage.addActor(textfield);
-
-		//Setup labels
-		////Setup label variables
-		this.playerLabel1 = new Label("", skin);
-		this.playerLabel2 = new Label("", skin);
-		this.healthLabel1 = new Label("100", skin);
-		this.healthLabel2 = new Label("100", skin);
-		this.scoreLabel = new Label("5000", skin);
-		////Setup label fontscales
-		healthLabel2.setFontScale(2);
-		playerLabel2.setFontScale(2);
-		scoreLabel.setFontScale(2);
-		////Setup label colors
-		healthLabel1.setColor(Color.RED);
-		healthLabel2.setColor(Color.RED);
-		scoreLabel.setColor(Color.YELLOW);
-		////Setup label height
-		playerLabel2.setHeight(20);
-		scoreLabel.setHeight(20);
-		healthLabel2.setHeight(20);
-		////Add labels to stage
-		stage.addActor(healthLabel1);
-		stage.addActor(healthLabel2);
-		stage.addActor(playerLabel1);
-		stage.addActor(playerLabel2);
-		stage.addActor(scoreLabel);
-
-		oldchatlabels = new ArrayList();
-	}
-        
-        public static GameScreen getInstance()
+        if (playerName == null || playerName.trim().isEmpty())
         {
-            return GAMESCREEN;
+            throw new IllegalArgumentException("Player name can't be null nor an empty string (excluding spaces).");
+        }
+        
+        if (character == null)
+        {
+            throw new IllegalArgumentException("Character can not be null.");
+        }
+        
+        int idx = new Random().nextInt(this.maps.size());
+        GameScreen.map = this.maps.get(idx);
+
+        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), GameScreen.map.getId());
+        this.mainPlayer.setPosition(64, 64);
+        this.client.send(new SimplePlayer(this.mainPlayer));
+
+        this.playerLabel1.setText(playerName);
+        this.playerLabel2.setText(playerName);
+
+        this.inputManager = new InputManager(this.game, this.mainPlayer);
+        this.inputManager.addObserver(this);
+    }
+
+    /**
+     * Adds a list of other players to this game.
+     *
+     * @param multiplayers A list of the other players. An empty list is allowed.
+     */
+    public void addMultiPlayers(Collection<SimplePlayer> multiplayers) {
+        
+        if (multiplayers == null)
+        {
+            throw new IllegalArgumentException("The multiplayers can not be null.");
+        }
+        
+        this.multiplayers = (List<SimplePlayer>) multiplayers;
+    }
+
+    /**
+     * Shows the map on the screen.
+     */
+    @Override
+    public void show() {
+        this.renderer = new OrthogonalTiledMapRenderer(GameScreen.map.getMap(), 1f);
+        this.renderer.setView(camera);
+
+        this.stage.setKeyboardFocus(null);
+    }
+
+    /**
+     * Sets the map to the map with the given id.
+     *
+     * @param mapId The id of the map. When smaller than 1, throws an IllegalArgumentException.
+     * @param direction the direction in which the mainPlayer is entering.
+     */
+    public void setLevel(int mapId, Direction direction) {
+        if (mapId <= 0) {
+            throw new IllegalArgumentException("The map id must be at least 1.");
+        }
+        
+        if (direction == null)
+        {
+            throw new IllegalArgumentException("direction can not be null.");
+        }
+        
+        Map oldMap = GameScreen.map;
+        for (Map m : this.maps) {
+            if (m.getId() == mapId) {
+                GameScreen.map = m;
+            }
         }
 
-	private void loadMaps() {
-		mapTypes.add(new MapType(1, "level1"));
-		mapTypes.add(new MapType(2, "level2"));
-		mapTypes.add(new MapType(3, "level3"));
+        if (oldMap == GameScreen.map) {
+            return;
+        }
 
-		for (MapType mapType : mapTypes) {
-			maps.add(new Map(mapType.getName() + ".tmx", mapType.getId()));
-		}
-	}
+        for (RectangleMapObject rmo : GameScreen.map.getDoors().getByType(RectangleMapObject.class)) {
+            if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
+                switch (direction) {
+                    case UP:
+                        this.mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
+                        break;
+                    case DOWN:
+                        this.mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y - 64);
+                        break;
+                    case LEFT:
+                        this.mainPlayer.setPosition(rmo.getRectangle().x - 64, rmo.getRectangle().y);
+                        break;
+                    case RIGHT:
+                        this.mainPlayer.setPosition(rmo.getRectangle().x + 64, rmo.getRectangle().y);
+                        break;
+                }
+                break;
+            }
+        }
 
-	public void AddPlayer(String playerName, PlayerCharacter character) {
-		int idx = new Random().nextInt(maps.size());
-		map = maps.get(idx);
-		
-		mainPlayer = new Player(character, playerName, new Vector(64f, 64f), map.getId());
-		mainPlayer.setPosition(64, 64);
-		client.send(new SimplePlayer(mainPlayer));
+        this.renderer = new OrthogonalTiledMapRenderer(GameScreen.map.getMap(), 1f);
+        this.renderer.setView(camera);
+        this.mainPlayer.setRoomId(GameScreen.map.getId());
+    }
 
-		playerLabel1.setText(playerName);
-		playerLabel2.setText(playerName);
+    /**
+     * Adds a projectile to the screen.
+     *
+     * @param projectile The projectile to add.
+     */
+    public static void addProjectile(Projectile projectile) {
+        
+        if (projectile == null)
+        {
+            throw new IllegalArgumentException("Projectile can not be null.");
+        }
+        
+        projectiles.add(projectile);
+    }
 
-		inputManager = new InputManager(game, mainPlayer);
-		this.inputManager.addObserver(this);
-	}
-	
-	public void addMultiPlayers(Collection<SimplePlayer> multiplayers) {
-		this.multiplayers = (List<SimplePlayer>)multiplayers;
-	}
+    /**
+     * Removes a projectile from the screen.
+     *
+     * @param projectile The projectile to remove.
+     */
+    public static void removeProjectile(Projectile projectile) {
+        
+        if (projectile == null)
+        {
+            throw new IllegalArgumentException("Projectile can not be null.");
+        }
+        projectiles.remove(projectile);
+    }
 
-	@Override
-	public void show() {
-		renderer = new OrthogonalTiledMapRenderer(map.getMap(), 1f);
-		renderer.setView(camera);
+    /**
+     * Is executed each time the screen should be redrawn. Contains all drawing
+     * logic for the game screen.
+     *
+     * @param delta The time relative to the last delta time.
+     */
+    @Override
+    public void render(float delta) {
+        if (this.mainPlayer != null) {
+            this.client.send(new SimplePlayer(this.mainPlayer));
+            camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
+            camera.update();
 
-		stage.setKeyboardFocus(null);
-	}
+            this.renderer.setView(camera);
+            this.renderer.render();
 
-	public void setLevel(int mapId, Direction dir) {
-		if (mapId == 0) {
-			return;
-		}
-		Map oldMap = map;
-		for (Map m : maps) {
-			if (m.getId() == mapId) {
-				map = m;
-			}
-		}
+            // Set the playerLabel position to the position of the player
+            Vector3 playerPos = new Vector3(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
+            camera.project(playerPos);
 
-		if (oldMap == map) {
-			return;
-		}
+            float playerLabelWidth = this.playerLabel1.getWidth();
+            this.playerLabel1.setAlignment((int) playerLabelWidth / 2);
+            this.playerLabel1.setPosition(playerPos.x + 32, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
 
-		for (RectangleMapObject rmo : map.getDoors().getByType(RectangleMapObject.class)) {
-			if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
-				switch (dir) {
-					case UP:
-						mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
-						break;
-					case DOWN:
-						mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y - 64);
-						break;
-					case LEFT:
-						mainPlayer.setPosition(rmo.getRectangle().x - 64, rmo.getRectangle().y);
-						break;
-					case RIGHT:
-						mainPlayer.setPosition(rmo.getRectangle().x + 64, rmo.getRectangle().y);
-						break;
-				}
-				break;
-			}
-		}
-		renderer = new OrthogonalTiledMapRenderer(map.getMap(), 1f);
-		renderer.setView(camera);
-		mainPlayer.setRoomId(map.getId());
-	}
+            float healthLabel1width = this.healthLabel1.getWidth();
+            this.healthLabel1.setAlignment((int) (healthLabel1width / 2));
+            this.healthLabel1.setPosition(playerPos.x + 16, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
 
-	public static void addProjectile(Projectile projectile) {
-		projectiles.add(projectile);
-	}
+            this.healthLabel2.setPosition(0, this.healthLabel2.getHeight());
 
-	public static void removeProjectile(Projectile projectile) {
-		projectiles.remove(projectile);
-	}
+            this.playerLabel2.setAlignment((int) this.playerLabel2.getWidth() / 2);
+            this.playerLabel2.setPosition(Gdx.graphics.getWidth() / 2, this.playerLabel2.getHeight());
 
-	@Override
-	public void render(float delta) {
-		if (this.mainPlayer != null) {
-			client.send(new SimplePlayer(mainPlayer));
-			camera.position.set(mainPlayer.getX(), mainPlayer.getY(), 0);
-			camera.update();
+            this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
-			renderer.setView(camera);
-			renderer.render();
+            //Render other players
+            for (SimplePlayer splayer : this.multiplayers) {
+                ShapeRenderer srenderer = new ShapeRenderer();
+                srenderer.setProjectionMatrix(camera.combined);
+                srenderer.setAutoShapeType(true);
+                srenderer.begin();
+                //srenderer.circle((splayer.getX()/mainPlayer.getX()) + Gdx.graphics.getWidth()/2, (splayer.getY()/mainPlayer.getY()) + Gdx.graphics.getHeight()/2, 10);
+                //Vector3 v3 = camera.unproject(new Vector3(splayer.getX(), splayer.getY(), 0));
+                //srenderer.circle(v3.x, v3.y, 10);
+                srenderer.circle(splayer.getX(), splayer.getY(), 10);
+                srenderer.end();
+            }
 
-			// Set the playerLabel position to the position of the player
-			Vector3 playerPos = new Vector3(mainPlayer.getX(), mainPlayer.getY(), 0);
-			camera.project(playerPos);
+            this.batch.begin();
+            this.mainPlayer.render(this.batch);
+            this.mainPlayer.update();
+            this.inputManager.checkInput();
+            this.batch.end();
 
-			float playerLabelWidth = playerLabel1.getWidth();
-			playerLabel1.setAlignment((int) playerLabelWidth / 2);
-			playerLabel1.setPosition(playerPos.x + 32, playerPos.y + mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
+            //Remove old chat labels
+            for (Label l : this.oldchatlabels) {
+                l.remove();
+            }
+            this.oldchatlabels.clear();
 
-			float healthLabel1width = healthLabel1.getWidth();
-			healthLabel1.setAlignment((int) (healthLabel1width / 2));
-			healthLabel1.setPosition(playerPos.x + 16, playerPos.y + mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
+            //Draw new labels
+            int counter = 0;
+            int spacing = 15;
+            for (Label label : this.chatManager.getMessages()) {
+                label.setPosition(10, Gdx.graphics.getHeight() - label.getHeight() - (counter * spacing));
+                this.oldchatlabels.add(label);
+                this.stage.addActor(label);
 
-			healthLabel2.setPosition(0, healthLabel2.getHeight());
+                counter++;
+            }
 
-			playerLabel2.setAlignment((int) playerLabel2.getWidth() / 2);
-			playerLabel2.setPosition(Gdx.graphics.getWidth() / 2, playerLabel2.getHeight());
+            this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+            this.stage.draw();
 
-			scoreLabel.setPosition(Gdx.graphics.getWidth() - (scoreLabel.getWidth() * 2), scoreLabel.getHeight());
+            for (Projectile p : GameScreen.projectiles) {
+                if (p != null) {
+                    if (!p.getDoRemove()) {
+                        p.update();
+                        p.render(this.shape, camera);
+                    } else {
+                        p = null;
+                    }
+                }
+            }
 
-			//Render other players
-			for (SimplePlayer splayer : multiplayers) {
-				
-				try {
-					Player p = new Player(splayer, this);
-					batch.begin();
-					p.render(batch);
-					p.update();
-					batch.end();
-				} catch (Exception ex) {
-					Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-//					System.err.println("Cannot draw player. Exception: " + ex);
-				}
-			}
-			
-			batch.begin();
-			mainPlayer.render(batch);
-			mainPlayer.update();
-			inputManager.checkInput();
-			batch.end();
+        }
+    }
 
-			//Remove old chat labels
-			for (Label l : oldchatlabels) {
-				l.remove();
-			}
-			oldchatlabels.clear();
+    /**
+     * Is executed each time the chatmanager is updated.
+     *
+     * @param o the observable which this observer is watching that was updated.
+     * @param arg the possibly given argument.
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        String chatMessage = this.textfield.getText();
 
-			//Draw new labels
-			int counter = 0;
-			int spacing = 15;
-			for (Label label : chatManager.getMessages()) {
-				label.setPosition(10, Gdx.graphics.getHeight() - label.getHeight() - (counter * spacing));
-				oldchatlabels.add(label);
-				stage.addActor(label);
+        if (!chatMessage.isEmpty()) {
+            this.stage.setKeyboardFocus(this.scoreLabel);
 
-				counter++;
-			}
+            this.chatManager.addMessage(this.mainPlayer.getName(), chatMessage);
+            this.textfield.setText("");
+        } else {
+            this.stage.setKeyboardFocus(this.textfield);
+        }
+    }
 
-			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-			stage.draw();
-                        
-			for (Projectile p : projectiles) {
-				if (p.getDoRemove()) {
-					p = null;
-				} else {
-					p.update();
-					p.render(shape, camera);
-				}
-			}
-		}
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		String chatMessage = this.textfield.getText();
+    //useless overrides
+    @Override
+    public void resize(int i, int i1) {
+    }
 
-		if (!chatMessage.isEmpty()) {
-			this.stage.setKeyboardFocus(this.scoreLabel);
+    @Override
+    public void pause() {
+    }
 
-			this.chatManager.addMessage(this.mainPlayer.getName(), chatMessage);
-			this.textfield.setText("");
-		} else {
-			this.stage.setKeyboardFocus(this.textfield);
-		}
-	}
+    @Override
+    public void resume() {
+    }
 
-	//useless overrides
-	@Override
-	public void resize(int i, int i1) {}
+    @Override
+    public void hide() {
+    }
 
-	@Override
-	public void pause() {}
-
-	@Override
-	public void resume() {}
-
-	@Override
-	public void hide() {}
-
-	@Override
-	public void dispose() {}	
+    @Override
+    public void dispose() {
+    }
 }

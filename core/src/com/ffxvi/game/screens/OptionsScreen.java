@@ -6,52 +6,67 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.ffxvi.game.MainClass;
 
-public class OptionsScreen implements Screen {	
-	private final MainClass game;
-	
-	public OptionsScreen (final MainClass game) {
-		this.game = game;	
-	}
+/**
+ * The screen for the settings.
+ */
+public class OptionsScreen implements Screen {
 
-	@Override
-	public void show() {
-		
-	}
+    /**
+     * The game controller.
+     */
+    private final MainClass game;
 
-	@Override
-	public void render(float f) {
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-		{
-			game.setScreen(new MenuScreen(game));
-			return;
-		}
-		
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-	}
+    /**
+     * Initializes a new OptionsScreen.
+     */
+    public OptionsScreen() {
+        this.game = MainClass.getInstance();
+    }
 
-	@Override
-	public void resize(int w, int h) {
-		
-	}
+    @Override
+    public void show() {
 
-	@Override
-	public void pause() {
-		
-	}
+    }
 
-	@Override
-	public void resume() {
-		
-	}
+    /**
+     * Is executed each time this screen is redrawn. ALl logic regarding drawing
+     * is executed here.
+     *
+     * @param f
+     */
+    @Override
+    public void render(float f) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.setScreen(new MenuScreen());
+            return;
+        }
 
-	@Override
-	public void hide() {
-		
-	}
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+    }
 
-	@Override
-	public void dispose() {
-		
-	}
+    @Override
+    public void resize(int w, int h) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
 }
