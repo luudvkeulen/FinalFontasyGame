@@ -29,9 +29,24 @@ import java.util.logging.Logger;
  */
 public class ClientListener implements Runnable {
 
+    /**
+     * Boolean indicating whether the client is listening.
+     */
     private boolean listening;
+
+    /**
+     * The port number of the listener.
+     */
     private final int listenerPort;
+
+    /**
+     * A datagram socket used for listening.
+     */
     private DatagramSocket listenerSocket;
+
+    /**
+     * The Game Screen.
+     */
     private final GameScreen screen;
 
     /**
@@ -76,7 +91,7 @@ public class ClientListener implements Runnable {
             try {
                 this.listenerSocket.receive(receivePacket);
             } catch (IOException ioe) {
-                Logger.getLogger(ClientListener.class.getName()).log(Level.SEVERE, "Socket closed while listening.");
+                Logger.getLogger(ClientListener.class.getName()).log(Level.SEVERE, "Socket closed while listening:{0}", ioe.getMessage());
                 break;
             }
 
@@ -93,12 +108,12 @@ public class ClientListener implements Runnable {
 
             // Check the type of the received object and treat it accordingly
             if (object instanceof String) {
-                receiveString(receivePacket, (String) object);
+                this.receiveString(receivePacket, (String) object);
             } else if (object instanceof Collection) {
                 // Check what type of collection the received object is
                 for (Object o : (Collection) object) {
                     if (o.getClass().equals(SimplePlayer.class)) {
-                        receivePlayers(receivePacket, (Collection<SimplePlayer>) object);
+                        this.receivePlayers(receivePacket, (Collection<SimplePlayer>) object);
                     }
                     break;
                 }
@@ -129,8 +144,7 @@ public class ClientListener implements Runnable {
     private Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream b = new ByteArrayInputStream(bytes);
         ObjectInputStream o = new ObjectInputStream(b);
-        Object ret = o.readObject();
-        return ret;
+        return o.readObject();      
     }
 
     /**
@@ -145,9 +159,9 @@ public class ClientListener implements Runnable {
         String message = data.trim();
         System.out.println(String.format("SERVER AT %1$s SENT: %2$s", packet.getSocketAddress().toString(), message));
 
-        if (message.equals("CONNECTED")) {
+        if ("CONNECTED".equals(message)) {
             // TODO start the game clientside
-        } else if (message.equals("DISCONNECTED")) {
+        } else if ("DISCONNECTED".equals(message)) {
             // TODO stop the game clientside
         }
     }

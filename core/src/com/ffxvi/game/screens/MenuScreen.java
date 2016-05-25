@@ -150,11 +150,6 @@ public class MenuScreen implements Screen {
         this.stage.addActor(quitButton);
     }
 
-    @Override
-    public void show() {
-
-    }
-
     /**
      * Is executed when the menu screen is redrawn. All drawing logic for menu
      * screen is handled here.
@@ -175,22 +170,7 @@ public class MenuScreen implements Screen {
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         this.stage.draw();
     }
-
-    @Override
-    public void resize(int w, int h) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
+    
     /**
      * Hides this screen.
      */
@@ -200,8 +180,28 @@ public class MenuScreen implements Screen {
     }
 
     @Override
-    public void dispose() {
+    public void show() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public void resize(int width, int height) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void pause() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void resume() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void dispose() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

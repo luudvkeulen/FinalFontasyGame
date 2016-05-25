@@ -18,7 +18,14 @@ package com.ffxvi.game.support;
 public class Utils {
 
     /**
+     * Private constructor for hiding the implicit public one.
+     */
+    private Utils() {
+
+    }
+
+    /**
      * The gridsize of the grid of a tiledmap.
      */
-    public final static int GRIDSIZE = 64;
+    public static final int GRIDSIZE = 64;
 }

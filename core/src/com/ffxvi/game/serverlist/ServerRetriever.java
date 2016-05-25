@@ -106,7 +106,7 @@ public class ServerRetriever {
      */
     public static void main(String[] args) {
         try {
-            ServerRetriever server = new ServerRetriever();
+            new ServerRetriever();
         } catch (IOException ex) {
             Logger.getLogger(ServerRetriever.class.getName()).log(Level.SEVERE, null, ex);
         }

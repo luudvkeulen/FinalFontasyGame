@@ -1,5 +1,5 @@
 projectKey=FinalFontasyXVI
 serverUrl=http://localhost:9000
 dashboardUrl=http://localhost:9000/dashboard/index/FinalFontasyXVI
-ceTaskId=AVTpoxmTXMd297vcyE9-
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AVTpoxmTXMd297vcyE9-
+ceTaskId=AVTp53H9XMd297vcyE-B
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AVTp53H9XMd297vcyE-B

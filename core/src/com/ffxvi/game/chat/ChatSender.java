@@ -46,7 +46,7 @@ public class ChatSender {
      * to the server.
      */
     public ChatSender(String serverIP, int serverPort) throws IOException {
-        if (serverIP == null || serverIP.trim().equals("")) {
+        if (serverIP == null || serverIP.trim().isEmpty()) {
             throw new IllegalArgumentException();
         }
 

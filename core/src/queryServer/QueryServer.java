@@ -64,12 +64,14 @@ public class QueryServer {
             this.registry = null;
         }
 
-        //Try binding the server
-        try {
-            this.registry.rebind(BINDINGNAME, this.serverList);
-            System.out.println("Succesfully binded server list");
-        } catch (RemoteException re) {
-            System.out.println("queryServer: RemoteException: " + re.getMessage());
+        if (this.registry != null) {
+            //Try binding the server
+            try {
+                this.registry.rebind(BINDINGNAME, this.serverList);
+                System.out.println("Succesfully binded server list");
+            } catch (RemoteException re) {
+                System.out.println("queryServer: RemoteException: " + re.getMessage());
+            }
         }
     }
 

@@ -12,7 +12,6 @@
  */
 package com.ffxvi.game.entities;
 
-import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
 import org.junit.*;
 

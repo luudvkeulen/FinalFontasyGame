@@ -34,17 +34,17 @@ public class MainClass extends Game implements ApplicationListener {
     /**
      * An int containing the width of the screen.
      */
-    public static int WIDTH;
+    public int WIDTH;
 
     /**
      * An int containing the height of the screen.
      */
-    public static int HEIGHT;
+    public int HEIGHT;
 
     /**
      * The camera.
      */
-    public static OrthographicCamera camera;
+    public OrthographicCamera camera;
 
     /**
      * The screen of the menu.
@@ -60,6 +60,13 @@ public class MainClass extends Game implements ApplicationListener {
      * The screen which is shown before the game is shown.
      */
     private PreGameScreen preGameScreen;
+
+    /**
+     * Private constructor for singleton.
+     */
+    private MainClass() {
+
+    }
 
     /**
      * Sets the menu screen.
@@ -83,13 +90,6 @@ public class MainClass extends Game implements ApplicationListener {
     public void setPreGameScreen() {
         preGameScreen = new PreGameScreen();
         setScreen(preGameScreen);
-    }
-
-    /**
-     * Private constructor for singleton.
-     */
-    private MainClass() {
-
     }
 
     /**
@@ -132,29 +132,5 @@ public class MainClass extends Game implements ApplicationListener {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-    }
-
-    /**
-     * Pauses the game.
-     */
-    @Override
-    public void pause() {
-        super.pause();
-    }
-
-    /**
-     * Resumes the game.
-     */
-    @Override
-    public void resume() {
-        super.resume();
-    }
-
-    /**
-     * Disposes the game.
-     */
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 }

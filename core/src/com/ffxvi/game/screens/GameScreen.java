@@ -26,7 +26,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
-import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
@@ -54,7 +53,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * Holds the current instance of GameScreen.
      */
-    private final static GameScreen GAMESCREEN = new GameScreen();
+    private static final GameScreen GAMESCREEN = new GameScreen();
 
     /**
      * The main class for the game.
@@ -86,7 +85,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * The map of this screen.
      */
-    private static Map map;
+    private Map map;
 
     /**
      * A list of all the maps in the game.
@@ -122,7 +121,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * An ArrayList containing all projectiles which are in the room.
      */
-    public static ArrayList<Projectile> projectiles;
+    protected static List<Projectile> projectiles;
 
     /**
      * The stage.
@@ -135,11 +134,34 @@ public class GameScreen implements Screen, Observer {
     private final Skin skin;
 
     //HUD Related
+    /**
+     * Label for the player name on top of the player.
+     */
     private final Label playerLabel1;
+
+    /**
+     * Label for the player name on the HUD.
+     */
     private final Label playerLabel2;
+
+    /**
+     * Label for the health counter on top of the player.
+     */
     private final Label healthLabel1;
+
+    /**
+     * Label for the health counter on the HUD.
+     */
     private final Label healthLabel2;
+
+    /**
+     * Label for the score on the HUD.
+     */
     private final Label scoreLabel;
+
+    /**
+     * TextField for chat messages.
+     */
     private final TextField textfield;
 
     /**
@@ -147,15 +169,6 @@ public class GameScreen implements Screen, Observer {
      * for the game.
      */
     private InputManager inputManager;
-
-    /**
-     * Gets the current map.
-     *
-     * @return The current map.
-     */
-    public static Map getCurrentMap() {
-        return map;
-    }
 
     /**
      * Initializes a new GameScreen.
@@ -220,6 +233,15 @@ public class GameScreen implements Screen, Observer {
     }
 
     /**
+     * Gets the current map.
+     *
+     * @return The current map.
+     */
+    public Map getCurrentMap() {
+        return this.map;
+    }
+
+    /**
      * Gets the current instance of this class.
      *
      * @return The current instance of this class.
@@ -259,9 +281,9 @@ public class GameScreen implements Screen, Observer {
         }
 
         int idx = new Random().nextInt(this.maps.size());
-        GameScreen.map = this.maps.get(idx);
+        GameScreen.getInstance().map = this.maps.get(idx);
 
-        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), GameScreen.map.getId());
+        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.map.getId());
         this.mainPlayer.setPosition(64, 64);
         this.client.send(new SimplePlayer(this.mainPlayer));
 
@@ -292,8 +314,8 @@ public class GameScreen implements Screen, Observer {
      */
     @Override
     public void show() {
-        this.renderer = new OrthogonalTiledMapRenderer(GameScreen.map.getMap(), 1f);
-        this.renderer.setView(camera);
+        this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
+        this.renderer.setView(this.game.camera);
 
         this.stage.setKeyboardFocus(null);
     }
@@ -314,18 +336,18 @@ public class GameScreen implements Screen, Observer {
             throw new IllegalArgumentException("direction can not be null.");
         }
 
-        Map oldMap = GameScreen.map;
+        Map oldMap = this.map;
         for (Map m : this.maps) {
             if (m.getId() == mapId) {
-                GameScreen.map = m;
+                this.map = m;
             }
         }
 
-        if (oldMap == GameScreen.map) {
+        if (oldMap == this.map) {
             return;
         }
 
-        for (RectangleMapObject rmo : GameScreen.map.getDoors().getByType(RectangleMapObject.class)) {
+        for (RectangleMapObject rmo : this.map.getDoors().getByType(RectangleMapObject.class)) {
             if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
                 switch (direction) {
                     case UP:
@@ -334,6 +356,7 @@ public class GameScreen implements Screen, Observer {
                     case DOWN:
                         this.mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y - 64);
                         break;
+                    default:
                     case LEFT:
                         this.mainPlayer.setPosition(rmo.getRectangle().x - 64, rmo.getRectangle().y);
                         break;
@@ -345,9 +368,9 @@ public class GameScreen implements Screen, Observer {
             }
         }
 
-        this.renderer = new OrthogonalTiledMapRenderer(GameScreen.map.getMap(), 1f);
-        this.renderer.setView(camera);
-        this.mainPlayer.setRoomId(GameScreen.map.getId());
+        this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
+        this.renderer.setView(this.game.camera);
+        this.mainPlayer.setRoomId(this.map.getId());
     }
 
     /**
@@ -387,15 +410,15 @@ public class GameScreen implements Screen, Observer {
     public void render(float delta) {
         if (this.mainPlayer != null) {
             this.client.send(new SimplePlayer(this.mainPlayer));
-            camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
-            camera.update();
+            this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
+            this.game.camera.update();
 
-            this.renderer.setView(camera);
+            this.renderer.setView(this.game.camera);
             this.renderer.render();
 
             // Set the playerLabel position to the position of the player
             Vector3 playerPos = new Vector3(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
-            camera.project(playerPos);
+            this.game.camera.project(playerPos);
 
             float playerLabelWidth = this.playerLabel1.getWidth();
             this.playerLabel1.setAlignment((int) playerLabelWidth / 2);
@@ -415,7 +438,7 @@ public class GameScreen implements Screen, Observer {
             //Render other players
             for (SimplePlayer splayer : this.multiplayers) {
                 ShapeRenderer srenderer = new ShapeRenderer();
-                srenderer.setProjectionMatrix(camera.combined);
+                srenderer.setProjectionMatrix(this.game.camera.combined);
                 srenderer.setAutoShapeType(true);
                 srenderer.begin();
                 //srenderer.circle((splayer.getX()/mainPlayer.getX()) + Gdx.graphics.getWidth()/2, (splayer.getY()/mainPlayer.getY()) + Gdx.graphics.getHeight()/2, 10);
@@ -427,7 +450,6 @@ public class GameScreen implements Screen, Observer {
 
             this.batch.begin();
             this.mainPlayer.render(this.batch);
-            this.mainPlayer.update();
             this.inputManager.checkInput();
             this.batch.end();
 
@@ -455,7 +477,7 @@ public class GameScreen implements Screen, Observer {
                 if (p != null) {
                     if (!p.shouldRemove()) {
                         p.update();
-                        p.render(this.shape, camera);
+                        p.render(this.shape, this.game.camera);
                     } else {
                         p = null;
                     }
@@ -485,24 +507,28 @@ public class GameScreen implements Screen, Observer {
         }
     }
 
-    //useless overrides
     @Override
-    public void resize(int i, int i1) {
+    public void resize(int width, int height) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void pause() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void resume() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void hide() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void dispose() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

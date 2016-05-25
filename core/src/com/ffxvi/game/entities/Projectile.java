@@ -64,10 +64,6 @@ public class Projectile extends SimpleProjectile {
     public Projectile(Vector position, float speed, float rotation, int roomID, String playerName) {
         super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
 
-        if (position == null) {
-            throw new IllegalArgumentException("The position of this projectile can not be null.");
-        }
-
         if (rotation < 0 || rotation >= 360) {
             throw new IllegalArgumentException("The rotation of the projectile must be >= 0 & < 360.");
         }
@@ -102,7 +98,7 @@ public class Projectile extends SimpleProjectile {
             if (this.canCollide) {
                 Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 10, 10);
                 //boolean collision = checkCollision(rec, GameScreen.wallObjects);
-                boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
+                boolean collision = checkCollision(rec, GameScreen.getInstance().getCurrentMap().getWallObjects());
                 /* If to check if there's a collision */
                 if (collision) {
                     this.position.setX(this.position.getX() - (this.speed * (float) Math.cos(this.rotation * Math.PI / 180)));

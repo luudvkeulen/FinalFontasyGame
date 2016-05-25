@@ -20,8 +20,6 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
@@ -31,7 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.serverlist.ServerRetriever;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,20 +48,11 @@ public class ServerBrowserScreen implements Screen {
      */
     private static final int BUTTON_HEIGHT = 60;
 
-    /**
-     * THe offset of buttons.
-     */
-    private static final int BUTTON_OFFSET = 30;
 
     /**
      * The skin of this class.
      */
     private Skin skin;
-
-    /**
-     * The spritebatch.
-     */
-    private SpriteBatch batch;
 
     /**
      * The stage.
@@ -76,21 +64,11 @@ public class ServerBrowserScreen implements Screen {
      */
     private final MainClass game;
 
-    /**
-     * The sprite.
-     */
-    private Sprite sprite;
-
     // TEMP SERVER LIST
     /**
      * A list of servers which the user can connect to.
      */
     private List servers;
-
-    /**
-     * Retrieves a list of users.
-     */
-    private ServerRetriever serverRetriever;
 
     /**
      * A scrollpane GUI control.
@@ -114,7 +92,6 @@ public class ServerBrowserScreen implements Screen {
      */
     @Override
     public void show() {
-        this.batch = new SpriteBatch();
         this.stage = new Stage();
         Gdx.input.setInputProcessor(this.stage);
 
@@ -218,22 +195,26 @@ public class ServerBrowserScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void pause() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void resume() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void hide() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void dispose() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

@@ -14,6 +14,8 @@ package com.ffxvi.game.chat;
 
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A runnable which checks if chat messages have come in.
@@ -55,16 +57,15 @@ public class ChatListener implements Runnable {
      */
     @Override
     public void run() {
+        //TODO: ADD DECENT END (check for thread intterupt?)
         while (true) {
             try {
                 String receivedMessage = this.in.readLine();
                 //TODO: PUT MESSAGE IN GUI
                 System.out.println("Received message: " + receivedMessage);
             } catch (IOException ex) {
-                System.out.println("Got error while retrieving message:"
-                        + ex.getMessage());
+                Logger.getLogger(ChatListener.class.getName()).log(Level.SEVERE, null, "Got error while retrieving message:" + ex.getMessage());
             }
         }
     }
-
 }

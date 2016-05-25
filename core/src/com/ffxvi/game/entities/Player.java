@@ -21,7 +21,7 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import static com.ffxvi.game.MainClass.camera;
+import com.ffxvi.game.MainClass;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
@@ -65,11 +65,49 @@ public class Player extends SimplePlayer implements Observable {
     private float stateTime;
 
     /**
-     * The animations of a player.
+     * The current animation of the player.
      */
-    private Animation currentAnimation,
-            walkUp, walkLeft, walkDown, walkRight,
-            slashUp, slashLeft, slashDown, slashRight;
+    private Animation currentAnimation;
+
+    /**
+     * An animation for walking in the up direction.
+     */
+    private Animation walkUp;
+
+    /**
+     * An animation for walking in the left direction.
+     */
+    private Animation walkLeft;
+
+    /**
+     * An animation for walking in the down direction.
+     */
+    private Animation walkDown;
+
+    /**
+     * An animation for walking in the right direction.
+     */
+    private Animation walkRight;
+
+    /**
+     * An animation for slashing in the up direction.
+     */
+    private Animation slashUp;
+
+    /**
+     * An animation for slashing in the left direction.
+     */
+    private Animation slashLeft;
+
+    /**
+     * An animation for slashing in the down direction.
+     */
+    private Animation slashDown;
+
+    /**
+     * An animation for slashing in the right direction.
+     */
+    private Animation slashRight;
 
     /**
      * The grid size of the player in width.
@@ -90,6 +128,65 @@ public class Player extends SimplePlayer implements Observable {
      * The time before a next shot can be fired.
      */
     private long shootStart;
+
+    /**
+     * Initializes a player.
+     *
+     * @param character The player's character.
+     * @param playerName The name of this player. This can not be an empty
+     * String (excluding spaces).
+     * @param position The position of this player.
+     * @param roomId The id of the room where the player is in.
+     */
+    public Player(PlayerCharacter character, String playerName, Vector position, int roomId) {
+        super(playerName, position.getX(), position.getY(), roomId, character);
+
+        if (character == null) {
+            throw new IllegalArgumentException("Character can not be null.");
+        }
+
+        if (playerName == null || playerName.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Character can neither be null nor an empty String.");
+        }
+
+        this.x = position.getX();
+        this.y = position.getY();
+        this.screen = GameScreen.getInstance();
+
+        this.aimDirection = 0;
+        this.animationSpeed = 0.05f;
+        this.stateTime = 0f;
+        this.switchCharacter(super.skin);
+        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+
+        int gridsize = Utils.GRIDSIZE;
+        this.modifiedGridSizeX = gridsize - 32;
+        this.modifiedGridSizeY = gridsize - 16;
+
+        this.speed = Player.WALK_SPEED;
+        this.direction = Direction.RIGHT;
+    }
+
+    public Player(SimplePlayer simplePlayer, GameScreen screen) {
+        super(simplePlayer.playerName,
+                simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
+
+        this.x = simplePlayer.getX();
+        this.y = simplePlayer.getY();
+        this.screen = screen;
+
+        this.animationSpeed = 0.05f;
+        this.stateTime = simplePlayer.getStateTime();
+        this.switchCharacter(super.skin);
+        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+
+        int gridsize = Utils.GRIDSIZE;
+        this.modifiedGridSizeX = gridsize - 32;
+        this.modifiedGridSizeY = gridsize - 16;
+
+        this.direction = simplePlayer.direction;
+    }
 
     /**
      * Gets the x position of this player.
@@ -197,7 +294,7 @@ public class Player extends SimplePlayer implements Observable {
         Vector3 playerPosition = new Vector3(this.x, this.y, 0);
 
         // Project the position to the camera
-        camera.project(playerPosition);
+        MainClass.getInstance().camera.project(playerPosition);
 
         // Calculate the direction of the bullet using arctan
         float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
@@ -222,7 +319,7 @@ public class Player extends SimplePlayer implements Observable {
      * @param controllerInputY The value of the y-axis.
      */
     public void setAimDirection(float controllerInputX, float controllerInputY) {
-        if (controllerInputX == 0 && controllerInputY == 0) {
+        if (Float.compare(controllerInputX, 0f) == 0 && Float.compare(controllerInputY, 0f) == 0) {
             throw new IllegalArgumentException("inputX and inputY can't both be 0.");
         }
 
@@ -240,69 +337,6 @@ public class Player extends SimplePlayer implements Observable {
 
     public void setRoomId(int id) {
         roomId = id;
-    }
-
-    /**
-     * Initializes a player.
-     *
-     * @param character The player's character.
-     * @param playerName The name of this player. This can not be an empty
-     * String (excluding spaces).
-     * @param position The position of this player.
-     * @param roomId The id of the room where the player is in.
-     */
-    public Player(PlayerCharacter character, String playerName, Vector position, int roomId) {
-        super(playerName, position.getX(), position.getY(), roomId, character);
-
-        if (character == null) {
-            throw new IllegalArgumentException("Character can not be null.");
-        }
-
-        if (playerName == null || playerName.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Character can neither be null nor an empty String.");
-        }
-
-        if (position == null) {
-            throw new IllegalArgumentException("Position can not be null.");
-        }
-
-        this.x = position.getX();
-        this.y = position.getY();
-        this.screen = GameScreen.getInstance();
-
-        this.aimDirection = 0;
-        this.animationSpeed = 0.05f;
-        this.stateTime = 0f;
-        this.switchCharacter(super.skin);
-        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
-
-        int gridsize = Utils.GRIDSIZE;
-        this.modifiedGridSizeX = gridsize - 32;
-        this.modifiedGridSizeY = gridsize - 16;
-
-        this.speed = Player.WALK_SPEED;
-        this.direction = Direction.RIGHT;
-    }
-
-    public Player(SimplePlayer simplePlayer, GameScreen screen) {
-        super(simplePlayer.playerName,
-                simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
-
-        this.x = simplePlayer.getX();
-        this.y = simplePlayer.getY();
-        this.screen = screen;
-
-        this.animationSpeed = 0.05f;
-        this.stateTime = simplePlayer.getStateTime();
-        this.switchCharacter(super.skin);
-        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
-
-        int gridsize = Utils.GRIDSIZE;
-        this.modifiedGridSizeX = gridsize - 32;
-        this.modifiedGridSizeY = gridsize - 16;
-
-        this.direction = simplePlayer.direction;
     }
 
     /**
@@ -385,8 +419,8 @@ public class Player extends SimplePlayer implements Observable {
             throw new IllegalArgumentException("Slashing animation can not be null.");
         }
 
-        setWalkingAnimations(walkingAnimation);
-        setSlashingAnimations(slashingAnimation);
+        this.setWalkingAnimations(walkingAnimation);
+        this.setSlashingAnimations(slashingAnimation);
 
         this.currentAnimation = null;
     }
@@ -398,6 +432,7 @@ public class Player extends SimplePlayer implements Observable {
      */
     private void switchCharacter(PlayerCharacter character) {
         switch (character) {
+            default:
             case SKELETON_DAGGER:
                 setAnimations("Units/Skeleton_Dagger/Walk.png",
                         "Units/Skeleton_Dagger/Slash.png");
@@ -419,7 +454,7 @@ public class Player extends SimplePlayer implements Observable {
      * @param batch The Sprite Batch to use.
      */
     public void render(SpriteBatch batch) {
-        batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(MainClass.getInstance().camera.combined);
         this.stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
         batch.draw(currentFrame, this.x, this.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
@@ -464,7 +499,7 @@ public class Player extends SimplePlayer implements Observable {
             Rectangle rectangleMapObject = mapObject.getRectangle();
             if (rec.overlaps(rectangleMapObject)) {
                 int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
-                this.screen.setLevel(Integer.parseInt(mapObject.getName()), direction);
+                this.screen.setLevel(mapId, this.direction);
             }
         }
     }
@@ -501,11 +536,11 @@ public class Player extends SimplePlayer implements Observable {
 
         this.setCurrentWalkingAnimation();
 
-        if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+        if (!this.checkCollision(this.getCollisionBox(), GameScreen.getInstance().getCurrentMap().getWallObjects(), GameScreen.getInstance().getCurrentMap().getObjects())) {
             this.move();
         }
 
-        this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
+        this.checkDoorCollision(this.getCollisionBox(), GameScreen.getInstance().getCurrentMap().getDoors());
     }
 
     /**
@@ -513,6 +548,7 @@ public class Player extends SimplePlayer implements Observable {
      */
     private void move() {
         switch (this.direction) {
+            default:
             case LEFT:
                 x -= this.speed;
                 break;
@@ -535,6 +571,7 @@ public class Player extends SimplePlayer implements Observable {
         this.animation = PlayerAnimation.WALKING;
 
         switch (this.direction) {
+            default:
             case LEFT:
                 this.currentAnimation = this.walkLeft;
                 break;
@@ -557,6 +594,7 @@ public class Player extends SimplePlayer implements Observable {
         this.animation = PlayerAnimation.SLASHING;
 
         switch (this.direction) {
+            default:
             case LEFT:
                 this.currentAnimation = this.slashLeft;
                 break;
@@ -588,12 +626,12 @@ public class Player extends SimplePlayer implements Observable {
      */
     private void setWalkingAnimations(String walkingAnimation) {
         float walkSpeed = animationSpeed * 1f;
-        int walkSheet_Cols = 9;
-        int walkSheet_Rows = 4;
+        int walkSheetCols = 9;
+        int walkSheetRows = 4;
 
         Texture walkSheet = new Texture(Gdx.files.internal(walkingAnimation));
         TextureRegion[][] anims = TextureRegion.split(walkSheet, walkSheet.getWidth()
-                / walkSheet_Cols, walkSheet.getHeight() / walkSheet_Rows);
+                / walkSheetCols, walkSheet.getHeight() / walkSheetRows);
 
         this.walkUp = new Animation(walkSpeed, anims[0]);
         this.walkLeft = new Animation(walkSpeed, anims[1]);
@@ -609,12 +647,12 @@ public class Player extends SimplePlayer implements Observable {
      */
     private void setSlashingAnimations(String slashingAnimation) {
         float slashSpeed = this.animationSpeed * 0.5f;
-        int slashSheet_Cols = 6;
-        int slashSheet_Rows = 4;
+        int slashSheetCols = 6;
+        int slashSheetRows = 4;
 
         Texture slashSheet = new Texture(Gdx.files.internal(slashingAnimation));
         TextureRegion[][] anims = TextureRegion.split(slashSheet, slashSheet.getWidth()
-                / slashSheet_Cols, slashSheet.getHeight() / slashSheet_Rows);
+                / slashSheetCols, slashSheet.getHeight() / slashSheetRows);
 
         this.slashUp = new Animation(slashSpeed, anims[0]);
         this.slashLeft = new Animation(slashSpeed, anims[1]);
@@ -631,6 +669,7 @@ public class Player extends SimplePlayer implements Observable {
         Rectangle rec = null;
 
         switch (this.direction) {
+            default:
             case LEFT:
                 rec = new Rectangle(x + 16 - this.speed, y,
                         this.modifiedGridSizeX, this.modifiedGridSizeY);
@@ -652,18 +691,13 @@ public class Player extends SimplePlayer implements Observable {
         return rec;
     }
 
-    public void update() {
-
-    }
-
     @Override
     public void addListener(InvalidationListener listener) {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void removeListener(InvalidationListener listener) {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

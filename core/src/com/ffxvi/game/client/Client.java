@@ -12,7 +12,6 @@
  */
 package com.ffxvi.game.client;
 
-import com.ffxvi.game.screens.GameScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -36,14 +35,28 @@ public final class Client {
     private final ClientListener clientListener;
 
     /**
-     * The screen in which the gameis shown.
-     */
-    private final GameScreen screen;
-
-    /**
      * A bytearray with the data which is sent.
      */
     private byte[] sendData;
+
+    /**
+     * Initialize the client. The client is listening in a thread, this is
+     * because the listening code keeps waiting until a packet is received
+     *
+     * @param hostIP the IP address that the client will connect with
+     * @param hostPort the port on the host that the client will connect with
+     * @param listenerPort the port that the client will be listening on
+     */
+    public Client(String hostIP, int hostPort, int listenerPort) {
+
+        // Set the host to send data to
+        this.hostAddress = new InetSocketAddress(hostIP, hostPort);
+        this.send("CONNECTING");
+        // Set the port to receive data on
+        this.clientListener = new ClientListener(listenerPort);
+        Thread listenerThread = new Thread(this.clientListener);
+        listenerThread.start();
+    }
 
     /**
      * The host's address (IP address + port number)
@@ -82,26 +95,6 @@ public final class Client {
     }
 
     /**
-     * Initialize the client. The client is listening in a thread, this is
-     * because the listening code keeps waiting until a packet is received
-     *
-     * @param hostIP the IP address that the client will connect with
-     * @param hostPort the port on the host that the client will connect with
-     * @param listenerPort the port that the client will be listening on
-     */
-    public Client(String hostIP, int hostPort, int listenerPort) {
-        this.screen = GameScreen.getInstance();
-
-        // Set the host to send data to
-        this.hostAddress = new InetSocketAddress(hostIP, hostPort);
-        this.send("CONNECTING");
-        // Set the port to receive data on
-        this.clientListener = new ClientListener(listenerPort);
-        Thread listenerThread = new Thread(this.clientListener);
-        listenerThread.start();
-    }
-
-    /**
      * Stop listening for new data and stop sending data to the host, use this
      * for disconnecting or stopping the application
      */
@@ -128,7 +121,7 @@ public final class Client {
 
         try {
             // Convert the object to bytes and put it in the byte array
-            this.sendData = serialize(message);
+            this.sendData = this.serialize(message);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -136,15 +129,17 @@ public final class Client {
         // Create the DatagramPacket to send
         DatagramPacket sendPacket = new DatagramPacket(this.sendData, this.sendData.length, this.hostAddress);
 
-        // Send the DatagramPacket through the DatagramSocket
-        try {
-            sendingSocket.send(sendPacket);
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        if (sendingSocket != null) {
+            // Send the DatagramPacket through the DatagramSocket
+            try {
+                sendingSocket.send(sendPacket);
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-        // Close the socket
-        sendingSocket.close();
+            // Close the socket
+            sendingSocket.close();
+        }
     }
 
     /**
@@ -158,7 +153,6 @@ public final class Client {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         ObjectOutputStream o = new ObjectOutputStream(b);
         o.writeObject(obj);
-        byte[] ret = b.toByteArray();
-        return ret;
+        return b.toByteArray();
     }
 }

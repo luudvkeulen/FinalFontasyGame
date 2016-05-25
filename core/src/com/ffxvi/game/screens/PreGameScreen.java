@@ -151,12 +151,7 @@ public class PreGameScreen implements Screen {
         gameScreen.addPlayer(txtUsername.getText(), character);
         game.setScreen(gameScreen);
     }
-
-    @Override
-    public void show() {
-
-    }
-
+    
     /**
      * Is executed each time the screen is drawn. Contains all drawing logic for
      * this screen.
@@ -174,28 +169,32 @@ public class PreGameScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void show() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public void resize(int width, int height) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void pause() {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void resume() {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void hide() {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void dispose() {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }
