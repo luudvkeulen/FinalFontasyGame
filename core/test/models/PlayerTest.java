@@ -31,6 +31,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import com.ffxvi.game.support.Vector;
 
+
 /**
  *
  * @author Joel
