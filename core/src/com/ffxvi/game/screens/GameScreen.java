@@ -248,12 +248,6 @@ public class GameScreen implements Screen, Observer {
 
 			//Render other players
 			for (SimplePlayer splayer : multiplayers) {
-				/*ShapeRenderer srenderer = new ShapeRenderer();
-				srenderer.setProjectionMatrix(camera.combined);
-				srenderer.setAutoShapeType(true);
-				srenderer.begin();
-				srenderer.circle(splayer.getX(), splayer.getY(), 10);
-				srenderer.end();*/
 				
 				try {
 					batch.setProjectionMatrix(camera.combined);
@@ -263,7 +257,6 @@ public class GameScreen implements Screen, Observer {
 				} catch (Exception ex) {
 					System.err.println("Cannot draw player. Exception: " + ex);
 				}
-				
 			}
 			
 			batch.begin();
