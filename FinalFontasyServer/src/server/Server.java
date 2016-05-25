@@ -86,11 +86,18 @@ public class Server {
 							HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
 							int clientRoomId = dataMapWithoutSender.get(address).getRoomId();
 							//dataMapWithoutSender.remove(address);
-							Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
+							Collection<SimplePlayer> dataListWithoutSender = new ArrayList();
 							// Remove the data from players that are not in the client's room from the Collection
-							for (SimplePlayer sp : dataListWithoutSender){
-								if (sp.getRoomId() != clientRoomId){
-									dataListWithoutSender.remove(sp);
+//							for (SimplePlayer sp : dataListWithoutSender){
+//								if (sp.getRoomId() != clientRoomId){
+//									dataListWithoutSender.remove(sp);
+//								}
+//							}
+
+							for (InetSocketAddress key : dataMapWithoutSender.keySet()){
+								SimplePlayer sp = dataMapWithoutSender.get(key);
+								if (sp.getRoomId() == clientRoomId){
+									dataListWithoutSender.add(sp);
 								}
 							}
 							sendSingle(dataListWithoutSender, address);
@@ -133,7 +140,7 @@ public class Server {
 	public boolean disconnectPlayer(InetSocketAddress ipAddress){
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
-				if (players[i].getAddress().equals(ipAddress)){
+				if (players[i].equals(ipAddress)){
 					playerData.remove(players[i]);
 					players[i] = null;
 					return true;
@@ -229,6 +236,6 @@ public class Server {
 	
 	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer player){
 		playerData.put(playerAddress, player);
-		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+//		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
 	}
 }
