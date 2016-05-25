@@ -13,6 +13,8 @@ import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class Player extends SimplePlayer {
 
@@ -224,7 +226,6 @@ public class Player extends SimplePlayer {
      * @param playerName The name of this player. This can not be an empty
      * String (excluding spaces).
      * @param position The position of this player.
-     * @param screen The gameScreen which is used.
      * @param roomId The room ID where the player is in.
      * 
      * @throws IllegalArgumentException When character is null.

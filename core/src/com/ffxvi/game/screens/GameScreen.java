@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -33,8 +32,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The screen for the game.
@@ -45,7 +42,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * Holds the current instance of GameScreen.
      */
-    private static final GameScreen GAMESCREEN = null;
+    private final static GameScreen GAMESCREEN = new GameScreen();
 
     /**
      * The main class for the game.
@@ -151,7 +148,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * Initializes a new GameScreen.
      */
-    public GameScreen() {
+    private GameScreen() {
         this.game = MainClass.getInstance();
         this.stage = new Stage();
         this.chatManager = new ChatManager();
@@ -240,17 +237,15 @@ public class GameScreen implements Screen, Observer {
      * @param character The character of this player.
      */
     public void addPlayer(String playerName, PlayerCharacter character) {
-        
-        if (playerName == null || playerName.trim().isEmpty())
-        {
+
+        if (playerName == null || playerName.trim().isEmpty()) {
             throw new IllegalArgumentException("Player name can't be null nor an empty string (excluding spaces).");
         }
-        
-        if (character == null)
-        {
+
+        if (character == null) {
             throw new IllegalArgumentException("Character can not be null.");
         }
-        
+
         int idx = new Random().nextInt(this.maps.size());
         GameScreen.map = this.maps.get(idx);
 
@@ -268,15 +263,15 @@ public class GameScreen implements Screen, Observer {
     /**
      * Adds a list of other players to this game.
      *
-     * @param multiplayers A list of the other players. An empty list is allowed.
+     * @param multiplayers A list of the other players. An empty list is
+     * allowed.
      */
     public void addMultiPlayers(Collection<SimplePlayer> multiplayers) {
-        
-        if (multiplayers == null)
-        {
+
+        if (multiplayers == null) {
             throw new IllegalArgumentException("The multiplayers can not be null.");
         }
-        
+
         this.multiplayers = (List<SimplePlayer>) multiplayers;
     }
 
@@ -294,19 +289,19 @@ public class GameScreen implements Screen, Observer {
     /**
      * Sets the map to the map with the given id.
      *
-     * @param mapId The id of the map. When smaller than 1, throws an IllegalArgumentException.
+     * @param mapId The id of the map. When smaller than 1, throws an
+     * IllegalArgumentException.
      * @param direction the direction in which the mainPlayer is entering.
      */
     public void setLevel(int mapId, Direction direction) {
         if (mapId <= 0) {
             throw new IllegalArgumentException("The map id must be at least 1.");
         }
-        
-        if (direction == null)
-        {
+
+        if (direction == null) {
             throw new IllegalArgumentException("direction can not be null.");
         }
-        
+
         Map oldMap = GameScreen.map;
         for (Map m : this.maps) {
             if (m.getId() == mapId) {
@@ -349,12 +344,11 @@ public class GameScreen implements Screen, Observer {
      * @param projectile The projectile to add.
      */
     public static void addProjectile(Projectile projectile) {
-        
-        if (projectile == null)
-        {
+
+        if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
-        
+
         projectiles.add(projectile);
     }
 
@@ -364,9 +358,8 @@ public class GameScreen implements Screen, Observer {
      * @param projectile The projectile to remove.
      */
     public static void removeProjectile(Projectile projectile) {
-        
-        if (projectile == null)
-        {
+
+        if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
         projectiles.remove(projectile);

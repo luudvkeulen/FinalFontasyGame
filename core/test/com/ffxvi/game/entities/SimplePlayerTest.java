@@ -76,13 +76,12 @@ public class SimplePlayerTest {
         * 
         * @throws IllegalArgumentException when the player is null.
         */
-        PlayerCharacter pc = PlayerCharacter.SKELETON_DAGGER;
+       
         String name = "Testerino";
         Vector pos = new Vector(20, 20);
-        GameScreen gs = GameScreen.getInstance();
         int roomid = 1;
         
-        Player player = new Player(pc, name, pos, roomid);
+        Player player = new Player(PlayerCharacter.SKELETON_DAGGER, name, pos, roomid);
         Assert.assertNotNull(player);
         
         SimplePlayer sPlayer = new SimplePlayer(player);
@@ -143,7 +142,7 @@ public class SimplePlayerTest {
     /**
      * Test the constructor which needs multiple parameters where the name is null.
      */
-    @Test
+    @Test (expected=IllegalArgumentException.class)
     public void testConstructorMultipleParametersPlayerNameNull() {
         /**
          * The constructor of the SimplePlayer class.
@@ -174,7 +173,7 @@ public class SimplePlayerTest {
      * Test the constructor which needs multiple parameters 
      * where the name only contains spaces.
      */
-    @Test
+    @Test (expected=IllegalArgumentException.class)
     public void testConstructorMultipleParametersPlayerNameEmptySpaces() {
         /**
          * The constructor of the SimplePlayer class.
@@ -204,7 +203,7 @@ public class SimplePlayerTest {
         /**
      * Test the constructor which needs multiple parameters where the name is empty.
      */
-    @Test
+    @Test (expected=IllegalArgumentException.class)
     public void testConstructorMultipleParametersPlayerNameEmpty() {
         /**
          * The constructor of the SimplePlayer class.
@@ -234,7 +233,7 @@ public class SimplePlayerTest {
     /**
      * Test the constructor which needs multiple parameters where the name is empty.
      */
-    @Test
+    @Test (expected=IllegalArgumentException.class)
     public void testConstructorMultipleParametersPlayerSkinNull() {
         /**
          * The constructor of the SimplePlayer class.
