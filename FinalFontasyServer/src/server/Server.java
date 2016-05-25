@@ -131,11 +131,13 @@ public class Server {
 	 * @return true if the player was successfully disconnected, false if the player is not connected
 	 */
 	public boolean disconnectPlayer(InetSocketAddress ipAddress){
-		for (int i = 0; i < players.length; i++){
-			if (players[i].getAddress().equals(ipAddress)){
-				playerData.remove(players[i]);
-				players[i] = null;
-				return true;
+		for (int i = 0; i < players.length; i++) {
+			if (players[i] != null) {
+				if (players[i].getAddress().equals(ipAddress)){
+					playerData.remove(players[i]);
+					players[i] = null;
+					return true;
+				}
 			}
 		}
 		return false;
