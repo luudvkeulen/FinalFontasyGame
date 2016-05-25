@@ -77,7 +77,7 @@ public class GameScreen implements Screen, Observer {
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
 		
-		this.client = new Client("localhost", 1338, 1337, this);
+		this.client = new Client("192.168.1.1", 1338, 1337, this);
 
 		//Setup map stuff
 		this.maps = new ArrayList();
