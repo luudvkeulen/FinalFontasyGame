@@ -20,6 +20,7 @@ public class SimplePlayer implements Serializable {
 	protected int hitPoints;
 	protected int score;
 
+	protected int roomId;
 	protected float x;
 	protected float y;
 	protected float speed; 
@@ -27,12 +28,7 @@ public class SimplePlayer implements Serializable {
 	protected Direction direction;
 	protected PlayerCharacter skin;
 	protected PlayerAnimation animation;
-	
-	protected int roomId;
-	
-	
 	public float stateTime;
-	public Animation currentAnimation;
 	
 	public float getX() {
 		return x;
@@ -70,7 +66,6 @@ public class SimplePlayer implements Serializable {
 		this.roomId = roomId;
 		
 		this.stateTime = 0;
-		this.currentAnimation = null;
 	}
 	
 	public SimplePlayer(Player player){
@@ -85,6 +80,5 @@ public class SimplePlayer implements Serializable {
 		animation = player.animation;
 		
 		this.stateTime = 0;
-		this.currentAnimation = player.getCurrentAnimation();
 	}
 }
