@@ -12,6 +12,8 @@
  */
 package com.ffxvi.game.entities;
 
+import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.support.Vector;
 import org.junit.*;
 
 /**
@@ -74,12 +76,24 @@ public class SimplePlayerTest {
         * 
         * @throws IllegalArgumentException when the player is null.
         */
+        PlayerCharacter pc = PlayerCharacter.SKELETON_DAGGER;
+        String name = "Testerino";
+        Vector pos = new Vector(20, 20);
+        GameScreen gs = GameScreen.getInstance();
+        int roomid = 1;
+        
+        Player player = new Player(pc, name, pos, gs, roomid);
+        Assert.assertNotNull(player);
+        
+        SimplePlayer sPlayer = new SimplePlayer(player);
+        Assert.assertNotNull(sPlayer);
     }
     
     /**
      * Test the constructor with a player object which is null.
+     * Testcase expects IllegalArgumentException.
      */
-    @Test
+    @Test (expected=IllegalArgumentException.class)
     public void testConstructorPlayerNull() {
        /**
         * The constructor of the SimplePlayer class.
@@ -91,6 +105,9 @@ public class SimplePlayerTest {
         * 
         * @throws IllegalArgumentException when the player is null.
         */
+        
+       Player p = null;
+       SimplePlayer sp = new SimplePlayer(p);
     }
     
     /**
@@ -98,18 +115,29 @@ public class SimplePlayerTest {
      */
     @Test
     public void testConstructorMultipleParametersCorrect() {
-       /**
-        * The constructor of the SimplePlayer class.
-        * Initializes all the fields in this class.
-        * This constructor is used when u want to make a player
-        * from the server.
-        * @param playerName The name of the player, this may not be null or empty.
-        * @param posX The X-position of the player.
-        * @param posY The Y-position of the player.
-        * @param roomId The room ID of where the player is in.
-        * 
-        * @throws IllegalArgumentException when the playername is null or empty.
-        */
+        /**
+         * The constructor of the SimplePlayer class.
+         * Initializes all the fields in this class.
+         * This constructor is used when u want to make a player
+         * from the server.
+         * @param playerName The name of the player, this may not be null or empty.
+         * @param posX The X-position of the player.
+         * @param posY The Y-position of the player.
+         * @param roomId The room ID of where the player is in.
+         * @param skin The skin of the player, may not be null.
+         * 
+         * @throws IllegalArgumentException when the playername is null or empty.
+         * @throws IllegalArgumentException when the skin is null.
+         */
+        
+        SimplePlayer sP;
+        String name = "Test";
+        float posx = 20.0f;
+        float posy = 20.0f;
+        int roomid = 1;
+        
+        sP = new SimplePlayer(name, posx, posy, roomid, 
+                PlayerCharacter.SKELETON_HOODED_DAGGER);
     }
     
     /**
@@ -117,39 +145,119 @@ public class SimplePlayerTest {
      */
     @Test
     public void testConstructorMultipleParametersPlayerNameNull() {
-       /**
-        * The constructor of the SimplePlayer class.
-        * Initializes all the fields in this class.
-        * This constructor is used when u want to make a player
-        * from the server.
-        * @param playerName The name of the player, this may not be null or empty.
-        * @param posX The X-position of the player.
-        * @param posY The Y-position of the player.
-        * @param roomId The room ID of where the player is in.
-        * 
-        * @throws IllegalArgumentException when the playername is null or empty.
-        */
+        /**
+         * The constructor of the SimplePlayer class.
+         * Initializes all the fields in this class.
+         * This constructor is used when u want to make a player
+         * from the server.
+         * @param playerName The name of the player, this may not be null or empty.
+         * @param posX The X-position of the player.
+         * @param posY The Y-position of the player.
+         * @param roomId The room ID of where the player is in.
+         * @param skin The skin of the player, may not be null.
+         * 
+         * @throws IllegalArgumentException when the playername is null or empty.
+         * @throws IllegalArgumentException when the skin is null.
+         */
+        
+        SimplePlayer sP;
+        String name = null;
+        float posx = 20.0f;
+        float posy = 20.0f;
+        int roomid = 1;
+        
+        sP = new SimplePlayer(name, posx, posy, roomid, 
+                PlayerCharacter.SKELETON_HOODED_DAGGER);
+    }
+    
+    /**
+     * Test the constructor which needs multiple parameters 
+     * where the name only contains spaces.
+     */
+    @Test
+    public void testConstructorMultipleParametersPlayerNameEmptySpaces() {
+        /**
+         * The constructor of the SimplePlayer class.
+         * Initializes all the fields in this class.
+         * This constructor is used when u want to make a player
+         * from the server.
+         * @param playerName The name of the player, this may not be null or empty.
+         * @param posX The X-position of the player.
+         * @param posY The Y-position of the player.
+         * @param roomId The room ID of where the player is in.
+         * @param skin The skin of the player, may not be null.
+         * 
+         * @throws IllegalArgumentException when the playername is null or empty.
+         * @throws IllegalArgumentException when the skin is null.
+         */
+        
+        SimplePlayer sP;
+        String name = "    ";
+        float posx = 20.0f;
+        float posy = 20.0f;
+        int roomid = 1;
+        
+        sP = new SimplePlayer(name, posx, posy, roomid, 
+                PlayerCharacter.SKELETON_HOODED_DAGGER);
+    }
+    
+        /**
+     * Test the constructor which needs multiple parameters where the name is empty.
+     */
+    @Test
+    public void testConstructorMultipleParametersPlayerNameEmpty() {
+        /**
+         * The constructor of the SimplePlayer class.
+         * Initializes all the fields in this class.
+         * This constructor is used when u want to make a player
+         * from the server.
+         * @param playerName The name of the player, this may not be null or empty.
+         * @param posX The X-position of the player.
+         * @param posY The Y-position of the player.
+         * @param roomId The room ID of where the player is in.
+         * @param skin The skin of the player, may not be null.
+         * 
+         * @throws IllegalArgumentException when the playername is null or empty.
+         * @throws IllegalArgumentException when the skin is null.
+         */
+        
+        SimplePlayer sP;
+        String name = "";
+        float posx = 20.0f;
+        float posy = 20.0f;
+        int roomid = 1;
+        
+        sP = new SimplePlayer(name, posx, posy, roomid, 
+                PlayerCharacter.SKELETON_HOODED_DAGGER);
     }
     
     /**
      * Test the constructor which needs multiple parameters where the name is empty.
      */
     @Test
-    public void testConstructorMultipleParametersPlayerNameEmpty() {
-       /**
-        * The constructor of the SimplePlayer class.
-        * Initializes all the fields in this class.
-        * This constructor is used when u want to make a player
-        * from the server.
-        * @param playerName The name of the player, this may not be null or empty.
-        * @param posX The X-position of the player.
-        * @param posY The Y-position of the player.
-        * @param roomId The room ID of where the player is in.
-        * 
-        * @throws IllegalArgumentException when the playername is null or empty.
-        */
-       
-       
+    public void testConstructorMultipleParametersPlayerSkinNull() {
+        /**
+         * The constructor of the SimplePlayer class.
+         * Initializes all the fields in this class.
+         * This constructor is used when u want to make a player
+         * from the server.
+         * @param playerName The name of the player, this may not be null or empty.
+         * @param posX The X-position of the player.
+         * @param posY The Y-position of the player.
+         * @param roomId The room ID of where the player is in.
+         * @param skin The skin of the player, may not be null.
+         * 
+         * @throws IllegalArgumentException when the playername is null or empty.
+         * @throws IllegalArgumentException when the skin is null.
+         */
+        
+        SimplePlayer sP;
+        String name = "TestTesterino";
+        float posx = 20.0f;
+        float posy = 20.0f;
+        int roomid = 1;
+        
+        sP = new SimplePlayer(name, posx, posy, roomid, null);
     }
     
     

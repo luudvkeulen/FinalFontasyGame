@@ -183,6 +183,7 @@ public class SimplePlayer implements Serializable {
      * @param skin The skin of the player, may not be null.
      * 
      * @throws IllegalArgumentException when the playername is null or empty.
+     * @throws IllegalArgumentException when the skin is null.
      */
     public SimplePlayer(String playerName, float posX, float posY, int roomId, PlayerCharacter skin) {
         
