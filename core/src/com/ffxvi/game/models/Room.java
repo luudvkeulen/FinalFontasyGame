@@ -12,6 +12,7 @@
  */
 package com.ffxvi.game.models;
 
+import com.ffxvi.game.entities.Projectile;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.support.Vector;
