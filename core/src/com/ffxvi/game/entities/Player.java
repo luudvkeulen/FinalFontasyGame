@@ -263,6 +263,16 @@ public class Player extends SimplePlayer {
 		this.speed = Player.WALK_SPEED;
 		this.direction = Direction.RIGHT;
 	}
+	
+	
+	public Player(SimplePlayer simplePlayer, GameScreen screen){
+		super(simplePlayer.playerName, simplePlayer.x,simplePlayer.y,simplePlayer.roomId);
+		this.screen = screen;
+		this.animationSpeed = 0.05f;
+		int gridsize = Utils.gridSize;
+		this.modifiedGridSizeX = gridsize - 32;
+		this.modifiedGridSizeY = gridsize - 16;
+	}
 
 	/**
 	 * Gets the name of this player.
