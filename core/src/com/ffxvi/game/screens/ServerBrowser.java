@@ -42,12 +42,8 @@ public class ServerBrowser implements Screen {
 	private List servers;
 	ServerRetriever serverRetriever;
 	
-	
-	
-	
 	private ScrollPane scrollPane;
 	private Table table;
-	
 	
 	public ServerBrowser(final MainClass game) {
 		this.game = game;
