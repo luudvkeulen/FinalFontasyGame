@@ -42,7 +42,7 @@ public class GameScreen implements Screen, Observer {
 
 	//Multiplayer
 	List<SimplePlayer> multiplayers = new ArrayList();
-	Client client;
+	static Client client;
 	
 	//Map related
 	OrthogonalTiledMapRenderer renderer;
@@ -72,6 +72,10 @@ public class GameScreen implements Screen, Observer {
 
 	public static Map getCurrentMap() {
 		return map;
+	}
+	
+	public static Client getClient() {
+		return client;
 	}
 
 	public GameScreen(MainClass game) {
