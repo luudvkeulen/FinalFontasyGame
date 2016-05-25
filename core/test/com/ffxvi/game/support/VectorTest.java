@@ -10,10 +10,9 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package support;
+package com.ffxvi.game.support;
 
 import com.ffxvi.game.business.GameManager;
-import com.ffxvi.game.support.Vector;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
