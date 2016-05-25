@@ -5,6 +5,7 @@
  */
 package com.ffxvi.game.client;
 
+import com.ffxvi.game.screens.GameScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -20,6 +21,7 @@ public class Client {
 	
 	private InetSocketAddress hostAddress;
 	private ClientListener clientListener;
+	private GameScreen screen;
 	private byte[] sendData;
 	
 	/**
@@ -60,13 +62,16 @@ public class Client {
 	 * @param hostIP the IP address that the client will connect with
 	 * @param hostPort the port on the host that the client will connect with
 	 * @param listenerPort the port that the client will be listening on
+	 * @param screen the GameScreen that will handle the rendering
 	 */
-	public Client(String hostIP, int hostPort, int listenerPort){
+	public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen){
+		this.screen = screen;
+		
 		// Set the host to send data to
 		hostAddress = new InetSocketAddress(hostIP, hostPort);
 		send("CONNECTING");
 		// Set the port to receive data on
-		clientListener = new ClientListener(listenerPort);
+		clientListener = new ClientListener(listenerPort, screen);
 		Thread listenerThread = new Thread(clientListener);
 		listenerThread.start();
 	}

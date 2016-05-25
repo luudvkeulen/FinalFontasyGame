@@ -6,6 +6,7 @@
 package com.ffxvi.game.client;
 
 import com.ffxvi.game.entities.SimplePlayer;
+import com.ffxvi.game.screens.GameScreen;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,14 +26,16 @@ public class ClientListener implements Runnable {
 	private boolean listening;
 	private int listenerPort;
 	private DatagramSocket listenerSocket;
+	private GameScreen screen;
 	
 	/**
 	 * Initiate this runnable
 	 * @param listenOnPort the port that the client will use for listening
 	 */
-	public ClientListener(int listenOnPort){
+	public ClientListener(int listenOnPort, GameScreen screen){
 		listening = true;
 		listenerPort = listenOnPort;
+		this.screen = screen;
 	}
 	
 	/**
@@ -146,5 +149,6 @@ public class ClientListener implements Runnable {
 	private void receivePlayers(DatagramPacket packet, Collection<SimplePlayer> data){
 		System.out.println(String.format("RECEIVED DATA FROM %1$s PLAYERS", data.size()));
 		// TODO actually use the received data
+		screen.addMultiPlayers(data);
 	}
 }
