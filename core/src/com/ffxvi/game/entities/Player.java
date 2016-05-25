@@ -14,8 +14,10 @@ import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
-public class Player extends SimplePlayer {
+public class Player extends SimplePlayer implements Observable {
 
 	/**
 	 * The amount of coordinates a player moves per tick while walking.
@@ -621,5 +623,15 @@ public class Player extends SimplePlayer {
 
 	public void update() {
 
+	}
+
+	@Override
+	public void addListener(InvalidationListener listener) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void removeListener(InvalidationListener listener) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }
