@@ -1,3 +1,15 @@
+/*
+ * (C) Copyright 2016 - S33A
+ * Final Fontasy XVI, Version 1.0.
+ * 
+ * Contributors:
+ *   Pim Janissen
+ *   Luud van Keulen
+ *   Robin de Kort
+ *   Koen Schilders
+ *   Guido Thomasse
+ *   Joel Verbeek
+ */
 package com.ffxvi.game.entities;
 
 import com.badlogic.gdx.Gdx;
@@ -16,6 +28,9 @@ import com.ffxvi.game.support.Vector;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
+/**
+ * Entity which represents a player.
+ */
 public class Player extends SimplePlayer implements Observable {
 
     /**
@@ -187,10 +202,10 @@ public class Player extends SimplePlayer implements Observable {
         // Calculate the direction of the bullet using arctan
         float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
                 - playerPosition.y - (this.currentAnimation.getKeyFrame(stateTime)
-                        .getRegionHeight()) - (Utils.GRIDSIZE/ 3), 
-                mousePosition.getX() - playerPosition.x - 
-                        (this.currentAnimation.getKeyFrame(stateTime)
-                                .getRegionWidth() / 2)));
+                .getRegionHeight()) - (Utils.GRIDSIZE / 3),
+                mousePosition.getX() - playerPosition.x
+                - (this.currentAnimation.getKeyFrame(stateTime)
+                .getRegionWidth() / 2)));
 
         if (dir < 0) {
             dir += 360;
@@ -245,8 +260,8 @@ public class Player extends SimplePlayer implements Observable {
 
         if (playerName == null || playerName.trim().isEmpty()) {
             throw new IllegalArgumentException(
-            "Character can neither be null nor an empty String.");
-	}
+                    "Character can neither be null nor an empty String.");
+        }
 
         if (position == null) {
             throw new IllegalArgumentException("Position can not be null.");
@@ -319,9 +334,9 @@ public class Player extends SimplePlayer implements Observable {
     public void setScore(int score) {
         if (score < 0) {
             throw new IllegalArgumentException("The score can not be a negative value.");
-	}
+        }
 
-	this.score = score;
+        this.score = score;
 
     }
 
@@ -364,11 +379,11 @@ public class Player extends SimplePlayer implements Observable {
     private void setAnimations(String walkingAnimation, String slashingAnimation) {
         if (walkingAnimation == null || walkingAnimation.trim().isEmpty()) {
             throw new IllegalArgumentException("Walking animation can not be null.");
-	}
+        }
 
-    if (slashingAnimation == null || slashingAnimation.trim().isEmpty()) {
+        if (slashingAnimation == null || slashingAnimation.trim().isEmpty()) {
             throw new IllegalArgumentException("Slashing animation can not be null.");
-	}
+        }
 
         setWalkingAnimations(walkingAnimation);
         setSlashingAnimations(slashingAnimation);
@@ -392,7 +407,7 @@ public class Player extends SimplePlayer implements Observable {
                         "");
                 break;
             case SKELETON_HOODED_DAGGER:
-                setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png", 
+                setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png",
                         "Units/Skeleton_Hooded_Dagger/Slash.png");
                 break;
         }
@@ -464,7 +479,7 @@ public class Player extends SimplePlayer implements Observable {
 
             // Create a bullet inside the player with the direction and speed
             GameScreen.addProjectile(new Projectile(new Vector(this.x
-                    + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)), 
+                    + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
                     30, this.aimDirection, this.roomId, this.playerName));
         }
     }

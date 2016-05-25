@@ -1,3 +1,15 @@
+/*
+ * (C) Copyright 2016 - S33A
+ * Final Fontasy XVI, Version 1.0.
+ * 
+ * Contributors:
+ *   Pim Janissen
+ *   Luud van Keulen
+ *   Robin de Kort
+ *   Koen Schilders
+ *   Guido Thomasse
+ *   Joel Verbeek
+ */
 package com.ffxvi.game.logics;
 
 import com.badlogic.gdx.Gdx;
@@ -6,45 +18,61 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatManager
-{
-	/**
-	 * The list of chatlabels used to display messages
-	 */
+/**
+ * Class which is responsible for the chat messages in the game.
+ *
+ */
+public class ChatManager {
+
+    /**
+     * The list of chatlabels used to display messages
+     */
     private final List<Label> chatLabels;
-	
-	/**
-	 * the Skin that needs to display the chat messages
-	 */
+
+    /**
+     * the Skin that needs to display the chat messages
+     */
     private final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-    public ChatManager()
-    {
-        chatLabels = new ArrayList();
+    /**
+     * Initializes a new chat manager.
+     */
+    public ChatManager() {
+        this.chatLabels = new ArrayList();
     }
 
-	/**
-	 * Adds a new label to the skin and removes the first message from the list if the total message count is bigger than 10.
-	 * 
-	 * @param playerName The name of the player that owns the message.
-	 * @param message The content of the message.
-	 */
-    public void addMessage(String playerName, String message)
-    {
-        chatLabels.add(new Label(String.format("%s: %s", playerName, message), skin));
+    /**
+     * Adds a new label to the skin and removes the first message from the list
+     * if the total message count is bigger than 10.
+     *
+     * @param playerName The name of the player that owns the message. When an
+     * empty String (excluding spaces), throw an IllegalArgumentException.
+     * @param message The content of the message. When an empty String
+     * (excluding spaces), throw an IllegalArgumentException.
+     */
+    public void addMessage(String playerName, String message) {
 
-        if (chatLabels.size() > 10)
-        {
-            chatLabels.remove(0);
+        if (playerName == null || playerName.trim().isEmpty()) {
+            throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");
+        }
+        
+        if (message == null || message.trim().isEmpty()) {
+            throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");
+        }
+
+        this.chatLabels.add(new Label(String.format("%s: %s", playerName, message), skin));
+
+        if (this.chatLabels.size() > 10) {
+            this.chatLabels.remove(0);
         }
     }
 
-	/**
-	 * getter for the list of messages
-	 * @return List which contains the labels in this chatManager
-	 */
-    public List<Label> getMessages()
-    {
-        return chatLabels;
+    /**
+     * getter for the list of messages
+     *
+     * @return List which contains the labels in this chatManager
+     */
+    public List<Label> getMessages() {
+        return this.chatLabels;
     }
 }

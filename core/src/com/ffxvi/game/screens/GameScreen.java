@@ -1,3 +1,15 @@
+/*
+ * (C) Copyright 2016 - S33A
+ * Final Fontasy XVI, Version 1.0.
+ * 
+ * Contributors:
+ *   Pim Janissen
+ *   Luud van Keulen
+ *   Robin de Kort
+ *   Koen Schilders
+ *   Guido Thomasse
+ *   Joel Verbeek
+ */
 package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -153,7 +165,7 @@ public class GameScreen implements Screen, Observer {
         this.stage = new Stage();
         this.chatManager = new ChatManager();
 
-        this.client = new Client("192.168.1.1", 1338, 1337, this);
+        this.client = new Client("192.168.1.1", 1338, 1337);
 
         //Setup map stuff
         this.maps = new ArrayList();
@@ -256,7 +268,7 @@ public class GameScreen implements Screen, Observer {
         this.playerLabel1.setText(playerName);
         this.playerLabel2.setText(playerName);
 
-        this.inputManager = new InputManager(this.game, this.mainPlayer);
+        this.inputManager = new InputManager(this.mainPlayer);
         this.inputManager.addObserver(this);
     }
 
@@ -441,7 +453,7 @@ public class GameScreen implements Screen, Observer {
 
             for (Projectile p : GameScreen.projectiles) {
                 if (p != null) {
-                    if (!p.getDoRemove()) {
+                    if (!p.shouldRemove()) {
                         p.update();
                         p.render(this.shape, camera);
                     } else {

@@ -1,17 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * (C) Copyright 2016 - S33A
+ * Final Fontasy XVI, Version 1.0.
+ * 
+ * Contributors:
+ *   Pim Janissen
+ *   Luud van Keulen
+ *   Robin de Kort
+ *   Koen Schilders
+ *   Guido Thomasse
+ *   Joel Verbeek
  */
 package com.ffxvi.game.entities;
 
 /**
- *
- * @author Robin
+ * An enumeration containing the possible values which a player's current
+ * animation might have.
  */
 public enum PlayerAnimation {
-	IDLE,
-	WALKING,
-	SLASHING,
-	SHOOTING
+    IDLE,
+    WALKING,
+    SLASHING,
+    SHOOTING
 }

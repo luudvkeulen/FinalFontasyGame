@@ -1,5 +1,3 @@
-package com.ffxvi.game.entities;
-
 /*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
@@ -12,7 +10,7 @@ package com.ffxvi.game.entities;
  *   Guido Thomasse
  *   Joel Verbeek
  */
-
+package com.ffxvi.game.entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -28,7 +26,7 @@ import java.util.Objects;
  * This class contains all the properties for the Projectile. It contains the
  * position, rotation and AmmoType.
  */
-public class Projectile extends SimpleProjectile{
+public class Projectile extends SimpleProjectile {
 
     /**
      * Vector2f containing the position of the projectile.
@@ -36,92 +34,114 @@ public class Projectile extends SimpleProjectile{
     private Vector position;
 
     /**
-     * The rotation of the projectile.
+     * The nanotime at which this projectile was spawned.
      */
-    private float rotation;
-
+    private long startTime;
 
     /**
-     * The speed of this projectile.
+     * The delay in seconds before the projectile despawns.
      */
-    private float speed;
+    private long despawnDelay;
 
-    private long startTime;
-    private long despawnDelay = 30;
-    private boolean doRemove;
+    /**
+     * A boolean indicating if the projectile can collide.
+     */
     private boolean canCollide;
 
     /**
      * Initializes a new projectile object.
      *
-     * @param position the position in the room.
-     * @param rotation the rotation of the projectile in degrees. If the
-     * rotation is not in the range 0-359, throws an IllegalArgumentException.
-     * @param ammoType the type of ammo this projectile is.
+     * @param position The position in the room.
+     * @param speed The speed of the projectile. When smaller than 0, throw an
+     * IllegalArgumentException.
+     * @param rotation The rotation of the projectile. When not at least 0 or
+     * smaller than 360, throw an IllegalArgumentException.
+     * @param roomID The id of the room which this projectile exists in. When
+     * not > 0, throw an IllegalArgumentException.
+     * @param playerName The name of the player which fired the bullet. When an
+     * empty String (excluding spaces), throw an IllegalArgumentException.
      */
-    public Projectile(Vector position, float speed, float rotation, int roomId, String playerName) {
-		super(rotation, speed, position.getX(), position.getY(), playerName,  roomId);
+    public Projectile(Vector position, float speed, float rotation, int roomID, String playerName) {
+        super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
+
         if (position == null) {
             throw new IllegalArgumentException("The position of this projectile can not be null.");
         }
 
         if (rotation < 0 || rotation >= 360) {
-            System.out.println(rotation);
-            throw new IllegalArgumentException("The rotation of the projectile must be >= 0 & < 360");
-            
+            throw new IllegalArgumentException("The rotation of the projectile must be >= 0 & < 360.");
         }
 
+        if (roomID <= 0) {
+            throw new IllegalArgumentException("The room id must be bigger than 0.");
+        }
+
+        if (playerName == null || playerName.trim().isEmpty()) {
+            throw new IllegalArgumentException("The playername can neither be null nor an empty String (excluding spaces).");
+        }
 
         this.position = position;
         this.rotation = rotation;
         this.speed = speed;
         this.canCollide = true;
+        this.despawnDelay = 30;
         this.startTime = System.nanoTime();
     }
 
+    /**
+     * Updates the position of this projectile when it still hasn't despawned.
+     */
     public void update() {
         /* Only run this event when the bullet can still exist */
-        if (!this.doRemove) {
+        if (!this.shouldRemove()) {
             /* Update the coordinates based on the bullet speed and direction */
-            position.setX(position.getX() + (speed * (float) Math.cos(rotation * Math.PI / 180)));
-            position.setY(position.getY() + (speed * (float) Math.sin(rotation * Math.PI / 180)));
+            this.position.setX(this.position.getX() + (this.speed * (float) Math.cos(this.rotation * Math.PI / 180)));
+            this.position.setY(this.position.getY() + (this.speed * (float) Math.sin(this.rotation * Math.PI / 180)));
 
             /* Only check collisions if the bullet is allowed to collide */
             if (this.canCollide) {
-                Rectangle rec = new Rectangle(position.getX(), position.getY(), 10, 10);
+                Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 10, 10);
                 //boolean collision = checkCollision(rec, GameScreen.wallObjects);
-		boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
+                boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
                 /* If to check if there's a collision */
                 if (collision) {
-                    position.setX(position.getX() - (speed * (float) Math.cos(rotation * Math.PI / 180)));
-                    position.setY(position.getY() - (speed * (float) Math.sin(rotation * Math.PI / 180)));
+                    this.position.setX(this.position.getX() - (this.speed * (float) Math.cos(this.rotation * Math.PI / 180)));
+                    this.position.setY(this.position.getY() - (this.speed * (float) Math.sin(this.rotation * Math.PI / 180)));
                     this.canCollide = false;
                     this.speed = 0;
                 }
             }
-
-            /* Check if the bullet should be despawned */
-            if (System.nanoTime() - startTime > despawnDelay * 1000000000) {
-                this.doRemove = true;
-            }
         }
     }
-    
-    public void render(ShapeRenderer shape, OrthographicCamera camera){
-		shape.setProjectionMatrix(camera.combined);
-		shape.begin(ShapeRenderer.ShapeType.Filled);
-		shape.setColor(Color.WHITE);
-		float length = 20;
-		float loc1x = position.getX();
-		float loc1y = position.getY();
-		float loc2x = (float)(loc1x + (length * (Math.cos(rotation * Math.PI/180))));
-		float loc2y = (float)(loc1y + (length * (Math.sin(rotation * Math.PI/180))));
-		shape.circle(loc1x, loc1y, 5);
-		shape.circle(loc2x, loc2y, 4);
-		shape.line(loc1x, loc1y, loc2x, loc2y);
-		shape.end();
-	}
 
+    /**
+     * Method which is executed when the screen is redrawn. The code concerns
+     * the drawing commands regarding projectiles.
+     *
+     * @param shape The shaperenderer.
+     * @param camera The camera.
+     */
+    public void render(ShapeRenderer shape, OrthographicCamera camera) {
+        shape.setProjectionMatrix(camera.combined);
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setColor(Color.WHITE);
+        float length = 20;
+        float loc1x = this.position.getX();
+        float loc1y = this.position.getY();
+        float loc2x = (float) (loc1x + (length * (Math.cos(this.rotation * Math.PI / 180))));
+        float loc2y = (float) (loc1y + (length * (Math.sin(this.rotation * Math.PI / 180))));
+        shape.circle(loc1x, loc1y, 5);
+        shape.circle(loc2x, loc2y, 4);
+        shape.line(loc1x, loc1y, loc2x, loc2y);
+        shape.end();
+    }
+
+    /**
+     * Checks if the given rectangle collides with any of the given mapobjects.
+     * @param rec The rectangle to check.
+     * @param objects The objects to check for collision with.
+     * @return 
+     */
     private boolean checkCollision(Rectangle rec, MapObjects objects) {
         for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
             Rectangle rectangleMapObject = mapObject.getRectangle();
@@ -150,14 +170,14 @@ public class Projectile extends SimpleProjectile{
     public float getRotation() {
         return this.rotation;
     }
-    
+
     /**
      * Gets the do-remove boolean from this class.
-     * 
+     *
      * @return A boolean which says if a projectile can be destroyed.
      */
-    public boolean getDoRemove() {
-        return this.doRemove;
+    public boolean shouldRemove() {
+        return System.nanoTime() - this.startTime > this.despawnDelay * 1000000000;
     }
 
     /**
@@ -167,8 +187,8 @@ public class Projectile extends SimpleProjectile{
      */
     public void updatePosition() {
 
-        float newX = (float) (this.position.getX() + Math.cos(this.rotation) * speed);
-        float newY = (float) (this.position.getY() + Math.sin(this.rotation) * speed);
+        float newX = (float) (this.position.getX() + Math.cos(this.rotation) * this.speed);
+        float newY = (float) (this.position.getY() + Math.sin(this.rotation) * this.speed);
 
         this.position = new Vector(newX, newY);
 
