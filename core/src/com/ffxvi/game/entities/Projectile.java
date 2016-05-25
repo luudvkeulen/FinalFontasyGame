@@ -1,3 +1,5 @@
+package com.ffxvi.game.entities;
+
 /*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
@@ -10,7 +12,7 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.models;
+
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
