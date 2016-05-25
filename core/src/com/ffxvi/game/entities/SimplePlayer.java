@@ -73,7 +73,7 @@ public class SimplePlayer implements Serializable {
 		return stateTime;
 	}
 	
-	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
+	public SimplePlayer(String playerName, float posX, float posY, int roomId, PlayerCharacter skin) {
 		this.playerName = playerName;
 		hitPoints = 100;
 		score = 0;
@@ -84,7 +84,7 @@ public class SimplePlayer implements Serializable {
 		speed = 0.0f;
 		
 		direction = DOWN;
-		// SKIN CONSTRUCTOR
+		this.skin = skin;
 		animation = IDLE;
 		this.stateTime = 0;
 	}

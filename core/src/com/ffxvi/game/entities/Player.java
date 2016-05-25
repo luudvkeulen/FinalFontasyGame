@@ -228,7 +228,7 @@ public class Player extends SimplePlayer {
 	 * @param screen The gameScreen which is used.
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
-		super(playerName, position.getX(), position.getY(), roomId);
+		super(playerName, position.getX(), position.getY(), roomId, character);
 
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
@@ -253,7 +253,7 @@ public class Player extends SimplePlayer {
 		this.aimDirection = 0;
 		this.animationSpeed = 0.05f;
 		this.stateTime = 0f;
-		this.switchCharacter(character);
+		this.switchCharacter(super.skin);
 		this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 
 		int gridsize = Utils.gridSize;
@@ -266,7 +266,7 @@ public class Player extends SimplePlayer {
 	
 	
 	public Player(SimplePlayer simplePlayer, GameScreen screen){
-		super(simplePlayer.playerName, simplePlayer.x,simplePlayer.y,simplePlayer.roomId);
+		super(simplePlayer.playerName, simplePlayer.x,simplePlayer.y,simplePlayer.roomId, simplePlayer.skin);
 		
 		this.x = simplePlayer.getX();
 		this.y = simplePlayer.getY();
@@ -274,6 +274,7 @@ public class Player extends SimplePlayer {
 		
 		this.animationSpeed = 0.05f;
 		this.stateTime = simplePlayer.stateTime;
+		this.switchCharacter(super.skin);
 		this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 		
 		int gridsize = Utils.gridSize;
