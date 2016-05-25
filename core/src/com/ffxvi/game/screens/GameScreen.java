@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameScreen implements Screen, Observer {
 
@@ -257,7 +259,8 @@ public class GameScreen implements Screen, Observer {
 					Player p = new Player(splayer, this);
 					p.render(batch);
 				} catch (Exception ex) {
-					System.err.println("Cannot draw player. Exception: " + ex);
+					Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+//					System.err.println("Cannot draw player. Exception: " + ex);
 				}
 			}
 			
