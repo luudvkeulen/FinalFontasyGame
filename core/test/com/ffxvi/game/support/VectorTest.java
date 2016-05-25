@@ -18,10 +18,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
+ * The class which we use to test the vector class.
  */
 public class VectorTest {
 
+    /**
+     * The vector which we use for testing
+     */
     private Vector vector;
 
     @Before
