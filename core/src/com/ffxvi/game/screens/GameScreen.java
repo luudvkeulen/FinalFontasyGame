@@ -252,8 +252,8 @@ public class GameScreen implements Screen, Observer {
 				try {
 					batch.setProjectionMatrix(camera.combined);
 					splayer.stateTime += Gdx.graphics.getDeltaTime();
-					TextureRegion currentFrame = splayer.currentAnimation.getKeyFrame(splayer.stateTime, true);
-					batch.draw(currentFrame, splayer.getX(), splayer.getY(), Utils.gridSize, Utils.gridSize);
+//					TextureRegion currentFrame = splayer.currentAnimation.getKeyFrame(splayer.stateTime, true);
+//					batch.draw(currentFrame, splayer.getX(), splayer.getY(), Utils.gridSize, Utils.gridSize);
 				} catch (Exception ex) {
 					System.err.println("Cannot draw player. Exception: " + ex);
 				}
