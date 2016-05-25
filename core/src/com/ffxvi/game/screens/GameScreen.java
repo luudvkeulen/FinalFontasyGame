@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -25,6 +26,7 @@ import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.models.Projectile;
+import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +34,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameScreen implements Screen, Observer {
 
@@ -40,7 +44,7 @@ public class GameScreen implements Screen, Observer {
 
 	//Multiplayer
 	List<SimplePlayer> multiplayers = new ArrayList();
-	Client client;
+	static Client client;
 	
 	//Map related
 	OrthogonalTiledMapRenderer renderer;
@@ -71,13 +75,17 @@ public class GameScreen implements Screen, Observer {
 	public static Map getCurrentMap() {
 		return map;
 	}
+	
+	public static Client getClient() {
+		return client;
+	}
 
 	public GameScreen(MainClass game) {
 		this.game = game;
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
 		
-		this.client = new Client("192.168.1.1", 1338, 1337, this);
+		this.client = new Client("192.168.1.2", 1338, 1337, this);
 
 		//Setup map stuff
 		this.maps = new ArrayList();
@@ -245,16 +253,18 @@ public class GameScreen implements Screen, Observer {
 			scoreLabel.setPosition(Gdx.graphics.getWidth() - (scoreLabel.getWidth() * 2), scoreLabel.getHeight());
 
 			//Render other players
-			for(SimplePlayer splayer : multiplayers) {
-				ShapeRenderer srenderer = new ShapeRenderer();
-				srenderer.setProjectionMatrix(camera.combined);
-				srenderer.setAutoShapeType(true);
-				srenderer.begin();
-				//srenderer.circle((splayer.getX()/mainPlayer.getX()) + Gdx.graphics.getWidth()/2, (splayer.getY()/mainPlayer.getY()) + Gdx.graphics.getHeight()/2, 10);
-				//Vector3 v3 = camera.unproject(new Vector3(splayer.getX(), splayer.getY(), 0));
-				//srenderer.circle(v3.x, v3.y, 10);
-				srenderer.circle(splayer.getX(), splayer.getY(), 10);
-				srenderer.end();
+			for (SimplePlayer splayer : multiplayers) {
+				
+				try {
+					Player p = new Player(splayer, this);
+					batch.begin();
+					p.render(batch);
+					p.update();
+					batch.end();
+				} catch (Exception ex) {
+					Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+//					System.err.println("Cannot draw player. Exception: " + ex);
+				}
 			}
 			
 			batch.begin();
@@ -291,7 +301,6 @@ public class GameScreen implements Screen, Observer {
 					p.render(shape, camera);
 				}
 			}
-                        
 		}
 	}
 	

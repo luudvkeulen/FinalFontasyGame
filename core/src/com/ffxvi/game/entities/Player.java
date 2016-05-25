@@ -14,8 +14,10 @@ import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
-public class Player extends SimplePlayer {
+public class Player extends SimplePlayer implements Observable {
 
 	/**
 	 * The amount of coordinates a player moves per tick while walking.
@@ -228,7 +230,7 @@ public class Player extends SimplePlayer {
 	 * @param screen The gameScreen which is used.
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
-		super(playerName, position.getX(), position.getY(), roomId);
+		super(playerName, position.getX(), position.getY(), roomId, character);
 
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
@@ -253,7 +255,7 @@ public class Player extends SimplePlayer {
 		this.aimDirection = 0;
 		this.animationSpeed = 0.05f;
 		this.stateTime = 0f;
-		this.switchCharacter(character);
+		this.switchCharacter(super.skin);
 		this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 
 		int gridsize = Utils.gridSize;
@@ -262,6 +264,26 @@ public class Player extends SimplePlayer {
 
 		this.speed = Player.WALK_SPEED;
 		this.direction = Direction.RIGHT;
+	}
+	
+	
+	public Player(SimplePlayer simplePlayer, GameScreen screen){
+		super(simplePlayer.playerName, simplePlayer.x,simplePlayer.y,simplePlayer.roomId, simplePlayer.skin);
+		
+		this.x = simplePlayer.getX();
+		this.y = simplePlayer.getY();
+		this.screen = screen;
+		
+		this.animationSpeed = 0.05f;
+		this.stateTime = simplePlayer.stateTime;
+		this.switchCharacter(super.skin);
+		this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+		
+		int gridsize = Utils.gridSize;
+		this.modifiedGridSizeX = gridsize - 32;
+		this.modifiedGridSizeY = gridsize - 16;
+		
+		this.direction = simplePlayer.direction;
 	}
 
 	/**
@@ -601,5 +623,15 @@ public class Player extends SimplePlayer {
 
 	public void update() {
 
+	}
+
+	@Override
+	public void addListener(InvalidationListener listener) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public void removeListener(InvalidationListener listener) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 }

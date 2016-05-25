@@ -65,7 +65,8 @@ public class Server {
 		// Set the port to receive data on
 		serverListener = new ServerListener(this, listenerPort);
 		Thread listenerThread = new Thread(serverListener);
-		listenerThread.start();
+		listenerThread.start();	
+		
 		// Start the updateTimer
 		startTimer();
 	}
@@ -81,10 +82,26 @@ public class Server {
 				// Send each connected player the data of all other players
 				for (InetSocketAddress address : players){
 					if (address != null){
-						HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
-						//dataMapWithoutSender.remove(address);
-						Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
-						sendSingle(dataListWithoutSender, address);
+						if (playerData.get(address) != null){
+							HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
+							int clientRoomId = dataMapWithoutSender.get(address).getRoomId();
+							//dataMapWithoutSender.remove(address);
+							Collection<SimplePlayer> dataListWithoutSender = new ArrayList();
+							// Remove the data from players that are not in the client's room from the Collection
+//							for (SimplePlayer sp : dataListWithoutSender){
+//								if (sp.getRoomId() != clientRoomId){
+//									dataListWithoutSender.remove(sp);
+//								}
+//							}
+
+							for (InetSocketAddress key : dataMapWithoutSender.keySet()){
+								SimplePlayer sp = dataMapWithoutSender.get(key);
+								if (sp.getRoomId() == clientRoomId){
+									dataListWithoutSender.add(sp);
+								}
+							}
+							sendSingle(dataListWithoutSender, address);
+						}
 					}
 				}
 			}
@@ -121,11 +138,13 @@ public class Server {
 	 * @return true if the player was successfully disconnected, false if the player is not connected
 	 */
 	public boolean disconnectPlayer(InetSocketAddress ipAddress){
-		for (int i = 0; i < players.length; i++){
-			if (players[i].getAddress().equals(ipAddress)){
-				playerData.remove(ipAddress);
-				players[i] = null;
-				return true;
+		for (int i = 0; i < players.length; i++) {
+			if (players[i] != null) {
+				if (players[i].equals(ipAddress)){
+					playerData.remove(players[i]);
+					players[i] = null;
+					return true;
+				}
 			}
 		}
 		return false;
@@ -207,16 +226,16 @@ public class Server {
 	 * @throws IOException when the OutputStream gets disrupted
 	 */
 	public byte[] serialize(Object obj) throws IOException {
-        try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
-            try(ObjectOutputStream o = new ObjectOutputStream(b)){
-                o.writeObject(obj);
-            }
-            return b.toByteArray();
-        }
-    }
+		try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
+			try(ObjectOutputStream o = new ObjectOutputStream(b)){
+				o.writeObject(obj);
+			}
+			return b.toByteArray();
+		}
+	}
 	
 	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer player){
 		playerData.put(playerAddress, player);
-		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+//		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
 	}
 }

@@ -19,6 +19,7 @@ public class SimplePlayer implements Serializable {
 	protected int hitPoints;
 	protected int score;
 
+	protected int roomId;
 	protected float x;
 	protected float y;
 	protected float speed; 
@@ -26,8 +27,23 @@ public class SimplePlayer implements Serializable {
 	protected Direction direction;
 	protected PlayerCharacter skin;
 	protected PlayerAnimation animation;
+	public float stateTime;
 	
-	protected int roomId;
+	public String getName() {
+		return playerName;
+	}
+	
+	public int getHitPoints() {
+		return hitPoints;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public int getRoomId() {
+		return roomId;
+	}
 	
 	public float getX() {
 		return x;
@@ -37,27 +53,55 @@ public class SimplePlayer implements Serializable {
 		return y;
 	}
 	
-	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
+	public float getSpeed() {
+		return speed;
+	}
+	
+	public Direction getDirection() {
+		return direction;
+	}
+	
+	public PlayerCharacter getSkin() {
+		return skin;
+	}
+	
+	public PlayerAnimation getAnimation() {
+		return animation;
+	}
+	
+	public float getStateTime() {
+		return stateTime;
+	}
+	
+	public SimplePlayer(String playerName, float posX, float posY, int roomId, PlayerCharacter skin) {
 		this.playerName = playerName;
 		hitPoints = 100;
 		score = 0;
+		
+		this.roomId = roomId;
 		x = posX;
 		y = posY;
 		speed = 0.0f;
+		
 		direction = DOWN;
+		this.skin = skin;
 		animation = IDLE;
-		this.roomId = roomId;
+		this.stateTime = 0;
 	}
 	
 	public SimplePlayer(Player player){
 		playerName = player.playerName;
 		hitPoints = player.hitPoints;
 		score = player.score;
+		
+		roomId = player.roomId;
 		x = player.x;
 		y = player.y;
 		speed = player.speed;
+		
 		direction = player.direction;
 		skin = player.skin;
 		animation = player.animation;
+		this.stateTime = 0;
 	}
 }

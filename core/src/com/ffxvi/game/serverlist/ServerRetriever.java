@@ -15,7 +15,7 @@ public class ServerRetriever {
 	private IServerList serverList;
 	
 	private static final int PORT = 420;
-	private static final String IP = "localhost";
+	private static final String IP = "192.168.1.2";
 	static final String BINDINGNAME = "serverList";
 	
 	public ServerRetriever() throws IOException {

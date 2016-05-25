@@ -6,9 +6,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
-import queryServer.IServer;
 import queryServer.IServerList;
 public class ServerSubscriber {
 	
@@ -16,7 +13,7 @@ public class ServerSubscriber {
 	private IServerList serverList;
 	
 	private static final int PORT = 420;
-	private static final String IP = "localhost";
+	private static final String IP = "192.168.1.2";
 	static final String BINDINGNAME = "serverList";
 	
 	public ServerSubscriber() throws IOException {
@@ -41,7 +38,7 @@ public class ServerSubscriber {
 			}
 		}
 		
-		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1337);
+		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
 		System.out.println(Inet4Address.getLocalHost().getHostAddress());
 	}
 }

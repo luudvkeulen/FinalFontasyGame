@@ -147,7 +147,7 @@ public class ClientListener implements Runnable {
 	 * @param data the received SimplePlayer
 	 */
 	private void receivePlayers(DatagramPacket packet, Collection<SimplePlayer> data){
-		System.out.println(String.format("RECEIVED DATA FROM %1$s PLAYERS", data.size()));
+//		System.out.println(String.format("RECEIVED DATA FROM %1$s PLAYERS", data.size()));
 		// TODO actually use the received data
 		screen.addMultiPlayers(data);
 	}
