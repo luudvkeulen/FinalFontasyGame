@@ -257,7 +257,10 @@ public class GameScreen implements Screen, Observer {
 				
 				try {
 					Player p = new Player(splayer, this);
+					batch.begin();
 					p.render(batch);
+					p.update();
+					batch.end();
 				} catch (Exception ex) {
 					Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
 //					System.err.println("Cannot draw player. Exception: " + ex);
