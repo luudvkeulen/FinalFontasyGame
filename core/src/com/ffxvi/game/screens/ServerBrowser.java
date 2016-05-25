@@ -87,18 +87,6 @@ public class ServerBrowser implements Screen {
 
 		skin.add("default", textButtonStyle);
 		
-		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
-		final TextButton playButton = new TextButton("PLAY",textButtonStyle);
-		playButton.setPosition((stage.getWidth()/2) - (playButton.getWidth()/2), (playButton.getHeight()/2) - 10);
-		playButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				game.getScreen().dispose();
-				game.setScreen(new PreGameScreen(game));
-			}
-		});
-		stage.addActor(playButton);
-		
 		/* Draw server overview */
 		try {
 			this.serverRetriever = new ServerRetriever();
@@ -113,11 +101,23 @@ public class ServerBrowser implements Screen {
 		
 		this.scrollPane = new ScrollPane(servers, this.skin);
 		
+		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
+		final TextButton playButton = new TextButton("PLAY",textButtonStyle);
+		playButton.setPosition((stage.getWidth()/2) - (playButton.getWidth()/2), (playButton.getHeight()/2) - 10);
+		playButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println(servers.getSelected());
+				game.getScreen().dispose();
+				game.setScreen(new PreGameScreen(game));
+			}
+		});
+		stage.addActor(playButton);
+		
 		table = new Table(this.skin);
 		this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		this.scrollPane.setSmoothScrolling(false);
 		this.table.add(this.scrollPane).size(800, 600);
-		//table.debug();
 		
 		this.stage.addActor(this.table);
 		

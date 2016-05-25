@@ -63,9 +63,12 @@ public class Server {
 		// Initialize the playerData HashMap
 		playerData = new HashMap(serverSize);
 		// Set the port to receive data on
-		serverListener = new ServerListener(this, serverListener.getPort());
 		Thread listenerThread = new Thread(serverListener);
 		listenerThread.start();
+		
+		//Subscribe to query server
+		serverListener = new ServerListener(this, listenerPort);
+		
 		// Start the updateTimer
 		startTimer();
 	}
