@@ -5,7 +5,6 @@
  */
 package com.ffxvi.game.entities;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import static com.ffxvi.game.entities.Direction.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 import java.io.Serializable;
@@ -30,12 +29,32 @@ public class SimplePlayer implements Serializable {
 	protected PlayerAnimation animation;
 	public float stateTime;
 	
+	public String getName() {
+		return playerName;
+	}
+	
+	public int getHitPoints() {
+		return hitPoints;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public int getRoomId() {
+		return roomId;
+	}
+	
 	public float getX() {
 		return x;
 	}
 	
 	public float getY() {
 		return y;
+	}
+	
+	public float getSpeed() {
+		return speed;
 	}
 	
 	public Direction getDirection() {
@@ -50,21 +69,23 @@ public class SimplePlayer implements Serializable {
 		return animation;
 	}
 	
-	public int getRoomId() {
-		return roomId;
+	public float getStateTime() {
+		return stateTime;
 	}
 	
 	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
 		this.playerName = playerName;
 		hitPoints = 100;
 		score = 0;
+		
+		this.roomId = roomId;
 		x = posX;
 		y = posY;
 		speed = 0.0f;
-		direction = DOWN;
-		animation = IDLE;
-		this.roomId = roomId;
 		
+		direction = DOWN;
+		// SKIN CONSTRUCTOR
+		animation = IDLE;
 		this.stateTime = 0;
 	}
 	
@@ -72,13 +93,15 @@ public class SimplePlayer implements Serializable {
 		playerName = player.playerName;
 		hitPoints = player.hitPoints;
 		score = player.score;
+		
+		roomId = player.roomId;
 		x = player.x;
 		y = player.y;
 		speed = player.speed;
+		
 		direction = player.direction;
 		skin = player.skin;
 		animation = player.animation;
-		
 		this.stateTime = 0;
 	}
 }
