@@ -35,6 +35,8 @@ import java.util.Random;
 
 public class GameScreen implements Screen, Observer {
 
+        private static final GameScreen GAMESCREEN = null;
+        
 	MainClass game;
 	Player mainPlayer;
 
@@ -130,6 +132,11 @@ public class GameScreen implements Screen, Observer {
 
 		oldchatlabels = new ArrayList();
 	}
+        
+        public static GameScreen getInstance()
+        {
+            return GAMESCREEN;
+        }
 
 	private void loadMaps() {
 		mapTypes.add(new MapType(1, "level1"));
@@ -145,7 +152,7 @@ public class GameScreen implements Screen, Observer {
 		int idx = new Random().nextInt(maps.size());
 		map = maps.get(idx);
 		
-		mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, map.getId());
+		mainPlayer = new Player(character, playerName, new Vector(64f, 64f), map.getId());
 		mainPlayer.setPosition(64, 64);
 		client.send(new SimplePlayer(mainPlayer));
 

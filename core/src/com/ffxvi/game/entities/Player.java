@@ -226,7 +226,7 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param screen The gameScreen which is used.
 	 */
-	public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
+	public Player(PlayerCharacter character, String playerName, Vector position, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId);
 
 		if (character == null) {
@@ -241,13 +241,9 @@ public class Player extends SimplePlayer {
 			throw new IllegalArgumentException("Position can not be null.");
 		}
 
-		if (screen == null) {
-			throw new IllegalArgumentException("Screen can not be null.");
-		}
-
 		this.x = position.getX();
 		this.y = position.getY();
-		this.screen = screen;
+		this.screen = GameScreen.getInstance();
 
 		this.aimDirection = 0;
 		this.animationSpeed = 0.05f;
