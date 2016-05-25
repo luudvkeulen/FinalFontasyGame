@@ -7,29 +7,64 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
+import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.util.Observable;
 
 public class InputManager extends Observable
 {
-
+	/**
+	 * This float determines how much a analog stick needs to move before the input is used
+	 */
     private static final float DEADZONE = 0.3f;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
     private static final int LEFT_AXIS_X = 1;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
     private static final int LEFT_AXIS_Y = 0;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
     private static final int RIGHT_AXIS_X = 3;
+	/**
+	 * The int that the library needs to identifiy which axis it is
+	 */
     private static final int RIGHT_AXIS_Y = 2;
+	/**
+	 * The amount of triggers on the controller
+	 */
     private static final int TRIGGERS = 4;
 
+	/**
+	 * The gameController
+	 */
     private final MainClass game;
+	/**
+	 * The player thats is controlled by this instance of the game
+	 */
     private final Player mainPlayer;
 
+	/**
+	 * The Contructor which is used to create an inputManager
+	 * 
+	 * @param game The gameController
+	 * @param mainPlayer The player that needs to be moved by this inputManager
+	 */
     public InputManager(MainClass game, Player mainPlayer)
     {
         this.game = game;
         this.mainPlayer = mainPlayer;
     }
 
+	/**
+	 * This method checks if the controller sends input by calling checkControllerInput. 
+	 * If that is not the case the checkKeyboardInput() method is called. 
+	 * This makes sure there cant be controller input when there is keyboard input and vice versa
+	 */
     public void checkInput()
     {
         if (!this.checkControllerInput())
@@ -37,10 +72,14 @@ public class InputManager extends Observable
             this.checkKeyboardInput();
         }
         
-        this.checkGUIInput();
+        this.checkHUDInput();
     }
+	
+	/**
+	 * Checks if the enter key is pressed. which in turn notifys the observers
+	 */
     
-    public void checkGUIInput()
+    public void checkHUDInput()
     {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
@@ -49,6 +88,25 @@ public class InputManager extends Observable
         }
     }
 
+	/**
+	 * This method checks if certain keys are pressed and calls the necessary methods in the mainPlayer or game
+	 * keys that are checked:
+	 * ESCAPE 
+	 * SHIFT_LEFT
+	 * LEFT
+	 * RIGHT
+	 * UP
+	 * DOWN
+	 * A
+	 * S
+	 * D
+	 * W
+	 * (mouse) buttons that are checked
+	 * LEFT
+	 * RIGHT
+	 * 
+	 * @return boolean If there has been keyboard input this tick, this will return true
+	 */
     public boolean checkKeyboardInput()
     {
         boolean returnValue = false;
@@ -81,6 +139,7 @@ public class InputManager extends Observable
         {
             if (rightPressed)
             {
+				// to prevent setting the animation to right when right is pressed while left is held
                 mainPlayer.setIdle();
             }
             else
@@ -147,6 +206,19 @@ public class InputManager extends Observable
         return returnValue;
     }
 
+	/**
+	 * This method checks if certain controller buttons are pressed and calls the necessary methods in the mainPlayer or game
+	 * buttons that are checked
+	 * --none
+	 * Axis that are checked
+	 * LEFT_AXIS_X
+	 * LEFT_AXIS_Y
+	 * RIGHT_AXIS_X
+	 * RIGHT_AXIS_Y
+	 * TRIGGERS
+	 * 
+	 * @return boolean If there has been controller input this tick, this will return true
+	 */
     private boolean checkControllerInput()
     {
         Boolean returnValue = false;
@@ -213,4 +285,5 @@ public class InputManager extends Observable
 
         return returnValue;
     }
+
 }
