@@ -27,7 +27,8 @@ public class SimplePlayerTest {
     
     @Before
     public void initialize() {
-        simplePlayer = new SimplePlayer(playerName, posX, posY, roomID);
+        simplePlayer = new SimplePlayer(playerName, posX, posY, roomID, 
+                PlayerCharacter.SKELETON_DAGGER);
     }
     
     /**
