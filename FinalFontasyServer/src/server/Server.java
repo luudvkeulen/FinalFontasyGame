@@ -84,10 +84,10 @@ public class Server {
 					if (address != null){
 						if (playerData.get(address) != null){
 							HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
+							int clientRoomId = dataMapWithoutSender.get(address).getRoomId();
 							//dataMapWithoutSender.remove(address);
 							Collection<SimplePlayer> dataListWithoutSender = new ArrayList(dataMapWithoutSender.values());
 							// Remove the data from players that are not in the client's room from the Collection
-							int clientRoomId = playerData.get(address).getRoomId();
 							for (SimplePlayer sp : dataListWithoutSender){
 								if (sp.getRoomId() != clientRoomId){
 									dataListWithoutSender.remove(sp);
