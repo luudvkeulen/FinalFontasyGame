@@ -7,6 +7,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
+import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.util.Observable;
@@ -284,4 +285,5 @@ public class InputManager extends Observable
 
         return returnValue;
     }
+
 }
