@@ -182,7 +182,7 @@ public class Player extends SimplePlayer {
 		camera.project(playerPosition);
 
 		// Calculate the direction of the bullet using arctan
-		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY() - playerPosition.y - (this.currentAnimation.getKeyFrame(stateTime).getRegionHeight()) - (Utils.gridSize / 3), mousePosition.getX() - playerPosition.x - (this.currentAnimation.getKeyFrame(stateTime).getRegionWidth() / 2)));
+		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY() - playerPosition.y - (this.currentAnimation.getKeyFrame(stateTime).getRegionHeight()) - (Utils.GRIDSIZE / 3), mousePosition.getX() - playerPosition.x - (this.currentAnimation.getKeyFrame(stateTime).getRegionWidth() / 2)));
 
 		if (dir < 0) {
 			dir += 360;
@@ -256,7 +256,7 @@ public class Player extends SimplePlayer {
 		this.switchCharacter(character);
 		this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 
-		int gridsize = Utils.gridSize;
+		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
 
@@ -376,7 +376,7 @@ public class Player extends SimplePlayer {
 		batch.setProjectionMatrix(camera.combined);
 		this.stateTime += Gdx.graphics.getDeltaTime();
 		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
-		batch.draw(currentFrame, this.x, this.y, Utils.gridSize, Utils.gridSize);
+		batch.draw(currentFrame, this.x, this.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
 	}
 
 	/**
