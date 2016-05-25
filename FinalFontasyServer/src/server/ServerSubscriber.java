@@ -43,5 +43,6 @@ public class ServerSubscriber {
 		
 		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
 		System.out.println(Inet4Address.getLocalHost().getHostAddress());
+		//jlashjkasdfhjklafdslhjasfd
 	}
 }
