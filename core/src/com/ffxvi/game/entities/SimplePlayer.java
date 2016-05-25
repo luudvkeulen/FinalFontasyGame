@@ -5,14 +5,8 @@
  */
 package com.ffxvi.game.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import static com.ffxvi.game.MainClass.camera;
 import static com.ffxvi.game.entities.Direction.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
-import com.ffxvi.game.support.Utils;
 import java.io.Serializable;
 
 /**
@@ -34,12 +28,6 @@ public class SimplePlayer implements Serializable {
 	protected PlayerAnimation animation;
 	
 	protected int roomId;
-	
-	
-	
-	protected float stateTime;
-	private Animation currentAnimation;
-	
 	
 	public float getX() {
 		return x;
@@ -83,19 +71,5 @@ public class SimplePlayer implements Serializable {
 		direction = player.direction;
 		skin = player.skin;
 		animation = player.animation;
-		
-		currentAnimation = player.getCurrentAnimation();
-	}
-	
-	/**
-	 * Method that is performed each tick and focusses on drawing.
-	 *
-	 * @param batch The Sprite Batch to use.
-	 */
-	public void render(SpriteBatch batch) {
-		batch.setProjectionMatrix(camera.combined);
-		this.stateTime += Gdx.graphics.getDeltaTime();
-		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
-		batch.draw(currentFrame, this.x, this.y, Utils.gridSize, Utils.gridSize);
 	}
 }

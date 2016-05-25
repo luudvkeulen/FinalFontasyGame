@@ -367,17 +367,17 @@ public class Player extends SimplePlayer {
 		}
 	}
 
-//	/**
-//	 * Method that is performed each tick and focusses on drawing.
-//	 *
-//	 * @param batch The Sprite Batch to use.
-//	 */
-//	public void render(SpriteBatch batch) {
-//		batch.setProjectionMatrix(camera.combined);
-//		this.stateTime += Gdx.graphics.getDeltaTime();
-//		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
-//		batch.draw(currentFrame, this.x, this.y, Utils.gridSize, Utils.gridSize);
-//	}
+	/**
+	 * Method that is performed each tick and focusses on drawing.
+	 *
+	 * @param batch The Sprite Batch to use.
+	 */
+	public void render(SpriteBatch batch) {
+		batch.setProjectionMatrix(camera.combined);
+		this.stateTime += Gdx.graphics.getDeltaTime();
+		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
+		batch.draw(currentFrame, this.x, this.y, Utils.gridSize, Utils.gridSize);
+	}
 
 	/**
 	 * Checks the given rec for collision withthe given (wall)objects.
