@@ -247,13 +247,14 @@ public class GameScreen implements Screen, Observer {
 			scoreLabel.setPosition(Gdx.graphics.getWidth() - (scoreLabel.getWidth() * 2), scoreLabel.getHeight());
 
 			//Render other players
-			for(SimplePlayer splayer : multiplayers) {
+			for (SimplePlayer splayer : multiplayers) {
 				/*ShapeRenderer srenderer = new ShapeRenderer();
 				srenderer.setProjectionMatrix(camera.combined);
 				srenderer.setAutoShapeType(true);
 				srenderer.begin();
 				srenderer.circle(splayer.getX(), splayer.getY(), 10);
 				srenderer.end();*/
+				batch.setProjectionMatrix(camera.combined);
 			}
 			
 			batch.begin();
