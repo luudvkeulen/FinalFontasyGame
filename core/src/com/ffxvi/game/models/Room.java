@@ -12,6 +12,8 @@
  */
 package com.ffxvi.game.models;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import static com.ffxvi.game.MainClass.camera;
 import com.ffxvi.game.support.Vector;
 import java.util.*;
 
@@ -133,6 +135,27 @@ public class Room {
         }
 
         return false;
+    }
+    
+    /**
+     * Checks for all projectiles in the room if it needs to be destroyed.
+     * If a projectile needs to be destroyed, remove it from the list.
+     * Else update the projectile.
+     */
+    public void updateProjectiles() {
+        //Might work 
+        ShapeRenderer shape = new ShapeRenderer();
+        
+        for (Projectile p : this.projectiles) {
+            
+            if (p.getDoRemove()) {
+                this.projectiles.remove(p);
+            } else {
+                p.update();
+                p.render(shape, camera);
+            }
+            
+        }
     }
 
     /**

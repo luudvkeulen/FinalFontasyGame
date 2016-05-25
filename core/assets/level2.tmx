@@ -18,6 +18,6 @@
  </objectgroup>
  <objectgroup name="Objects"/>
  <objectgroup name="Door">
-  <object id="67" name="level1" x="448" y="960" width="64" height="64"/>
+  <object id="67" name="1" x="448" y="960" width="64" height="64"/>
  </objectgroup>
 </map>

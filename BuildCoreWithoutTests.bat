@@ -1,0 +1,1 @@
+gradlew core:build -x test
