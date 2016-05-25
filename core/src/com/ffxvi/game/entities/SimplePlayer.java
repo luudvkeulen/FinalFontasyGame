@@ -5,6 +5,7 @@
  */
 package com.ffxvi.game.entities;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import static com.ffxvi.game.entities.Direction.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 import java.io.Serializable;
@@ -28,6 +29,10 @@ public class SimplePlayer implements Serializable {
 	protected PlayerAnimation animation;
 	
 	protected int roomId;
+	
+	
+	public float stateTime;
+	public Animation currentAnimation;
 	
 	public float getX() {
 		return x;
@@ -59,6 +64,9 @@ public class SimplePlayer implements Serializable {
 		direction = DOWN;
 		animation = IDLE;
 		this.roomId = roomId;
+		
+		this.stateTime = 0;
+		this.currentAnimation = null;
 	}
 	
 	public SimplePlayer(Player player){
@@ -71,5 +79,8 @@ public class SimplePlayer implements Serializable {
 		direction = player.direction;
 		skin = player.skin;
 		animation = player.animation;
+		
+		this.stateTime = 0;
+		this.currentAnimation = player.getCurrentAnimation();
 	}
 }
