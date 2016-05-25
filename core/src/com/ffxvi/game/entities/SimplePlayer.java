@@ -37,6 +37,18 @@ public class SimplePlayer implements Serializable {
 		return y;
 	}
 	
+	public PlayerCharacter getSkin() {
+		return skin;
+	}
+	
+	public PlayerAnimation getAnimation() {
+		return animation;
+	}
+	
+	public Direction getDirection() {
+		return direction;
+	}
+	
 	public SimplePlayer(String playerName, float posX, float posY, int roomId) {
 		this.playerName = playerName;
 		hitPoints = 100;

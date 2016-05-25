@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -25,6 +26,7 @@ import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.models.Projectile;
+import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -246,12 +248,12 @@ public class GameScreen implements Screen, Observer {
 
 			//Render other players
 			for(SimplePlayer splayer : multiplayers) {
-				ShapeRenderer srenderer = new ShapeRenderer();
+				/*ShapeRenderer srenderer = new ShapeRenderer();
 				srenderer.setProjectionMatrix(camera.combined);
 				srenderer.setAutoShapeType(true);
 				srenderer.begin();
 				srenderer.circle(splayer.getX(), splayer.getY(), 10);
-				srenderer.end();
+				srenderer.end();*/
 			}
 			
 			batch.begin();
@@ -288,7 +290,6 @@ public class GameScreen implements Screen, Observer {
 					p.render(shape, camera);
 				}
 			}
-                        
 		}
 	}
 	
