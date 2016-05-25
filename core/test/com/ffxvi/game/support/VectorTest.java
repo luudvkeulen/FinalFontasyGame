@@ -12,7 +12,6 @@
  */
 package com.ffxvi.game.support;
 
-import com.ffxvi.game.business.GameManager;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,6 @@ public class VectorTest {
 
     @Before
     public void initialize() {
-        GameManager.resetInstance();
         float x = 50;
         float y = 20;
 
@@ -345,7 +343,7 @@ public class VectorTest {
     @Test
     public void testEqualsObjectOtherClass() {
 
-        Assert.assertFalse(this.vector.equals(GameManager.getInstance()));
+        Assert.assertFalse(this.vector.equals(new String()));
     }
 
     /**

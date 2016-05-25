@@ -5,7 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.ffxvi.game.models.Player;
+import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.screens.PreGameScreen;
@@ -34,11 +34,6 @@ public class MainClass extends Game implements ApplicationListener {
      * The camera.
      */
     public static OrthographicCamera camera;
-
-    /**
-     * The main player of the client.
-     */
-    public static Player mainPlayer;
 
     /**
      * The screen of the menu.
