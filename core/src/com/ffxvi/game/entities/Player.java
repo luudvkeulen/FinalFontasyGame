@@ -10,7 +10,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import static com.ffxvi.game.MainClass.camera;
-import com.ffxvi.game.models.AmmoType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
@@ -434,7 +433,7 @@ public class Player extends SimplePlayer {
 			this.shootStart = System.nanoTime();
 
 			// Create a bullet inside the player with the direction and speed
-			GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)), this.aimDirection, new AmmoType(10, 30, "animationstring")));
+			GameScreen.addProjectile(new Projectile(new Vector(this.x + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)), 30, this.aimDirection, this.roomId, this.playerName));
 		}
 	}
 

@@ -24,13 +24,11 @@ import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.support.Vector;
-import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
-import javafx.scene.input.MouseEvent;
 
 public class GameScreen implements Screen, Observer {
 
@@ -256,16 +254,16 @@ public class GameScreen implements Screen, Observer {
 
 			stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 			stage.draw();
-                        /*
+                        
 			for (Projectile p : projectiles) {
-				if (p.doRemove) {
+				if (p.getDoRemove()) {
 					p = null;
 				} else {
 					p.update();
 					p.render(shape, camera);
 				}
 			}
-                        */
+                        
 		}
 	}
 	
