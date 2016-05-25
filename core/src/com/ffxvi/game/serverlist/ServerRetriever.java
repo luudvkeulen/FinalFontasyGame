@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import queryServer.IServer;
 import queryServer.IServerList;
+
 public class ServerRetriever {
 	
 	private Registry registry;

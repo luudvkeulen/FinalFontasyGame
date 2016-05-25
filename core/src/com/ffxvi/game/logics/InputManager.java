@@ -54,7 +54,7 @@ public class InputManager extends Observable
         boolean returnValue = false;
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
-            game.setScreen(new MenuScreen(game));
+            game.setScreen(new MenuScreen());
             return returnValue;
         }
 
