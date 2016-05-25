@@ -63,7 +63,7 @@ public class Server {
 		// Initialize the playerData HashMap
 		playerData = new HashMap(serverSize);
 		// Set the port to receive data on
-		serverListener = new ServerListener(this, listenerPort);
+		serverListener = new ServerListener(this, serverListener.getPort());
 		Thread listenerThread = new Thread(serverListener);
 		listenerThread.start();
 		// Start the updateTimer

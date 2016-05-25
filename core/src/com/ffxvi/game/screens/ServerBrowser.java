@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -13,27 +8,20 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.serverlist.ServerRetriever;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,11 +100,11 @@ public class ServerBrowser implements Screen {
 		stage.addActor(playButton);
 		
 		/* Draw server overview */
-		/*try {
+		try {
 			this.serverRetriever = new ServerRetriever();
 		} catch (IOException ex) {
 			Logger.getLogger(ServerBrowser.class.getName()).log(Level.SEVERE, null, ex);
-		}*/
+		}
 		
 		this.servers = new List(skin);
 		servers.getSelection().setMultiple(true);
@@ -129,7 +117,7 @@ public class ServerBrowser implements Screen {
 		this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		this.scrollPane.setSmoothScrolling(false);
 		this.table.add(this.scrollPane).size(800, 600);
-		table.debug();
+		//table.debug();
 		
 		this.stage.addActor(this.table);
 		
@@ -141,9 +129,10 @@ public class ServerBrowser implements Screen {
 	}
 	
 	private void refreshServers() throws RemoteException {
-		//String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
+		if(serverRetriever == null) return;
+		String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
 		
-		//this.servers.setItems(serverAddresses);
+		this.servers.setItems(serverAddresses);
 	}
 
 	@Override
