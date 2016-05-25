@@ -59,7 +59,7 @@ public class MainClass extends Game implements ApplicationListener {
      * Sets the menu screen.
      */
     public void setMenuScreen() {
-        menuScreen = new MenuScreen(this);
+        menuScreen = new MenuScreen();
         setScreen(menuScreen);
     }
 
@@ -75,7 +75,7 @@ public class MainClass extends Game implements ApplicationListener {
      * Sets the pre game screen.
      */
     public void setPreGameScreen() {
-        preGameScreen = new PreGameScreen(this);
+        preGameScreen = new PreGameScreen();
         setScreen(preGameScreen);
     }
 

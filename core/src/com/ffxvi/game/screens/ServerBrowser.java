@@ -30,7 +30,7 @@ public class ServerBrowser implements Screen {
 	private SpriteBatch batch;
 	private Stage stage;
 	
-	private MainClass game;
+	private final MainClass game;
 	
 	private static final int BUTTON_WIDTH = 200;
 	private static final int BUTTON_HEIGHT = 60;
@@ -97,7 +97,7 @@ public class ServerBrowser implements Screen {
 		this.servers = new List(skin);
 		servers.getSelection().setMultiple(true);
 		servers.getSelection().setRequired(false);
-		this.servers.setItems(new String[] {});
+		this.servers.setItems((Object) new String[] {});
 		
 		this.scrollPane = new ScrollPane(servers, this.skin);
 		
@@ -109,7 +109,7 @@ public class ServerBrowser implements Screen {
 			public void clicked(InputEvent event, float x, float y) {
 				System.out.println(servers.getSelected());
 				game.getScreen().dispose();
-				game.setScreen(new PreGameScreen(game));
+				game.setScreen(new PreGameScreen());
 			}
 		});
 		stage.addActor(playButton);
@@ -132,14 +132,14 @@ public class ServerBrowser implements Screen {
 		if(serverRetriever == null) return;
 		String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
 		
-		this.servers.setItems(serverAddresses);
+		this.servers.setItems((Object) serverAddresses);
 	}
 
 	@Override
 	public void render(float delta) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
 		{
-			this.game.setScreen(new MenuScreen(game));
+			this.game.setScreen(new MenuScreen());
 			return;
 		}
 		

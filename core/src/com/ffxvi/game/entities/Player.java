@@ -231,7 +231,7 @@ public class Player extends SimplePlayer {
      * @throws IllegalArgumentException When playername is null or empty.
      * @throws IllegalArgumentException When position is null.
      */
-    public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
+    public Player(PlayerCharacter character, String playerName, Vector position, int roomId) {
         super(playerName, position.getX(), position.getY(), roomId, character);
 
         if (character == null) {
