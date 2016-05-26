@@ -197,6 +197,7 @@ public class GameScreen implements Screen, Observer {
         this.batch = new SpriteBatch();
 
         GameScreen.projectiles = new ArrayList();
+		this.multiplayers = new ArrayList();
 
         this.textfield = new TextField("", skin);
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
