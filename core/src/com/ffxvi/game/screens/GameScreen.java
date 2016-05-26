@@ -286,7 +286,7 @@ public class GameScreen implements Screen, Observer {
 
         this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.map.getId());
         this.mainPlayer.setPosition(64, 64);
-        this.client.send(new SimplePlayer(this.mainPlayer));
+        this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 
         this.playerLabel1.setText(playerName);
         this.playerLabel2.setText(playerName);
@@ -410,7 +410,7 @@ public class GameScreen implements Screen, Observer {
     @Override
     public void render(float delta) {
         if (this.mainPlayer != null) {
-            this.client.send(new SimplePlayer(this.mainPlayer));
+            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
             this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
             this.game.camera.update();
 

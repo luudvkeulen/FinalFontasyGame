@@ -12,11 +12,13 @@
  */
 package com.ffxvi.game.entities;
 
+import java.io.Serializable;
+
 /**
  * Simple projectile used for cross-component communication.
  *
  */
-public class SimpleProjectile {
+public class SimpleProjectile implements Serializable {
 
     /**
      * The rotation of the projectile.
@@ -53,7 +55,7 @@ public class SimpleProjectile {
      *
      * @param rotation The rotation of the projectile. When not greater than 0
      * or smaller than 360, throw an IllegalArgumentException.
-     * @param speed The speed of the pro jectile. When negative, throw an
+     * @param speed The speed of the projectile. When negative, throw an
      * IllegalArgumentException.
      * @param x The x position. When negative, throw an
      * IllegalArgumentException.
@@ -97,4 +99,66 @@ public class SimpleProjectile {
         this.playerName = playerName;
         this.roomID = roomID;
     }
+	
+	public SimpleProjectile(Projectile projectile) {
+
+        if (projectile == null) {
+            throw new IllegalArgumentException("Projectile may not be null");
+        }
+		
+		this.rotation = projectile.rotation;
+		this.speed = projectile.speed;
+		this.x = projectile.x;
+		this.y = projectile.y;
+		this.playerName = projectile.playerName;
+		this.roomID = projectile.roomID;
+	}
+	
+	/**
+	 * Get the angle that this projectile was fired at
+	 * @return the angle that this projectile was fired at
+	 */
+	public float getRotation() {
+		return rotation;
+	}
+	
+	/**
+	 * Get the speed of this projectile
+	 * @return the speed of this projectile
+	 */
+	public float getSpeed() {
+		return speed;
+	}
+	
+	/**
+	 * Get the X position of this projectile
+	 * @return the X position of this projectile
+	 */
+	public float getX() {
+		return x;
+	}
+	
+	/**
+	 * Get the Y position of this projectile
+	 * @return the Y position of this projectile
+	 */
+	public float getY() {
+		return y;
+	}
+	
+	/**
+	 * Get the name of the player that shot this projectile
+	 * @return the name of the player that shot this projectile
+	 */
+	public String getShooterName() {
+		return playerName;
+	}
+	
+	/**
+	 * Get the ID of the room that this projectile is in
+	 * @return the ID of the room that this projectile is in
+	 */
+	public int getRoomID() {
+		return roomID;
+	}
 }

@@ -44,7 +44,7 @@ public class SimplePlayer implements Serializable {
     protected float x;
 
     /**
-     * The Y-position of hte player. This may not be null.
+     * The Y-position of the player. This may not be null.
      */
     protected float y;
 
