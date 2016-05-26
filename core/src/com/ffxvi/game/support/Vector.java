@@ -28,12 +28,22 @@ public class Vector {
     private float y;
 
     /**
+     * Initializes a new vector with the given x and y position.
+     *
+     * @param x the x coördinate of the vector.
+     * @param y the y coördinate of the vector.
+     */
+    public Vector(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
      * Gets the x coördinate of the vector.
      *
      * @return the x coördinate.
      */
-    public float getX()
-    {
+    public float getX() {
         return this.x;
     }
 
@@ -42,8 +52,7 @@ public class Vector {
      *
      * @return the y coördinate.
      */
-    public float getY()
-    {
+    public float getY() {
         return this.y;
     }
 
@@ -52,7 +61,6 @@ public class Vector {
      *
      * @param x the new x coördinate.
      */
-
     public void setX(float x) {
         this.x = x;
     }
@@ -62,20 +70,7 @@ public class Vector {
      *
      * @param y the new y coördinate.
      */
-
-    public void setY(float y)
-    {
-        this.y = y;
-    }
-
-    /**
-     * Initializes a new vector with the given x and y position.
-     *
-     * @param x the x coördinate of the vector.
-     * @param y the y coördinate of the vector.
-     */
-    public Vector(float x, float y) {
-        this.x = x;
+    public void setY(float y) {
         this.y = y;
     }
 
