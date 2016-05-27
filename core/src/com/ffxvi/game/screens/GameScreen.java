@@ -32,6 +32,7 @@ import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
+import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
@@ -39,6 +40,7 @@ import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -327,8 +329,9 @@ public class GameScreen implements Screen, Observer {
      * @param mapId The id of the map. When smaller than 1, throws an
      * IllegalArgumentException.
      * @param direction the direction in which the mainPlayer is entering.
+	 * @throws IllegalArgumentException
      */
-    public void setLevel(int mapId, Direction direction) {
+    public void setLevel(int mapId, Direction direction) throws IllegalArgumentException {
         if (mapId <= 0) {
             throw new IllegalArgumentException("The map id must be at least 1.");
         }
@@ -379,13 +382,20 @@ public class GameScreen implements Screen, Observer {
      *
      * @param projectile The projectile to add.
      */
-    public static void addProjectile(Projectile projectile) {
+    public void addProjectile(Projectile projectile, boolean receivedFromServer) {
 
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
 
         projectiles.add(projectile);
+		
+		// Check if this projectile has not been received from the server,
+		// to prevent an infinite loop
+		if (!receivedFromServer) {
+			// Send projectile to other players
+			client.sendProjectile(new SimpleProjectile(projectile));
+		}
     }
 
     /**
@@ -393,12 +403,13 @@ public class GameScreen implements Screen, Observer {
      *
      * @param projectile The projectile to remove.
      */
-    public static void removeProjectile(Projectile projectile) {
+    public void removeProjectile(Projectile projectile) {
 
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
-        projectiles.remove(projectile);
+		
+		projectiles.remove(projectile);
     }
 
     /**
@@ -473,18 +484,29 @@ public class GameScreen implements Screen, Observer {
 
             this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
             this.stage.draw();
-
+			
+			// Render projectiles
+			ArrayList projectilesToBeRemoved = new ArrayList();
+			
             for (Projectile p : GameScreen.projectiles) {
                 if (p != null) {
                     if (!p.shouldRemove()) {
-                        p.update();
-                        p.render(this.shape, this.game.camera);
+						
+						// Update and render projectile only if the room IDs match
+						// This should always be the case when projectiles are send
+						// through multiplayer
+						if (p.getRoomID() == this.mainPlayer.getRoomId()) {
+							p.update();
+							p.render(this.shape, this.game.camera);
+						}
                     } else {
-                        p = null;
+						projectilesToBeRemoved.add(p);
                     }
                 }
             }
-
+			
+			// Remove all expired projectiles
+			projectiles.removeAll(projectilesToBeRemoved);
         }
     }
 

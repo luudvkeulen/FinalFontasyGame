@@ -12,9 +12,11 @@
  */
 package com.ffxvi.game.client;
 
+import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.support.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -187,6 +189,11 @@ public class ClientListener implements Runnable {
 	 * @param data the received SimpleProjectile
 	 */
 	private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
-		// TODO Use the received projectile
+		// Convert the SimpleProjectile to a Projectile
+		Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
+				data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName());
+		
+		// Add the projectile to the GameScreen
+		screen.addProjectile(projectile, true);
 	}
 }

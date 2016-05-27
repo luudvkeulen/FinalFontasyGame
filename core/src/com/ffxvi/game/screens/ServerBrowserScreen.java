@@ -29,6 +29,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.serverlist.ServerRetriever;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,7 +81,7 @@ public class ServerBrowserScreen implements Screen {
      * A table used for displaying the server list.
      */
     private Table table;
-
+	
     /**
      * Initializes a new ServerBrowserScreen.
      */
@@ -167,9 +169,9 @@ public class ServerBrowserScreen implements Screen {
      * @throws RemoteException When an (un)expected remote exception occurs.
      */
     private void refreshServers() throws RemoteException {
-        //String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
-
-        //this.servers.setItems(serverAddresses);
+		//String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
+        String[] serverAddresses = new String[]{"Deze", "Shit", "Moet", "Gefixed", "Worden"};
+		this.servers.setItems(serverAddresses);
     }
 
     /**
