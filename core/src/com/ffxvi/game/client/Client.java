@@ -105,30 +105,33 @@ public final class Client {
         this.send("DISCONNECTING");
         this.clientListener.stopListening();
     }
-	
-	/**
-	 * Send a SimplePlayer to the host, only intended to use with mainPlayer
-	 * @param player the SimplePlayer data to be sent
-	 */
-	public void sendPlayer(SimplePlayer player) {
-		if (player != null) {
-			send(player);
-			return;
-		}
-		throw new IllegalArgumentException("SimplePlayer can't be a null value");
-	}
-	
-	/**
-	 * Send a SimpleProjectile to the host, only use this when the projectile is created
-	 * @param projectile the projectile to be sent
-	 */
-	public void sendProjectile(SimpleProjectile projectile) {
-		if (projectile != null) {
-			send(projectile);
-			return;
-		}
-		throw new IllegalArgumentException("SimpleProjectile can't be a null value");
-	}
+
+    /**
+     * Send a SimplePlayer to the host, only intended to use with mainPlayer
+     *
+     * @param player the SimplePlayer data to be sent
+     */
+    public void sendPlayer(SimplePlayer player) {
+        if (player != null) {
+            send(player);
+            return;
+        }
+        throw new IllegalArgumentException("SimplePlayer can't be a null value");
+    }
+
+    /**
+     * Send a SimpleProjectile to the host, only use this when the projectile is
+     * created
+     *
+     * @param projectile the projectile to be sent
+     */
+    public void sendProjectile(SimpleProjectile projectile) {
+        if (projectile != null) {
+            send(projectile);
+            return;
+        }
+        throw new IllegalArgumentException("SimpleProjectile can't be a null value");
+    }
 
     /**
      * Send an Object to the host

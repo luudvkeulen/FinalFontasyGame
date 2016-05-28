@@ -180,7 +180,7 @@ public class GameScreen implements Screen, Observer {
         this.stage = new Stage();
         this.chatManager = new ChatManager();
 
-        this.client = new Client("192.168.1.1", 1338, 1337);
+        this.client = new Client("127.0.0.1", 1338, 1337);
 
         //Setup map stuff
         this.maps = new ArrayList();
@@ -199,7 +199,7 @@ public class GameScreen implements Screen, Observer {
         this.batch = new SpriteBatch();
 
         GameScreen.projectiles = new ArrayList();
-		this.multiplayers = new ArrayList();
+        this.multiplayers = new ArrayList();
 
         this.textfield = new TextField("", skin);
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
@@ -329,7 +329,7 @@ public class GameScreen implements Screen, Observer {
      * @param mapId The id of the map. When smaller than 1, throws an
      * IllegalArgumentException.
      * @param direction the direction in which the mainPlayer is entering.
-	 * @throws IllegalArgumentException
+     * @throws IllegalArgumentException
      */
     public void setLevel(int mapId, Direction direction) throws IllegalArgumentException {
         if (mapId <= 0) {
@@ -381,6 +381,8 @@ public class GameScreen implements Screen, Observer {
      * Adds a projectile to the screen.
      *
      * @param projectile The projectile to add.
+     * @param receivedFromServer True if the projectile was sent by the server, 
+     * false if the projectile was created by this client
      */
     public void addProjectile(Projectile projectile, boolean receivedFromServer) {
 
@@ -389,13 +391,13 @@ public class GameScreen implements Screen, Observer {
         }
 
         projectiles.add(projectile);
-		
-		// Check if this projectile has not been received from the server,
-		// to prevent an infinite loop
-		if (!receivedFromServer) {
-			// Send projectile to other players
-			client.sendProjectile(new SimpleProjectile(projectile));
-		}
+
+        // Check if this projectile has not been received from the server,
+        // to prevent an infinite loop
+        if (!receivedFromServer) {
+            // Send projectile to other players
+            client.sendProjectile(new SimpleProjectile(projectile));
+        }
     }
 
     /**
@@ -408,8 +410,8 @@ public class GameScreen implements Screen, Observer {
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
-		
-		projectiles.remove(projectile);
+
+        projectiles.remove(projectile);
     }
 
     /**
@@ -421,7 +423,7 @@ public class GameScreen implements Screen, Observer {
     @Override
     public void render(float delta) {
         if (this.mainPlayer != null) {
-            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
+//            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
             this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
             this.game.camera.update();
 
@@ -484,29 +486,29 @@ public class GameScreen implements Screen, Observer {
 
             this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
             this.stage.draw();
-			
-			// Render projectiles
-			ArrayList projectilesToBeRemoved = new ArrayList();
-			
+
+            // Render projectiles
+            ArrayList projectilesToBeRemoved = new ArrayList();
+
             for (Projectile p : GameScreen.projectiles) {
                 if (p != null) {
                     if (!p.shouldRemove()) {
-						
-						// Update and render projectile only if the room IDs match
-						// This should always be the case when projectiles are send
-						// through multiplayer
-						if (p.getRoomID() == this.mainPlayer.getRoomId()) {
-							p.update();
-							p.render(this.shape, this.game.camera);
-						}
+
+                        // Update and render projectile only if the room IDs match
+                        // This should always be the case when projectiles are send
+                        // through multiplayer
+                        if (p.getRoomID() == this.mainPlayer.getRoomId()) {
+                            p.update();
+                            p.render(this.shape, this.game.camera);
+                        }
                     } else {
-						projectilesToBeRemoved.add(p);
+                        projectilesToBeRemoved.add(p);
                     }
                 }
             }
-			
-			// Remove all expired projectiles
-			projectiles.removeAll(projectilesToBeRemoved);
+
+            // Remove all expired projectiles
+            projectiles.removeAll(projectilesToBeRemoved);
         }
     }
 
@@ -532,26 +534,26 @@ public class GameScreen implements Screen, Observer {
 
     @Override
     public void resize(int width, int height) {
-        
+
     }
 
     @Override
     public void pause() {
-        
+
     }
 
     @Override
     public void resume() {
-        
+
     }
 
     @Override
     public void hide() {
-        
+
     }
 
     @Override
     public void dispose() {
-        
+
     }
 }

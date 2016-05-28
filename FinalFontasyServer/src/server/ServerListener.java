@@ -155,7 +155,15 @@ public class ServerListener implements Runnable {
 	 * @param data the received Object
 	 */
 	private void receiveObject(DatagramPacket packet, Object data) {
-
+		// If the received data is a String, this might be the client connecting
+		// or disconnecting. If a client is trying to connect, it will obviously
+		// not yet be in the list of connected clients. This is why we handle
+		// received Strings differently from other received Objects. 
+		if (data instanceof String) {
+			receiveString(packet, (String) data);
+			return;
+		}
+		
 		InetSocketAddress validSender = null;
 		for (InetSocketAddress address : server.getPlayerAddresses()) {
 			if (address != null) {
@@ -170,14 +178,16 @@ public class ServerListener implements Runnable {
 			return;
 		}
 
-		if (data instanceof String) {
-			receiveString(packet, (String) data);
-		} else if (data instanceof SimplePlayer) {
+		if (data instanceof SimplePlayer) {
 			server.receivePlayer(validSender, (SimplePlayer) data);
+			return;
 		} else if (data instanceof SimpleProjectile) {
+			System.out.println("Projectile received from " + packet.getSocketAddress().toString());
 			server.receiveProjectile(validSender, (SimpleProjectile) data);
+			return;
 		} else {
 			server.sendSingle("Invalid data received", new InetSocketAddress(packet.getAddress(), 1337));
+			return;
 		}
 	}
 }

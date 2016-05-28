@@ -61,6 +61,7 @@ public class ClientListener implements Runnable {
         this.listening = true;
         this.listenerPort = listenOnPort;
         this.screen = GameScreen.getInstance();
+        System.out.println(screen.getClass().getName());
     }
 
     /**
@@ -120,8 +121,8 @@ public class ClientListener implements Runnable {
                     }
                     break;
                 }
-			} else if (object instanceof SimpleProjectile){
-				this.receiveProjectile(receivePacket, (SimpleProjectile) object);
+            } else if (object instanceof SimpleProjectile) {
+                this.receiveProjectile(receivePacket, (SimpleProjectile) object);
             }
         }
     }
@@ -147,7 +148,7 @@ public class ClientListener implements Runnable {
     private Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream b = new ByteArrayInputStream(bytes);
         ObjectInputStream o = new ObjectInputStream(b);
-        return o.readObject();      
+        return o.readObject();
     }
 
     /**
@@ -181,19 +182,19 @@ public class ClientListener implements Runnable {
         this.screen.addMultiPlayers(data);
     }
 
-	/**
-	 * Treats the received projectile data the way it is supposed to be treated
-	 * by using it in the game
-	 * 
-	 * @param packet the received DatagramPacket
-	 * @param data the received SimpleProjectile
-	 */
-	private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
-		// Convert the SimpleProjectile to a Projectile
-		Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
-				data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName());
-		
-		// Add the projectile to the GameScreen
-		screen.addProjectile(projectile, true);
-	}
+    /**
+     * Treats the received projectile data the way it is supposed to be treated
+     * by using it in the game
+     *
+     * @param packet the received DatagramPacket
+     * @param data the received SimpleProjectile
+     */
+    private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
+        // Convert the SimpleProjectile to a Projectile
+        Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
+                data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName());
+
+        // Add the projectile to the GameScreen
+        screen.addProjectile(projectile, true);
+    }
 }

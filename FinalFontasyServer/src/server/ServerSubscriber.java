@@ -13,7 +13,7 @@ public class ServerSubscriber {
 	private IServerList serverList;
 	
 	private static final int PORT = 420;
-	private static final String IP = "192.168.1.2";
+	private static final String IP = "127.0.0.1";
 	static final String BINDINGNAME = "serverList";
 	
 	public ServerSubscriber() throws IOException {
