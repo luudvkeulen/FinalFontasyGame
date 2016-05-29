@@ -165,13 +165,4 @@ public class SimpleProjectile {
     public int getRoomID() {
         return roomID;
     }
-
-    /**
-     * Get the player name (and owner) of this projectile.
-     *
-     * @return a string containing the player name of this projectile.
-     */
-    public String getPlayerName() {
-        return this.playerName;
-    }
 }

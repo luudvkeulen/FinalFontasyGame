@@ -80,7 +80,7 @@ public class Projectile extends SimpleProjectile {
         this.rotation = rotation;
         this.speed = speed;
         this.canCollide = true;
-        this.despawnDelay = 30;
+        this.despawnDelay = 10;
         this.startTime = System.nanoTime();
     }
 

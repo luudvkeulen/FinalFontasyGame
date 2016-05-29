@@ -198,6 +198,7 @@ public class GameScreen implements Screen, Observer {
         this.batch = new SpriteBatch();
 
         GameScreen.projectiles = new ArrayList();
+        this.multiplayers = new ArrayList();
 
         this.textfield = new TextField("", skin);
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
@@ -328,7 +329,7 @@ public class GameScreen implements Screen, Observer {
      * IllegalArgumentException.
      * @param direction the direction in which the mainPlayer is entering.
      */
-    public void setLevel(int mapId, Direction direction) {
+    public void setLevel(int mapId, Direction direction) throws IllegalArgumentException {
         if (mapId <= 0) {
             throw new IllegalArgumentException("The map id must be at least 1.");
         }
@@ -402,7 +403,7 @@ public class GameScreen implements Screen, Observer {
      *
      * @param projectile The projectile to remove.
      */
-    public static void removeProjectile(Projectile projectile) {
+    public void removeProjectile(Projectile projectile) {
 
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
@@ -483,17 +484,28 @@ public class GameScreen implements Screen, Observer {
             this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
             this.stage.draw();
 
+            // Render projectiles
+            ArrayList projectilesToBeRemoved = new ArrayList();
+
             for (Projectile p : GameScreen.projectiles) {
                 if (p != null) {
                     if (!p.shouldRemove()) {
-                        p.update();
-                        p.render(this.shape, this.game.camera);
+
+                        // Update and render projectile only if the room IDs match
+                        // This should always be the case when projectiles are send
+                        // through multiplayer
+                        if (p.getRoomID() == this.mainPlayer.getRoomId()) {
+                            p.update();
+                            p.render(this.shape, this.game.camera);
+                        }
                     } else {
-                        p = null;
+                        projectilesToBeRemoved.add(p);
                     }
                 }
             }
 
+            // Remove all expired projectiles
+            projectiles.removeAll(projectilesToBeRemoved);
         }
     }
 
