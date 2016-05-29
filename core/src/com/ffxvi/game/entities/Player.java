@@ -139,6 +139,7 @@ public class Player extends SimplePlayer implements Observable {
      * String (excluding spaces).
      * @param position The position of this player.
      * @param roomId The id of the room where the player is in.
+     * @param screen the GameScreen that this Player is in. Used to create projectiles
      */
     public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
         super(playerName, position.getX(), position.getY(), roomId, character);

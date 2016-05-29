@@ -63,7 +63,7 @@ public class Projectile extends SimpleProjectile {
      * @param rotation The rotation of the projectile. When not at least 0 or
      * smaller than 360, throw an IllegalArgumentException.
      * @param roomID The id of the room which this projectile exists in. When
-     * not > 0, throw an IllegalArgumentException.
+     * not greater than 0, throw an IllegalArgumentException.
      * @param playerName The name of the player which fired the bullet. When an
      * empty String (excluding spaces), throw an IllegalArgumentException.
      * @param screen The screen of the player which fired the bullet. When null,

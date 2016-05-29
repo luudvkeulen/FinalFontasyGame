@@ -158,7 +158,7 @@ public class PreGameScreen implements Screen {
      * Is executed each time the screen is drawn. Contains all drawing logic for
      * this screen.
      *
-     * @param delta
+     * @param delta the time between the last and current use of this method
      */
     @Override
     public void render(float delta) {

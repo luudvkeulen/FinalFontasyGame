@@ -49,6 +49,7 @@ public final class Client {
      * @param hostIP the IP address that the client will connect with
      * @param hostPort the port on the host that the client will connect with
      * @param listenerPort the port that the client will be listening on
+     * @param screen the GameScreen that uses this client
      */
     public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen) {
 

@@ -39,10 +39,10 @@ public class OptionsScreen implements Screen {
      * Is executed each time this screen is redrawn. ALl logic regarding drawing
      * is executed here.
      *
-     * @param f
+     * @param delta the time between the last and current use of this method
      */
     @Override
-    public void render(float f) {
+    public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.getScreen().dispose();
             game.setScreen(new MenuScreen());

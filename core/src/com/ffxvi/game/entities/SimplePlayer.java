@@ -88,8 +88,8 @@ public class SimplePlayer implements Serializable {
      * IllegalArgumentException.
      * @param posY The Y-position of the player. If negative, throw an
      * IllegalArgumentException.
-     * @param roomID The room ID of where the player is in. If not >= 1, throw
-     * an IllegalArgumentException.
+     * @param roomID The room ID of the room that the player is in. If not
+     * greater than 0, throw an IllegalArgumentException.
      * @param skin The skin of the player.
      *
      * @throws IllegalArgumentException when the playername is null or empty.

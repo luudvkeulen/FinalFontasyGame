@@ -330,7 +330,8 @@ public class GameScreen implements Screen, Observer {
      * @param mapId The id of the map. When smaller than 1, throws an
      * IllegalArgumentException.
      * @param direction the direction in which the mainPlayer is entering.
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException when the mapId is lower than 1 or when
+     * the direction is a null value
      */
     public void setLevel(int mapId, Direction direction) throws IllegalArgumentException {
         if (mapId <= 0) {

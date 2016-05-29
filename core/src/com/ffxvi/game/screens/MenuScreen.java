@@ -155,10 +155,10 @@ public class MenuScreen implements Screen {
      * Is executed when the menu screen is redrawn. All drawing logic for menu
      * screen is handled here.
      *
-     * @param f
+     * @param delta the time between the last and current use of this method
      */
     @Override
-    public void render(float f) {
+    public void render(float delta) {
         // Draw background color
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
