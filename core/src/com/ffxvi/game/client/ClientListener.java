@@ -12,8 +12,11 @@
  */
 package com.ffxvi.game.client;
 
+import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
+import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.support.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -117,8 +120,8 @@ public class ClientListener implements Runnable {
                     }
                     break;
                 }
-//			} else if (object instanceof SimpleProjectile){
-                // TODO need SimpleProjectile class
+            } else if (object instanceof SimpleProjectile){
+                this.receiveProjectile(receivePacket, (SimpleProjectile) object);
             }
         }
     }
@@ -175,7 +178,22 @@ public class ClientListener implements Runnable {
      */
     private void receivePlayers(DatagramPacket packet, Collection<SimplePlayer> data) {
         // System.out.println(String.format("RECEIVED DATA FROM %1$s PLAYERS", data.size()));
-        // TODO actually use the received data
         this.screen.addMultiPlayers(data);
+    }
+
+    /**
+     * Treats the received projectile data the way it is supposed to be treated
+     * by using it in the game
+     *
+     * @param packet the received DatagramPacket
+     * @param data the received SimpleProjectile
+     */
+    private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
+        // Convert the SimpleProjectile to a Projectile
+        Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
+                data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName());
+
+        // Add the projectile to the GameScreen
+        screen.addProjectile(projectile, true);
     }
 }

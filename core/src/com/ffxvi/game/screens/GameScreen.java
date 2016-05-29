@@ -32,6 +32,7 @@ import com.ffxvi.game.entities.Player;
 import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
+import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
@@ -285,7 +286,7 @@ public class GameScreen implements Screen, Observer {
 
         this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.map.getId());
         this.mainPlayer.setPosition(64, 64);
-        this.client.send(new SimplePlayer(this.mainPlayer));
+        this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 
         this.playerLabel1.setText(playerName);
         this.playerLabel2.setText(playerName);
@@ -377,14 +378,23 @@ public class GameScreen implements Screen, Observer {
      * Adds a projectile to the screen.
      *
      * @param projectile The projectile to add.
+     * @param receivedFromServer True if the projectile was sent by the server, 
+     * false if the projectile was created by this client
      */
-    public static void addProjectile(Projectile projectile) {
+    public void addProjectile(Projectile projectile, boolean receivedFromServer) {
 
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
 
         projectiles.add(projectile);
+
+        // Check if this projectile has not been received from the server,
+        // to prevent an infinite loop
+        if (!receivedFromServer) {
+            // Send projectile to other players
+            client.sendProjectile(new SimpleProjectile(projectile));
+        }
     }
 
     /**
@@ -409,7 +419,7 @@ public class GameScreen implements Screen, Observer {
     @Override
     public void render(float delta) {
         if (this.mainPlayer != null) {
-            this.client.send(new SimplePlayer(this.mainPlayer));
+            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
             this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
             this.game.camera.update();
 

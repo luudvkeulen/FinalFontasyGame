@@ -513,9 +513,9 @@ public class Player extends SimplePlayer implements Observable {
             this.shootStart = System.nanoTime();
 
             // Create a bullet inside the player with the direction and speed
-            GameScreen.addProjectile(new Projectile(new Vector(this.x
+            screen.addProjectile(new Projectile(new Vector(this.x
                     + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
-                    30, this.aimDirection, this.roomId, this.playerName));
+                    30, this.aimDirection, this.roomId, this.playerName), false);
         }
     }
 

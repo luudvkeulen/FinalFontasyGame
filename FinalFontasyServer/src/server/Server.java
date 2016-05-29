@@ -6,6 +6,7 @@
 package server;
 
 import com.ffxvi.game.entities.SimplePlayer;
+import com.ffxvi.game.entities.SimpleProjectile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -237,5 +238,9 @@ public class Server {
 	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer player){
 		playerData.put(playerAddress, player);
 //		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+	}
+
+	public void receiveProjectile(InetSocketAddress validSender, SimpleProjectile simpleProjectile) {
+		sendAll(simpleProjectile, validSender.getAddress());
 	}
 }
