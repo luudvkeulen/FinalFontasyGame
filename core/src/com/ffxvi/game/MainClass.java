@@ -32,6 +32,11 @@ public class MainClass extends Game implements ApplicationListener {
     private static final MainClass MAINCLASS = new MainClass();
 
     /**
+     * The ip address of the selected string in serverBrowser
+     */
+    public static String selectedServer;
+    
+    /**
      * An int containing the width of the screen.
      */
     public int WIDTH;

@@ -131,6 +131,8 @@ public class ServerBrowserScreen implements Screen {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                System.out.println(servers.getSelected());
+                game.selectedServer = servers.getSelected().toString();
                 game.getScreen().dispose();
                 game.setScreen(new PreGameScreen());
             }
