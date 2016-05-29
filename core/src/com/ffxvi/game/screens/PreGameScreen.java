@@ -87,6 +87,7 @@ public class PreGameScreen implements Screen {
         this.label = new Label("Voer een naam in:", skin);
         this.layout.setText(skin.getFont("default"), this.label.getText());
         this.label.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
+        
         // Add the label to the stage
         this.stage.addActor(this.label);
 
@@ -102,12 +103,12 @@ public class PreGameScreen implements Screen {
         });
 
         // Add the button to the stage
-        stage.addActor(enterAsSkeletonDaggerButton);
+        this.stage.addActor(enterAsSkeletonDaggerButton);
 
         // Create new button
         TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", skin);
         enterAsSkeletonHoodedBowButton.setSize(200, 50);
-        enterAsSkeletonHoodedBowButton.setPosition((stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
+        enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
         enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -118,12 +119,12 @@ public class PreGameScreen implements Screen {
         enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
 
         // Add the button to the stage
-        stage.addActor(enterAsSkeletonHoodedBowButton);
+        this.stage.addActor(enterAsSkeletonHoodedBowButton);
 
         // Create new button
         TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", skin);
         enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
-        enterAsSkeletonHoodedDaggerButton.setPosition((stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
+        enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
         enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -132,7 +133,7 @@ public class PreGameScreen implements Screen {
         });
 
         // Add the button to the stage
-        stage.addActor(enterAsSkeletonHoodedDaggerButton);
+        this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
     }
 
     /**
@@ -146,10 +147,10 @@ public class PreGameScreen implements Screen {
             throw new IllegalArgumentException("Character can not be null.");
         }
 
-        game.getScreen().dispose();
+        this.game.getScreen().dispose();
         GameScreen gameScreen = GameScreen.getInstance();
-        gameScreen.addPlayer(txtUsername.getText(), character);
-        game.setScreen(gameScreen);
+        gameScreen.addPlayer(this.txtUsername.getText(), character);
+        this.game.setScreen(gameScreen);
     }
     
     /**
@@ -164,8 +165,8 @@ public class PreGameScreen implements Screen {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        stage.draw();
+        this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        this.stage.draw();
     }
 
     @Override

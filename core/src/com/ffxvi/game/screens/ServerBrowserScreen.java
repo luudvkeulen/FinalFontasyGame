@@ -148,11 +148,11 @@ public class ServerBrowserScreen implements Screen {
 
         this.scrollPane = new ScrollPane(servers, this.skin);
 
-        table = new Table(this.skin);
+        this.table = new Table(this.skin);
         this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.scrollPane.setSmoothScrolling(false);
         this.table.add(this.scrollPane).size(800, 600);
-        table.debug();
+        this.table.debug();
 
         this.stage.addActor(this.table);
 
