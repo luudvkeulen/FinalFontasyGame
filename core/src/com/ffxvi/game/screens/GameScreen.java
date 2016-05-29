@@ -176,13 +176,12 @@ public class GameScreen implements Screen, Observer {
         this.chatManager = new ChatManager();
 
         if(!game.selectedIp.equals("")) {
-            this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":") - 1), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);
+            this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":")), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);
         } else {
             this.client = null;
             System.out.println("Error no ip selected");
         }
         
-        //this.client = new Client("127.0.0.1", 1338, 1337, this);
 
         //Setup map stuff
         this.maps = new ArrayList();
