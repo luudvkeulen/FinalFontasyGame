@@ -70,7 +70,7 @@ public class ServerBrowserScreen implements Screen {
     /**
      * A list of servers which the user can connect to.
      */
-    private List servers;
+    private List<String> servers;
 
     /**
      * A scrollpane GUI control.
@@ -82,6 +82,11 @@ public class ServerBrowserScreen implements Screen {
      */
     private Table table;
 	
+    /**
+     * The serverretriever for getting the server list
+     */
+    private ServerRetriever serverRetriever;
+    
     /**
      * Initializes a new ServerBrowserScreen.
      */
@@ -135,16 +140,16 @@ public class ServerBrowserScreen implements Screen {
         });
         this.stage.addActor(playButton);
 
-        /* Draw server overview */
- /*try {
-			this.serverRetriever = new ServerRetriever();
-		} catch (IOException ex) {
-			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
-		}*/
+        /* Connect to the RMI Server */       
+        try {
+            this.serverRetriever = new ServerRetriever();
+        } catch (IOException ex) {
+            Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.servers = new List(skin);
         servers.getSelection().setMultiple(true);
         servers.getSelection().setRequired(false);
-        this.servers.setItems((Object) new String[]{});
+        this.servers.setItems(new String[]{});
 
         this.scrollPane = new ScrollPane(servers, this.skin);
 
@@ -152,7 +157,7 @@ public class ServerBrowserScreen implements Screen {
         this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.scrollPane.setSmoothScrolling(false);
         this.table.add(this.scrollPane).size(800, 600);
-        this.table.debug();
+        //this.table.debug(); //Deze laat lijnen rondom de serverlist zien voor te debuggen
 
         this.stage.addActor(this.table);
 
@@ -169,9 +174,8 @@ public class ServerBrowserScreen implements Screen {
      * @throws RemoteException When an (un)expected remote exception occurs.
      */
     private void refreshServers() throws RemoteException {
-		//String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
-        String[] serverAddresses = new String[]{"Deze", "Shit", "Moet", "Gefixed", "Worden"};
-		this.servers.setItems(serverAddresses);
+        String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
+	this.servers.setItems(serverAddresses);
     }
 
     /**

@@ -192,7 +192,7 @@ public class ClientListener implements Runnable {
     private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
         // Convert the SimpleProjectile to a Projectile
         Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
-                data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName());
+                data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName(), this.screen);
 
         // Add the projectile to the GameScreen
         screen.addProjectile(projectile, true);

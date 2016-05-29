@@ -377,7 +377,6 @@ public class Player extends SimplePlayer implements Observable {
         }
 
         this.score = score;
-
     }
 
     /**
@@ -387,6 +386,35 @@ public class Player extends SimplePlayer implements Observable {
      */
     public int getHitPoints() {
         return this.hitPoints;
+    }
+    
+    /**
+     * Deals damage to the player.
+     * 
+     * @param amount The amount of damage.
+     */
+    public void dealDamage(int amount) {
+        this.hitPoints -= amount;
+        
+        if (this.hitPoints < 0) {
+            this.die();
+        }
+    }
+    
+    /**
+     * Gets the collision rectangle of this player.
+     * 
+     * @return The collision rectangle of this player.
+     */
+    public Rectangle getRectangle() {
+        return new Rectangle(this.x, this.y, this.modifiedGridSizeX, this.modifiedGridSizeY);
+    }
+    
+    /**
+     * Lets the player die.
+     */
+    public void die() {
+        // player dies
     }
 
     /**
@@ -526,7 +554,7 @@ public class Player extends SimplePlayer implements Observable {
             // Create a bullet inside the player with the direction and speed
             screen.addProjectile(new Projectile(new Vector(this.x
                     + (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
-                    30, this.aimDirection, this.roomId, this.playerName), false);
+                    30, this.aimDirection, this.roomId, this.playerName, this.screen), false);
         }
     }
 

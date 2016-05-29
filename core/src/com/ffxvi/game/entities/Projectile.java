@@ -20,6 +20,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -47,6 +48,11 @@ public class Projectile extends SimpleProjectile {
      * A boolean indicating if the projectile can collide.
      */
     private boolean canCollide;
+    
+    /**
+     * A GameScreen object.
+     */
+    private GameScreen screen;
 
     /**
      * Initializes a new projectile object.
@@ -60,8 +66,10 @@ public class Projectile extends SimpleProjectile {
      * not > 0, throw an IllegalArgumentException.
      * @param playerName The name of the player which fired the bullet. When an
      * empty String (excluding spaces), throw an IllegalArgumentException.
+     * @param screen The screen of the player which fired the bullet. When null,
+     * throw an IllegalArgumentException.
      */
-    public Projectile(Vector position, float speed, float rotation, int roomID, String playerName) {
+    public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameScreen screen) {
         super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
 
         if (rotation < 0 || rotation >= 360) {
@@ -75,10 +83,15 @@ public class Projectile extends SimpleProjectile {
         if (playerName == null || playerName.trim().isEmpty()) {
             throw new IllegalArgumentException("The playername can neither be null nor an empty String (excluding spaces).");
         }
+        
+        if (screen == null) {
+            throw new IllegalArgumentException("The screen can't be null.");
+        }
 
         this.position = position;
         this.rotation = rotation;
         this.speed = speed;
+        this.screen = screen;
         this.canCollide = true;
         this.despawnDelay = 10;
         this.startTime = System.nanoTime();
@@ -88,19 +101,35 @@ public class Projectile extends SimpleProjectile {
      * Updates the position of this projectile when it still hasn't despawned.
      */
     public void update() {
-        /* Only run this event when the bullet can still exist */
+        // Only run this event when the bullet can still exist
         if (!this.shouldRemove()) {
-            /* Update the coordinates based on the bullet speed and direction */
+            // Update the coordinates based on the bullet speed and direction
             this.position.setX(this.position.getX() + (this.speed * (float) Math.cos(this.rotation * Math.PI / 180)));
             this.position.setY(this.position.getY() + (this.speed * (float) Math.sin(this.rotation * Math.PI / 180)));
 
-            /* Only check collisions if the bullet is allowed to collide */
+            // Only check collisions if the bullet is allowed to collide
             if (this.canCollide) {
                 Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 10, 10);
-                //boolean collision = checkCollision(rec, GameScreen.wallObjects);
-                boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
-                /* If to check if there's a collision */
-                if (collision) {
+                
+                // Check collision with players
+                Player collisionPlayer = this.checkPlayerCollision(rec, screen.getMultiPlayers());
+                
+                if (collisionPlayer != null) {
+                    this.canCollide = false;
+                    this.despawnDelay = 0;
+                    this.speed = 0;
+                    
+                    collisionPlayer.dealDamage(10); //this.damage);
+                    
+                    // Return, as the bullet should be removed and should no
+                    // longer be checked for collision with walls
+                    return;
+                }
+                
+                // Check collision with walls
+                boolean collisionWall = checkWallCollision(rec, GameScreen.getCurrentMap().getWallObjects());
+                
+                if (collisionWall) {
                     this.position.setX(this.position.getX() - (this.speed * (float) Math.cos(this.rotation * Math.PI / 180)));
                     this.position.setY(this.position.getY() - (this.speed * (float) Math.sin(this.rotation * Math.PI / 180)));
                     this.canCollide = false;
@@ -138,7 +167,7 @@ public class Projectile extends SimpleProjectile {
      * @param objects The objects to check for collision with.
      * @return 
      */
-    private boolean checkCollision(Rectangle rec, MapObjects objects) {
+    private boolean checkWallCollision(Rectangle rec, MapObjects objects) {
         for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
             Rectangle rectangleMapObject = mapObject.getRectangle();
             if (rec.overlaps(rectangleMapObject)) {
@@ -146,6 +175,25 @@ public class Projectile extends SimpleProjectile {
             }
         }
         return false;
+    }
+    
+    private Player checkPlayerCollision(Rectangle rec, Collection<SimplePlayer> players) {
+        for (SimplePlayer splayer : players) {
+            // Convert the SimplePlayer to a Player
+            Player player = new Player(splayer, this.screen);
+            
+            // Get rectangle of this player
+            Rectangle playerRectangle = player.getRectangle();
+            
+            // Check if the rectangles overlap
+            if (rec.overlaps(playerRectangle)) {
+                // Return the player object if it has collision
+                return player;
+            }
+        }
+        
+        // Return null if no collision has been found
+        return null;
     }
 
     /**
@@ -182,12 +230,10 @@ public class Projectile extends SimpleProjectile {
      * room, keeps the position at nearest border of the room.
      */
     public void updatePosition() {
-
         float newX = (float) (this.position.getX() + Math.cos(this.rotation) * this.speed);
         float newY = (float) (this.position.getY() + Math.sin(this.rotation) * this.speed);
 
         this.position = new Vector(newX, newY);
-
     }
 
     @Override

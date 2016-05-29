@@ -40,6 +40,7 @@ import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -296,6 +297,15 @@ public class GameScreen implements Screen, Observer {
         }
 
         this.multiplayers = (List<SimplePlayer>) multiplayers;
+    }
+    
+    /**
+     * Gets a list with the currently connected players.
+     * 
+     * @return The currently connected players.
+     */
+    public Collection<SimplePlayer> getMultiPlayers() {
+        return Collections.unmodifiableCollection(this.multiplayers);
     }
 
     /**
