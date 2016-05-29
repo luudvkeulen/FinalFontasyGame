@@ -508,27 +508,17 @@ public class GameScreen implements Screen, Observer {
     }
 
     @Override
-    public void resize(int width, int height) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void resize(int width, int height) {}
 
     @Override
-    public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void hide() {}
 
     @Override
-    public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void dispose() {}
 }

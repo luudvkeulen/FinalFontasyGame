@@ -170,7 +170,7 @@ public class MenuScreen implements Screen {
         this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         this.stage.draw();
     }
-    
+
     /**
      * Hides this screen.
      */
@@ -180,28 +180,18 @@ public class MenuScreen implements Screen {
     }
 
     @Override
-    public void show() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void show() {}
 
     @Override
-    public void resize(int width, int height) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void resize(int width, int height) {}
 
     @Override
-    public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void resume() {}
 
     @Override
-    public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void dispose() {}
 
 }
