@@ -76,7 +76,7 @@ public class PreGameScreen implements Screen {
         skin.add("default", bfont);
 
         // Create textfield
-        this.txtUsername = new TextField("Pepe", skin);
+        this.txtUsername = new TextField("Papyrus", skin);
         this.txtUsername.setSize(200, 40);
         this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 25);
 
