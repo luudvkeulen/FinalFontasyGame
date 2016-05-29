@@ -177,7 +177,9 @@ public class Server {
 	/**
 	 * Send a message to all connected players except for the sender
 	 *
-	 * @param message the message to send
+	 * @param object the Object to send
+	 * @param sender the IP address of the sender. This is used to prevent
+	 * sending a client's data back to itself
 	 */
 	public void sendAll(Object object, InetAddress sender) {
 		for (InetSocketAddress targetIP : players) {
