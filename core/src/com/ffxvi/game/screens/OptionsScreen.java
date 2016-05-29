@@ -44,6 +44,7 @@ public class OptionsScreen implements Screen {
     @Override
     public void render(float f) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.getScreen().dispose();
             game.setScreen(new MenuScreen());
             return;
         }

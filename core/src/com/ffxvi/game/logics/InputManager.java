@@ -19,6 +19,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Player;
+import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.util.Observable;
@@ -36,19 +37,19 @@ public class InputManager extends Observable {
      */
     private static final float DEADZONE = 0.3f;
     /**
-     * The int that the library needs to identifiy which axis it is
+     * The int that the library needs to identify which axis it is
      */
     private static final int LEFT_AXIS_X = 1;
     /**
-     * The int that the library needs to identifiy which axis it is
+     * The int that the library needs to identify which axis it is
      */
     private static final int LEFT_AXIS_Y = 0;
     /**
-     * The int that the library needs to identifiy which axis it is
+     * The int that the library needs to identify which axis it is
      */
     private static final int RIGHT_AXIS_X = 3;
     /**
-     * The int that the library needs to identifiy which axis it is
+     * The int that the library needs to identify which axis it is
      */
     private static final int RIGHT_AXIS_Y = 2;
     /**
@@ -66,7 +67,7 @@ public class InputManager extends Observable {
     private final Player mainPlayer;
 
     /**
-     * The Contructor which is used to create an inputManager
+     * The Constructor which is used to create an inputManager
      *
      * @param mainPlayer The player which needs to be moved by this inputManager.
      */
@@ -96,7 +97,7 @@ public class InputManager extends Observable {
     }
 
     /**
-     * Checks if the enter key is pressed. which in turn notifys the observers
+     * Checks if the enter key is pressed. which in turn notifies the observers
      */
     public void checkHUDInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -117,6 +118,7 @@ public class InputManager extends Observable {
     public boolean checkKeyboardInput() {
         boolean returnValue = false;
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.getScreen().dispose();
             game.setScreen(new MenuScreen());
             return returnValue;
         }

@@ -71,7 +71,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * The code for this client.
      */
-    private final Client client;
+    public final Client client;
 
     //Map related
     /**
@@ -540,6 +540,6 @@ public class GameScreen implements Screen, Observer {
 
     @Override
     public void dispose() {
-
+        client.stop();
     }
 }

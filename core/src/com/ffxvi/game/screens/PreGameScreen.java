@@ -13,6 +13,7 @@
 package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -161,6 +162,13 @@ public class PreGameScreen implements Screen {
      */
     @Override
     public void render(float delta) {
+        
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.getScreen().dispose();
+            this.game.setScreen(new MenuScreen());
+            return;
+        }
+        
         // Draw background color
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);

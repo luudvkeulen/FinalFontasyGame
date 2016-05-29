@@ -183,6 +183,7 @@ public class ServerBrowserScreen implements Screen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.getScreen().dispose();
             this.game.setScreen(new MenuScreen());
             return;
         }

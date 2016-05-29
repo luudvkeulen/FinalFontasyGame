@@ -573,6 +573,8 @@ public class Player extends SimplePlayer implements Observable {
                 y -= this.speed;
                 break;
         }
+        screen.client.sendPlayer(new SimplePlayer(this));
+//        System.out.println("Sending SimplePlayer data");
     }
 
     /**

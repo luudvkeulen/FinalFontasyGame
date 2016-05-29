@@ -133,6 +133,7 @@ public class MenuScreen implements Screen {
         optionsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.getScreen().dispose();
                 game.setScreen(new OptionsScreen());
             }
         });
