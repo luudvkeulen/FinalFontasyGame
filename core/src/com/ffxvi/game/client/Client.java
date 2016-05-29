@@ -50,13 +50,13 @@ public final class Client {
      * @param hostPort the port on the host that the client will connect with
      * @param listenerPort the port that the client will be listening on
      */
-    public Client(String hostIP, int hostPort, int listenerPort) {
+    public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen) {
 
         // Set the host to send data to
         this.hostAddress = new InetSocketAddress(hostIP, hostPort);
         this.send("CONNECTING");
         // Set the port to receive data on
-        this.clientListener = new ClientListener(listenerPort);
+        this.clientListener = new ClientListener(listenerPort, screen);
         Thread listenerThread = new Thread(this.clientListener);
         listenerThread.start();
     }

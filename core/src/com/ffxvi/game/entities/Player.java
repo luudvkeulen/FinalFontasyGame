@@ -140,7 +140,7 @@ public class Player extends SimplePlayer implements Observable {
      * @param position The position of this player.
      * @param roomId The id of the room where the player is in.
      */
-    public Player(PlayerCharacter character, String playerName, Vector position, int roomId) {
+    public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
         super(playerName, position.getX(), position.getY(), roomId, character);
 
         if (character == null) {
@@ -151,10 +151,14 @@ public class Player extends SimplePlayer implements Observable {
             throw new IllegalArgumentException(
                     "Character can neither be null nor an empty String.");
         }
+        
+        if (screen == null) {
+            throw new IllegalArgumentException("Screen can not be null.");
+        }
 
         this.x = position.getX();
         this.y = position.getY();
-        this.screen = GameScreen.getInstance();
+        this.screen = screen;
 
         this.aimDirection = 0;
         this.animationSpeed = 0.05f;
@@ -543,11 +547,11 @@ public class Player extends SimplePlayer implements Observable {
 
         this.setCurrentWalkingAnimation();
 
-        if (!this.checkCollision(this.getCollisionBox(), GameScreen.getInstance().getCurrentMap().getWallObjects(), GameScreen.getInstance().getCurrentMap().getObjects())) {
+        if (!this.checkCollision(this.getCollisionBox(), screen.getCurrentMap().getWallObjects(), screen.getCurrentMap().getObjects())) {
             this.move();
         }
 
-        this.checkDoorCollision(this.getCollisionBox(), GameScreen.getInstance().getCurrentMap().getDoors());
+        this.checkDoorCollision(this.getCollisionBox(), screen.getCurrentMap().getDoors());
     }
 
     /**

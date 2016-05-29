@@ -98,7 +98,7 @@ public class Projectile extends SimpleProjectile {
             if (this.canCollide) {
                 Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 10, 10);
                 //boolean collision = checkCollision(rec, GameScreen.wallObjects);
-                boolean collision = checkCollision(rec, GameScreen.getInstance().getCurrentMap().getWallObjects());
+                boolean collision = checkCollision(rec, GameScreen.getCurrentMap().getWallObjects());
                 /* If to check if there's a collision */
                 if (collision) {
                     this.position.setX(this.position.getX() - (this.speed * (float) Math.cos(this.rotation * Math.PI / 180)));
