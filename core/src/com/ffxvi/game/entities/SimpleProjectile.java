@@ -12,11 +12,13 @@
  */
 package com.ffxvi.game.entities;
 
+import java.io.Serializable;
+
 /**
  * Simple projectile used for cross-component communication.
  *
  */
-public class SimpleProjectile {
+public class SimpleProjectile implements Serializable {
 
     /**
      * The rotation of the projectile.
