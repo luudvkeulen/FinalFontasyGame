@@ -41,7 +41,6 @@ import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -176,7 +175,14 @@ public class GameScreen implements Screen, Observer {
         this.stage = new Stage();
         this.chatManager = new ChatManager();
 
-        this.client = new Client("127.0.0.1", 1338, 1337, this);
+        if(!game.selectedIp.equals("")) {
+            this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":") - 1), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);
+        } else {
+            this.client = null;
+            System.out.println("Error no ip selected");
+        }
+        
+        //this.client = new Client("127.0.0.1", 1338, 1337, this);
 
         //Setup map stuff
         this.maps = new ArrayList();

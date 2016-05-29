@@ -62,6 +62,11 @@ public class MainClass extends Game implements ApplicationListener {
     private PreGameScreen preGameScreen;
 
     /**
+     * The selected ip from serverbrowser
+     */
+    public String selectedIp;
+    
+    /**
      * Private constructor for singleton.
      */
     private MainClass() {
