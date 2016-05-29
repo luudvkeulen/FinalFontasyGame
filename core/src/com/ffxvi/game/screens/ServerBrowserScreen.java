@@ -29,6 +29,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.serverlist.ServerRetriever;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -80,6 +82,8 @@ public class ServerBrowserScreen implements Screen {
      */
     private Table table;
 
+    
+    private ServerRetriever serverRetriever;
     /**
      * Initializes a new ServerBrowserScreen.
      */
@@ -134,11 +138,11 @@ public class ServerBrowserScreen implements Screen {
         this.stage.addActor(playButton);
 
         /* Draw server overview */
- /*try {
-			this.serverRetriever = new ServerRetriever();
-		} catch (IOException ex) {
-			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
-		}*/
+        try {
+            this.serverRetriever = new ServerRetriever();
+                    } catch (IOException ex) {
+                            Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    }
         this.servers = new List(skin);
         servers.getSelection().setMultiple(true);
         servers.getSelection().setRequired(false);
@@ -167,9 +171,9 @@ public class ServerBrowserScreen implements Screen {
      * @throws RemoteException When an (un)expected remote exception occurs.
      */
     private void refreshServers() throws RemoteException {
-        //String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
+        String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
 
-        //this.servers.setItems(serverAddresses);
+        this.servers.setItems(serverAddresses);
     }
 
     /**
