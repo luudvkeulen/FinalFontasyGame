@@ -52,11 +52,6 @@ import java.util.Random;
 public class GameScreen implements Screen, Observer {
 
     /**
-     * Holds the current instance of GameScreen.
-     */
-    private static final GameScreen GAMESCREEN = new GameScreen();
-
-    /**
      * The main class for the game.
      */
     private final MainClass game;
@@ -86,7 +81,7 @@ public class GameScreen implements Screen, Observer {
     /**
      * The map of this screen.
      */
-    private Map map;
+    private static Map map;
 
     /**
      * A list of all the maps in the game.
@@ -174,12 +169,12 @@ public class GameScreen implements Screen, Observer {
     /**
      * Initializes a new GameScreen.
      */
-    private GameScreen() {
+    public GameScreen() {
         this.game = MainClass.getInstance();
         this.stage = new Stage();
         this.chatManager = new ChatManager();
 
-        this.client = new Client("localhost", 1338, 1337);
+        this.client = new Client("localhost", 1338, 1337, this);
 
         //Setup map stuff
         this.maps = new ArrayList();
@@ -239,17 +234,8 @@ public class GameScreen implements Screen, Observer {
      *
      * @return The current map.
      */
-    public Map getCurrentMap() {
-        return this.map;
-    }
-
-    /**
-     * Gets the current instance of this class.
-     *
-     * @return The current instance of this class.
-     */
-    public static GameScreen getInstance() {
-        return GAMESCREEN;
+    public static Map getCurrentMap() {
+        return map;
     }
 
     /**
@@ -283,9 +269,9 @@ public class GameScreen implements Screen, Observer {
         }
 
         int idx = new Random().nextInt(this.maps.size());
-        GameScreen.getInstance().map = this.maps.get(idx);
+        map = maps.get(idx);
 
-        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.map.getId());
+        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, this.map.getId());
         this.mainPlayer.setPosition(64, 64);
         this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 

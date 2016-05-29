@@ -57,10 +57,10 @@ public class ClientListener implements Runnable {
      *
      * @param listenOnPort the port that the client will use for listening
      */
-    public ClientListener(int listenOnPort) {
+    public ClientListener(int listenOnPort, GameScreen screen) {
         this.listening = true;
         this.listenerPort = listenOnPort;
-        this.screen = GameScreen.getInstance();
+        this.screen = screen;
     }
 
     /**

@@ -147,7 +147,7 @@ public class PreGameScreen implements Screen {
         }
 
         game.getScreen().dispose();
-        GameScreen gameScreen = GameScreen.getInstance();
+        GameScreen gameScreen = new GameScreen();
         gameScreen.addPlayer(txtUsername.getText(), character);
         game.setScreen(gameScreen);
     }

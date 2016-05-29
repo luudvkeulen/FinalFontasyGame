@@ -85,7 +85,7 @@ public class MainClass extends Game implements ApplicationListener {
      * Sets the game screen.
      */
     public void setGameScreen() {
-        gameScreen = GameScreen.getInstance();
+        gameScreen = new GameScreen();
         setScreen(gameScreen);
     }
 
