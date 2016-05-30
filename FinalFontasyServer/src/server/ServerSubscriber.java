@@ -17,6 +17,14 @@ public class ServerSubscriber {
 	static final String BINDINGNAME = "serverList";
 	
 	public ServerSubscriber() throws IOException {
+		Runtime.getRuntime().addShutdownHook(
+		new Thread("app-shutdown-hook") {
+			@Override 
+			public void run() { 
+			  System.out.println("bye"); 
+			}
+		});
+		
 		//Try to get the registry
 		try {
 			registry = LocateRegistry.getRegistry(IP, PORT);
