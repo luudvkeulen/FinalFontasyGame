@@ -256,6 +256,18 @@ public class Server {
 	}
 
 	public void receiveProjectile(InetSocketAddress validSender, SimpleProjectile simpleProjectile) {
-		sendAll(simpleProjectile, validSender.getAddress());
+		for (InetSocketAddress address : players) {
+			if (address != null) {
+				if (!address.equals(validSender)){
+					SimplePlayer sPlayer = playerData.get(address);
+					if (sPlayer != null) {
+						if (sPlayer.getRoomId() == simpleProjectile.getRoomID()){
+							sendSingle(simpleProjectile, address);
+						}
+					}
+				}
+			}
+		}
+//		sendAll(simpleProjectile, validSender.getAddress());
 	}
 }
