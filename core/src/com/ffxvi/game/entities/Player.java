@@ -413,7 +413,6 @@ public class Player extends SimplePlayer implements Observable {
      */
     public void die() {
         // Set dialog message
-        System.out.println("In player die() method");
         screen.setDialogMessage("You died!");
         
         // Wait for X time

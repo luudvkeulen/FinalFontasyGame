@@ -111,19 +111,22 @@ public class Projectile extends SimpleProjectile {
             if (this.canCollide) {
                 Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 1, 1);
                 
-                // Check collision with players
-                boolean collisionPlayer = this.checkPlayerCollision(rec, screen.getMainPlayer());
+                // Check collision with player if the player's name is not equal
+                // to the owner's name of the projectile
+                if (!this.playerName.equals(screen.getMainPlayer().getName())) {
+                    boolean collisionPlayer = this.checkPlayerCollision(rec, screen.getMainPlayer());
                 
-                if (collisionPlayer) {
-                    this.canCollide = false;
-                    this.despawnDelay = 0;
-                    this.speed = 0;
+                    if (collisionPlayer) {
+                        this.canCollide = false;
+                        this.despawnDelay = 0;
+                        this.speed = 0;
                     
-                    screen.getMainPlayer().receiveDamage(10);
+                        screen.getMainPlayer().receiveDamage(10);
                     
-                    // Return, as the bullet should be removed and should no
-                    // longer be checked for collision with walls
-                    return;
+                        // Return, as the bullet should be removed and should no
+                        // longer be checked for collision with walls
+                        return;
+                    }
                 }
                 
                 // Check collision with walls
