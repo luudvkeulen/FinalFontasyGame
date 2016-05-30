@@ -15,6 +15,7 @@ package com.ffxvi.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -454,6 +455,7 @@ public class GameScreen implements Screen, Observer {
      */
     @Override
     public void render(float delta) {
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         if (this.mainPlayer != null) {
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
             this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
