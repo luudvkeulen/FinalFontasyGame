@@ -175,8 +175,7 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     public Player(SimplePlayer simplePlayer, GameScreen screen) {
-        super(simplePlayer.playerName,
-                simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
+        super(simplePlayer.playerName, simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
 
         this.x = simplePlayer.getX();
         this.y = simplePlayer.getY();
@@ -397,8 +396,14 @@ public class Player extends SimplePlayer implements Observable {
         this.hitPoints -= amount;
         
         if (this.hitPoints < 0) {
+            // Set the amount of hitPoints to 0 to prevent negative values
+            // being shown
+            this.hitPoints = 0;
             this.die();
         }
+        
+        // Update the health labels
+        this.screen.updatePlayerHealthLabels(this.hitPoints);
     }
     
     /**
@@ -533,12 +538,12 @@ public class Player extends SimplePlayer implements Observable {
             Rectangle rectangleMapObject = mapObject.getRectangle();
             if (rec.overlaps(rectangleMapObject)) {
                 int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
-				
-				try {
-					this.screen.setLevel(mapId, this.direction);
-				} catch (IllegalArgumentException ex) {
-					Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-				}
+                
+                try {
+                    this.screen.setLevel(mapId, this.direction);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }

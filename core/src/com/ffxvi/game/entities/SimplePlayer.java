@@ -157,6 +157,7 @@ public class SimplePlayer implements Serializable {
         this.direction = player.direction;
         this.skin = player.skin;
         this.animation = player.animation;
+        this.roomId = player.getRoomId();
     }
 
     /**
