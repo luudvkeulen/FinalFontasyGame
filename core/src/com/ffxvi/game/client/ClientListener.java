@@ -102,6 +102,7 @@ public class ClientListener implements Runnable {
 
             // Deserialize the received object
             byte[] data = receivePacket.getData();
+//            System.out.println(data.length);
             Object object = null;
             try {
                 object = deserialize(data);

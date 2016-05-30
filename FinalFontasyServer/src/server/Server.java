@@ -216,6 +216,7 @@ public class Server {
 		try {
 			// Convert the object to bytes and put it in the byte array
 			sendData = serialize(message);
+			System.out.println(sendData.length);
 		} catch (IOException ex) {
 			Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
 		}

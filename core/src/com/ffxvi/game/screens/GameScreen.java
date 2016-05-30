@@ -316,7 +316,7 @@ public class GameScreen implements Screen, Observer {
             throw new IllegalArgumentException("The multiplayers can not be null.");
         }
 
-        this.multiplayers = (List<SimplePlayer>) multiplayers;
+        this.multiplayers.addAll(multiplayers);
     }
     
     /**
@@ -483,7 +483,9 @@ public class GameScreen implements Screen, Observer {
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
-            for (SimplePlayer splayer : this.multiplayers) {
+            List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
+            this.multiplayers.clear();
+            for (SimplePlayer splayer : localMultiplayers) {
                 try {
                     Player p = new Player(splayer, this);
                     batch.begin();
