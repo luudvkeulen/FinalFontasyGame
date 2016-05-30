@@ -6,7 +6,10 @@
 package server;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,17 +21,19 @@ import server.chat.ChatListener;
  */
 public class FinalFontasyServer {
 
+	private static ServerSubscriber serverSubscriber;
+	
 	/**
 	 * @param args the command line arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException, UnknownHostException {
 		// Clear the console window
 		System.out.println("\033[H\033[2J");
 		// Write a welcome message
 		System.out.println("\n---Welcome to the Final Fontasy XVI server---");
 
 		try {
-			new ServerSubscriber();
+			serverSubscriber = new ServerSubscriber();
 		} catch (IOException ex) {
 			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -65,6 +70,7 @@ public class FinalFontasyServer {
 				case "stop":
 					stop = true;
 					server.stop();
+					serverSubscriber.removeServer(Inet4Address.getLocalHost().getHostAddress() + ":" + 1338);
 					chatListener.stopListener();
 					System.out.println("---Shutting down the Final Fontasy XVI server---");
 					break;
