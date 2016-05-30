@@ -25,6 +25,7 @@ import com.ffxvi.game.MainClass;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
@@ -176,8 +177,7 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     public Player(SimplePlayer simplePlayer, GameScreen screen) {
-        super(simplePlayer.playerName,
-                simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
+        super(simplePlayer.playerName, simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
 
         this.x = simplePlayer.getX();
         this.y = simplePlayer.getY();
@@ -379,27 +379,24 @@ public class Player extends SimplePlayer implements Observable {
 
         this.score = score;
     }
-
-    /**
-     * Gets the player's hitpoints.
-     *
-     * @return Returns the amount of hitpoints of the player.
-     */
-    public int getHitPoints() {
-        return this.hitPoints;
-    }
     
     /**
-     * Deals damage to the player.
+     * Receives damage which is subtracted from the player's hitpoints.
      * 
      * @param amount The amount of damage.
      */
-    public void dealDamage(int amount) {
+    public void receiveDamage(int amount) {
         this.hitPoints -= amount;
         
         if (this.hitPoints < 0) {
+            // Set the amount of hitPoints to 0 to prevent negative values
+            // being shown
+            this.hitPoints = 0;
             this.die();
         }
+        
+        // Update the health labels
+        this.screen.updatePlayerHealthLabels(this.hitPoints);
     }
     
     /**
@@ -415,7 +412,14 @@ public class Player extends SimplePlayer implements Observable {
      * Lets the player die.
      */
     public void die() {
-        // player dies
+        // Set dialog message
+        System.out.println("In player die() method");
+        screen.setDialogMessage("You died!");
+        
+        // Wait for X time
+        
+        // Respawn player
+        // Hide dialog
     }
 
     /**
@@ -534,12 +538,12 @@ public class Player extends SimplePlayer implements Observable {
             Rectangle rectangleMapObject = mapObject.getRectangle();
             if (rec.overlaps(rectangleMapObject)) {
                 int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
-				
-				try {
-					this.screen.setLevel(mapId, this.direction);
-				} catch (IllegalArgumentException ex) {
-					Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-				}
+                
+                try {
+                    this.screen.setLevel(mapId, this.direction);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -576,11 +580,11 @@ public class Player extends SimplePlayer implements Observable {
 
         this.setCurrentWalkingAnimation();
 
-        if (!this.checkCollision(this.getCollisionBox(), screen.getCurrentMap().getWallObjects(), screen.getCurrentMap().getObjects())) {
+        if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
             this.move();
         }
 
-        this.checkDoorCollision(this.getCollisionBox(), screen.getCurrentMap().getDoors());
+        this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
     }
 
     /**

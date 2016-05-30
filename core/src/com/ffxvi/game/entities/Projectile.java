@@ -109,17 +109,17 @@ public class Projectile extends SimpleProjectile {
 
             // Only check collisions if the bullet is allowed to collide
             if (this.canCollide) {
-                Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 10, 10);
+                Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 1, 1);
                 
                 // Check collision with players
-                Player collisionPlayer = this.checkPlayerCollision(rec, screen.getMultiPlayers());
+                boolean collisionPlayer = this.checkPlayerCollision(rec, screen.getMainPlayer());
                 
-                if (collisionPlayer != null) {
+                if (collisionPlayer) {
                     this.canCollide = false;
                     this.despawnDelay = 0;
                     this.speed = 0;
                     
-                    collisionPlayer.dealDamage(10); //this.damage);
+                    screen.getMainPlayer().receiveDamage(10);
                     
                     // Return, as the bullet should be removed and should no
                     // longer be checked for collision with walls
@@ -177,23 +177,18 @@ public class Projectile extends SimpleProjectile {
         return false;
     }
     
-    private Player checkPlayerCollision(Rectangle rec, Collection<SimplePlayer> players) {
-        for (SimplePlayer splayer : players) {
-            // Convert the SimplePlayer to a Player
-            Player player = new Player(splayer, this.screen);
-            
-            // Get rectangle of this player
-            Rectangle playerRectangle = player.getRectangle();
-            
-            // Check if the rectangles overlap
-            if (rec.overlaps(playerRectangle)) {
-                // Return the player object if it has collision
-                return player;
-            }
+    private boolean checkPlayerCollision(Rectangle rec, Player mainPlayer) {
+        // Get rectangle of this player
+        Rectangle playerRectangle = mainPlayer.getRectangle();
+
+        // Check if the rectangles overlap
+        if (rec.overlaps(playerRectangle)) {
+            // Return true if it has collision
+            return true;
         }
         
-        // Return null if no collision has been found
-        return null;
+        // Return false if no collision has been found
+        return false;
     }
 
     /**
@@ -204,15 +199,6 @@ public class Projectile extends SimpleProjectile {
      */
     public Vector getPosition() {
         return this.position;
-    }
-
-    /**
-     * Gets the rotation in the room of this projectile.
-     *
-     * @return A float containing the rotation of this projectile.
-     */
-    public float getRotation() {
-        return this.rotation;
     }
 
     /**

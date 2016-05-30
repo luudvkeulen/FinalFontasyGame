@@ -22,9 +22,11 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.Timer;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.Direction;
@@ -45,6 +47,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The screen for the game.
@@ -134,22 +138,22 @@ public class GameScreen implements Screen, Observer {
     /**
      * Label for the player name on top of the player.
      */
-    private final Label playerLabel1;
+    private final Label playerLabelName;
 
     /**
      * Label for the player name on the HUD.
      */
-    private final Label playerLabel2;
+    private final Label playerLabelNameHUD;
 
     /**
      * Label for the health counter on top of the player.
      */
-    private final Label healthLabel1;
+    private final Label playerHealthLabel;
 
     /**
      * Label for the health counter on the HUD.
      */
-    private final Label healthLabel2;
+    private final Label playerHealthLabelHUD;
 
     /**
      * Label for the score on the HUD.
@@ -166,6 +170,11 @@ public class GameScreen implements Screen, Observer {
      * for the game.
      */
     private InputManager inputManager;
+    
+    /**
+     * Dialog to show messages.
+     */
+    private Dialog messageDialog;
 
     /**
      * Initializes a new GameScreen.
@@ -206,31 +215,36 @@ public class GameScreen implements Screen, Observer {
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
         this.textfield.setWidth(300);
         this.stage.addActor(this.textfield);
+        
+        // Setup dialog
+        this.messageDialog = new Dialog("This is a message", skin);
+        this.messageDialog.setVisible(false);
+        this.messageDialog.setPosition((Gdx.graphics.getWidth()/2) - (this.messageDialog.getWidth()/2), (Gdx.graphics.getHeight()/2) - (this.messageDialog.getHeight()/2));
 
         //Setup labels
         ////Setup label variables
-        this.playerLabel1 = new Label("", this.skin);
-        this.playerLabel2 = new Label("", this.skin);
-        this.healthLabel1 = new Label("100", this.skin);
-        this.healthLabel2 = new Label("100", this.skin);
+        this.playerLabelName = new Label("", this.skin);
+        this.playerLabelNameHUD = new Label("", this.skin);
+        this.playerHealthLabel = new Label("100", this.skin);
+        this.playerHealthLabelHUD = new Label("100", this.skin);
         this.scoreLabel = new Label("5000", this.skin);
         ////Setup label fontscales
-        this.healthLabel2.setFontScale(2);
-        this.playerLabel2.setFontScale(2);
+        this.playerHealthLabelHUD.setFontScale(2);
+        this.playerLabelNameHUD.setFontScale(2);
         this.scoreLabel.setFontScale(2);
         ////Setup label colors
-        this.healthLabel1.setColor(Color.RED);
-        this.healthLabel2.setColor(Color.RED);
+        this.playerHealthLabel.setColor(Color.RED);
+        this.playerHealthLabelHUD.setColor(Color.RED);
         this.scoreLabel.setColor(Color.YELLOW);
         ////Setup label height
-        this.playerLabel2.setHeight(20);
+        this.playerLabelNameHUD.setHeight(20);
         this.scoreLabel.setHeight(20);
-        this.healthLabel2.setHeight(20);
+        this.playerHealthLabelHUD.setHeight(20);
         ////Add labels to stage
-        this.stage.addActor(this.healthLabel1);
-        this.stage.addActor(this.healthLabel2);
-        this.stage.addActor(this.playerLabel1);
-        this.stage.addActor(this.playerLabel2);
+        this.stage.addActor(this.playerHealthLabel);
+        this.stage.addActor(this.playerHealthLabelHUD);
+        this.stage.addActor(this.playerLabelName);
+        this.stage.addActor(this.playerLabelNameHUD);
         this.stage.addActor(this.scoreLabel);
 
         this.oldchatlabels = new ArrayList();
@@ -282,8 +296,8 @@ public class GameScreen implements Screen, Observer {
         this.mainPlayer.setPosition(64, 64);
         this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 
-        this.playerLabel1.setText(playerName);
-        this.playerLabel2.setText(playerName);
+        this.playerLabelName.setText(playerName);
+        this.playerLabelNameHUD.setText(playerName);
 
         this.inputManager = new InputManager(this.mainPlayer);
         this.inputManager.addObserver(this);
@@ -309,8 +323,13 @@ public class GameScreen implements Screen, Observer {
      * 
      * @return The currently connected players.
      */
-    public Collection<SimplePlayer> getMultiPlayers() {
-        return Collections.unmodifiableCollection(this.multiplayers);
+    public Player getMainPlayer() {
+        return this.mainPlayer;
+    }
+    
+    public void setDialogMessage(String message) {
+        this.messageDialog.text(message);
+        this.messageDialog.setVisible(true);
     }
 
     /**
@@ -412,8 +431,18 @@ public class GameScreen implements Screen, Observer {
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
-
+        
         projectiles.remove(projectile);
+    }
+    
+    /**
+     * Updates the player health labels to match the player's health.
+     * 
+     * @param health The player's health.
+     */
+    public void updatePlayerHealthLabels(int health) {
+        this.playerHealthLabel.setText(Integer.toString(health));
+        this.playerHealthLabelHUD.setText(Integer.toString(health));
     }
 
     /**
@@ -436,32 +465,31 @@ public class GameScreen implements Screen, Observer {
             Vector3 playerPos = new Vector3(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
             this.game.camera.project(playerPos);
 
-            float playerLabelWidth = this.playerLabel1.getWidth();
-            this.playerLabel1.setAlignment((int) playerLabelWidth / 2);
-            this.playerLabel1.setPosition(playerPos.x + 32, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
+            float playerLabelWidth = this.playerLabelName.getWidth();
+            this.playerLabelName.setAlignment((int) playerLabelWidth / 2);
+            this.playerLabelName.setPosition(playerPos.x + 32, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
 
-            float healthLabel1width = this.healthLabel1.getWidth();
-            this.healthLabel1.setAlignment((int) (healthLabel1width / 2));
-            this.healthLabel1.setPosition(playerPos.x + 16, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
+            float playerHealthLabelWidth = this.playerHealthLabel.getWidth();
+            this.playerHealthLabel.setAlignment((int) (playerHealthLabelWidth / 2));
+            this.playerHealthLabel.setPosition(playerPos.x + 16, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
 
-            this.healthLabel2.setPosition(0, this.healthLabel2.getHeight());
+            this.playerHealthLabelHUD.setPosition(0, this.playerHealthLabelHUD.getHeight());
 
-            this.playerLabel2.setAlignment((int) this.playerLabel2.getWidth() / 2);
-            this.playerLabel2.setPosition(Gdx.graphics.getWidth() / 2, this.playerLabel2.getHeight());
+            this.playerLabelNameHUD.setAlignment((int) this.playerLabelNameHUD.getWidth() / 2);
+            this.playerLabelNameHUD.setPosition(Gdx.graphics.getWidth() / 2, this.playerLabelNameHUD.getHeight());
 
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
             for (SimplePlayer splayer : this.multiplayers) {
-                ShapeRenderer srenderer = new ShapeRenderer();
-                srenderer.setProjectionMatrix(this.game.camera.combined);
-                srenderer.setAutoShapeType(true);
-                srenderer.begin();
-                //srenderer.circle((splayer.getX()/mainPlayer.getX()) + Gdx.graphics.getWidth()/2, (splayer.getY()/mainPlayer.getY()) + Gdx.graphics.getHeight()/2, 10);
-                //Vector3 v3 = camera.unproject(new Vector3(splayer.getX(), splayer.getY(), 0));
-                //srenderer.circle(v3.x, v3.y, 10);
-                srenderer.circle(splayer.getX(), splayer.getY(), 10);
-                srenderer.end();
+                try {
+                    Player p = new Player(splayer, this);
+                    batch.begin();
+                    p.render(batch);
+                    batch.end();
+                } catch (Exception ex) {
+                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             this.batch.begin();
@@ -495,7 +523,6 @@ public class GameScreen implements Screen, Observer {
             for (Projectile p : GameScreen.projectiles) {
                 if (p != null) {
                     if (!p.shouldRemove()) {
-
                         // Update and render projectile only if the room IDs match
                         // This should always be the case when projectiles are send
                         // through multiplayer
