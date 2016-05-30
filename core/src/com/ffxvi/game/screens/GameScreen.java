@@ -22,9 +22,11 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.Timer;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.Direction;
@@ -169,6 +171,11 @@ public class GameScreen implements Screen, Observer {
      * for the game.
      */
     private InputManager inputManager;
+    
+    /**
+     * Dialog to show messages.
+     */
+    private Dialog messageDialog;
 
     /**
      * Initializes a new GameScreen.
@@ -203,6 +210,11 @@ public class GameScreen implements Screen, Observer {
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
         this.textfield.setWidth(300);
         this.stage.addActor(this.textfield);
+        
+        // Setup dialog
+        this.messageDialog = new Dialog("This is a message", skin);
+        this.messageDialog.setVisible(false);
+        this.messageDialog.setPosition((Gdx.graphics.getWidth()/2) - (this.messageDialog.getWidth()/2), (Gdx.graphics.getHeight()/2) - (this.messageDialog.getHeight()/2));
 
         //Setup labels
         ////Setup label variables
@@ -306,8 +318,13 @@ public class GameScreen implements Screen, Observer {
      * 
      * @return The currently connected players.
      */
-    public Collection<SimplePlayer> getMultiPlayers() {
-        return Collections.unmodifiableCollection(this.multiplayers);
+    public Player getMainPlayer() {
+        return this.mainPlayer;
+    }
+    
+    public void setDialogMessage(String message) {
+        this.messageDialog.text(message);
+        this.messageDialog.setVisible(true);
     }
 
     /**
@@ -408,7 +425,7 @@ public class GameScreen implements Screen, Observer {
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
-
+        
         projectiles.remove(projectile);
     }
     
