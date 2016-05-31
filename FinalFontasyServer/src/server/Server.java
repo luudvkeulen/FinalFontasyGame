@@ -5,6 +5,7 @@
  */
 package server;
 
+import com.ffxvi.game.entities.PlayerCharacter;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import java.io.ByteArrayOutputStream;
@@ -216,7 +217,7 @@ public class Server {
 		try {
 			// Convert the object to bytes and put it in the byte array
 			sendData = serialize(message);
-			System.out.println(sendData.length);
+//			System.out.println(sendData.length);
 		} catch (IOException ex) {
 			Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
 		}
