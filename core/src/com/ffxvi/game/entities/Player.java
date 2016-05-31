@@ -365,7 +365,7 @@ public class Player extends SimplePlayer implements Observable {
     public int getScore() {
         return score;
     }
-
+    
     /**
      * Sets the player's score.
      *
@@ -400,6 +400,7 @@ public class Player extends SimplePlayer implements Observable {
         this.screen.updatePlayerHealthLabels(this.hitPoints);
     }
     
+    
     /**
      * Gets the collision rectangle of this player.
      * 
@@ -413,8 +414,9 @@ public class Player extends SimplePlayer implements Observable {
      * Lets the player die.
      */
     public void die() {
+        hitPoints = 100;
         // Set dialog message
-        screen.addPlayer(playerName, skin);
+        screen.Respawn();
         // Wait for X time
         
         // Respawn player 

@@ -109,7 +109,7 @@ public class Projectile extends SimpleProjectile {
 
             // Only check collisions if the bullet is allowed to collide
             if (this.canCollide) {
-                Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 1, 1);
+                Rectangle rec = new Rectangle(this.position.getX(), this.position.getY(), 32, 32);
                 
                 // Check collision with player if the player's name is not equal
                 // to the owner's name of the projectile

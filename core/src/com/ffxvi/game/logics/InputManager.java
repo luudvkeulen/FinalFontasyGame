@@ -122,6 +122,7 @@ public class InputManager extends Observable {
             game.setScreen(new MenuScreen());
             return returnValue;
         }
+        
 
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
                 || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
@@ -191,6 +192,8 @@ public class InputManager extends Observable {
             mainPlayer.slash();
             returnValue = true;
         }
+        
+        
 
         return returnValue;
     }
