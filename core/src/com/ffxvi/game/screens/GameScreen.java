@@ -322,6 +322,8 @@ public class GameScreen implements Screen, Observer {
 
         this.inputManager = new InputManager(this.mainPlayer);
         this.inputManager.addObserver(this);
+        
+        this.sendChatMessage("[SERVER]", this.mainPlayer.getName() + " HAS CONNECTED");
     }
 
     public Map getRandomMap() {
@@ -351,7 +353,8 @@ public class GameScreen implements Screen, Observer {
             throw new IllegalArgumentException("The multiplayers can not be null.");
         }
 
-        this.multiplayers.addAll(multiplayers);
+        this.multiplayers.clear();
+        this.multiplayers = (List<SimplePlayer>)multiplayers;
     }
 
     /**
@@ -361,6 +364,14 @@ public class GameScreen implements Screen, Observer {
      */
     public Player getMainPlayer() {
         return this.mainPlayer;
+    }
+    
+    /**
+     * Get all the players in the game.
+     * @return all the players in the game.
+     */
+    public Collection<SimplePlayer> getMultiplayers() {
+        return this.multiplayers;
     }
 
     public void setDialogMessage(String message) {
@@ -531,7 +542,6 @@ public class GameScreen implements Screen, Observer {
             } catch (ConcurrentModificationException cme) {
                 Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, cme);
             }
-            
             this.mainPlayer.render(this.batch);
             this.inputManager.checkInput();
             this.batch.end();
@@ -558,25 +568,36 @@ public class GameScreen implements Screen, Observer {
 
             // Render projectiles
             ArrayList projectilesToBeRemoved = new ArrayList();
-
-            for (Projectile p : GameScreen.projectiles) {
-                if (p != null) {
-                    if (!p.shouldRemove()) {
-                        // Update and render projectile only if the room IDs match
-                        // This should always be the case when projectiles are send
-                        // through multiplayer
-                        if (p.getRoomID() == this.mainPlayer.getRoomId()) {
-                            p.update();
-                            p.render(this.shape, this.game.camera);
+            
+            // Loop through all projectiles to render projectiles and check
+            // for removed projectiles
+            for (int i = 0; i < GameScreen.projectiles.size(); i++) {
+                try {
+                    Projectile p = GameScreen.projectiles.get(i);
+                    
+                    if (p != null) {
+                        if (!p.shouldRemove()) {
+                            // Update and render projectile only if the room IDs match
+                            // This should always be the case when projectiles are send
+                            // through multiplayer
+                            if (p.getRoomID() == this.mainPlayer.getRoomId()) {
+                                p.update();
+                                p.render(this.shape, this.game.camera);
+                            }
+                        } else {
+                            projectilesToBeRemoved.add(p);
                         }
-                    } else {
-                        projectilesToBeRemoved.add(p);
                     }
+                } catch (Exception ex) {
+                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
             // Remove all expired projectiles
             projectiles.removeAll(projectilesToBeRemoved);
+            
+            //Check for player slashing
+            this.mainPlayer.checkGetSlashed();
         }
     }
 
@@ -589,14 +610,28 @@ public class GameScreen implements Screen, Observer {
     @Override
     public void update(Observable o, Object arg) {
         String chatMessage = this.textfield.getText();
+        
+        this.sendChatMessage(this.mainPlayer.getName(), chatMessage);
+    }
+    
+    /**
+     * Sends a chat message to every connected player.
+     * 
+     * @param sender The sender of the message.
+     * @param message The message to be send.
+     */
+    public void sendChatMessage(String sender, String message) {
+        try {
+            if (!sender.isEmpty() && !message.isEmpty()) {
+                this.stage.setKeyboardFocus(this.scoreLabel);
 
-        if (!chatMessage.isEmpty()) {
-            this.stage.setKeyboardFocus(this.scoreLabel);
-
-            this.chatManager.addMessage(this.mainPlayer.getName(), chatMessage);
-            this.textfield.setText("");
-        } else {
-            this.stage.setKeyboardFocus(this.textfield);
+                this.chatManager.addMessage(sender, message);
+                this.textfield.setText("");
+            } else {
+                this.stage.setKeyboardFocus(this.textfield);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

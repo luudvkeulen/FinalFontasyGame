@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
@@ -34,6 +35,10 @@ import javafx.beans.Observable;
  * Entity which represents a player.
  */
 public class Player extends SimplePlayer implements Observable {
+    
+    protected static Texture WALKSHEET = null;
+    
+    protected static Texture SLASHSHEET = null;
 
     /**
      * The amount of coordinates a player moves per tick while walking.
@@ -416,6 +421,7 @@ public class Player extends SimplePlayer implements Observable {
             // being shown
             this.hitPoints = 0;
             this.die();
+            this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
         }
         
         // Update the health labels
@@ -697,10 +703,13 @@ public class Player extends SimplePlayer implements Observable {
         int walkSheetCols = 9;
         int walkSheetRows = 4;
 
-        Texture walkSheet = new Texture(Gdx.files.internal(walkingAnimation));
-        TextureRegion[][] anims = TextureRegion.split(walkSheet, walkSheet.getWidth()
-                / walkSheetCols, walkSheet.getHeight() / walkSheetRows);
-
+        if(WALKSHEET == null) {
+            WALKSHEET = new Texture(Gdx.files.internal(walkingAnimation));
+        }
+        
+        TextureRegion[][] anims = TextureRegion.split(WALKSHEET, WALKSHEET.getWidth()
+                / walkSheetCols, WALKSHEET.getHeight() / walkSheetRows);
+        
         this.walkUp = new Animation(walkSpeed, anims[0]);
         this.walkLeft = new Animation(walkSpeed, anims[1]);
         this.walkDown = new Animation(walkSpeed, anims[2]);
@@ -718,9 +727,12 @@ public class Player extends SimplePlayer implements Observable {
         int slashSheetCols = 6;
         int slashSheetRows = 4;
 
-        Texture slashSheet = new Texture(Gdx.files.internal(slashingAnimation));
-        TextureRegion[][] anims = TextureRegion.split(slashSheet, slashSheet.getWidth()
-                / slashSheetCols, slashSheet.getHeight() / slashSheetRows);
+        if (SLASHSHEET == null) {
+            SLASHSHEET = new Texture(Gdx.files.internal(slashingAnimation));
+        }
+        TextureRegion[][] anims = TextureRegion.split(SLASHSHEET, SLASHSHEET.getWidth()
+                / slashSheetCols, SLASHSHEET.getHeight() / slashSheetRows);
+        
 
         this.slashUp = new Animation(slashSpeed, anims[0]);
         this.slashLeft = new Animation(slashSpeed, anims[1]);
@@ -757,6 +769,36 @@ public class Player extends SimplePlayer implements Observable {
         }
 
         return rec;
+    }
+    
+    /**
+     * Check if player gets slashed.
+     */
+    public void checkGetSlashed() {   
+        for (SimplePlayer p : this.screen.getMultiplayers()) { 
+            if(p.animation == PlayerAnimation.SLASHING &&
+                    !p.getName().equals(this.playerName)) {
+                
+                Player player = new Player(p, this.screen);
+                Circle cEnemy = new Circle();
+                cEnemy.x = p.getX();
+                cEnemy.y = p.getY();
+                cEnemy.radius = 50.0f;
+
+                Circle cThis = new Circle();
+                cThis.x = this.getX();
+                cThis.y = this.getY();
+                cThis.radius = 50.0f;
+
+                if (cEnemy.overlaps(cThis)) {
+                    this.hitPoints =- 10;
+                }
+            }
+        }
+    }
+    
+    public void destroy() {
+        this.currentAnimation = null;
     }
 
     @Override
