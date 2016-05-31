@@ -39,13 +39,13 @@ public class Player extends SimplePlayer implements Observable {
     /**
      * The amount of coordinates a player moves per tick while walking.
      */
-    protected static final float WALK_SPEED = 5;
+    protected static final float WALK_SPEED = 5f;
 
     /**
      * The amount of coordinates a player moves per tick while
      * running/sprinting.
      */
-    protected static final float RUN_SPEED = 8;
+    protected static final float RUN_SPEED = 8f;
 
     /**
      * The cooldown between firing.
@@ -61,11 +61,6 @@ public class Player extends SimplePlayer implements Observable {
      * The speed at which the animation runs.
      */
     private final float animationSpeed;
-
-    /**
-     * The time the animation has currently been running.
-     */
-    private float stateTime;
 
     /**
      * The current animation of the player.
@@ -133,7 +128,7 @@ public class Player extends SimplePlayer implements Observable {
     private long shootStart;
 
     /**
-     * Initializes a player.
+     * Default constructor for Player.
      *
      * @param character The player's character.
      * @param playerName The name of this player. This can not be an empty
@@ -157,42 +152,71 @@ public class Player extends SimplePlayer implements Observable {
         if (screen == null) {
             throw new IllegalArgumentException("Screen can not be null.");
         }
-
-        this.x = position.getX();
-        this.y = position.getY();
+        
         this.screen = screen;
-
-        this.aimDirection = 0;
-        this.animationSpeed = 0.05f;
-        this.stateTime = 0f;
-        this.switchCharacter(super.skin);
-        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
-
-        int gridsize = Utils.GRIDSIZE;
-        this.modifiedGridSizeX = gridsize - 32;
-        this.modifiedGridSizeY = gridsize - 16;
 
         this.speed = Player.WALK_SPEED;
-        this.direction = Direction.RIGHT;
-    }
 
-    public Player(SimplePlayer simplePlayer, GameScreen screen) {
-        super(simplePlayer.playerName, simplePlayer.x, simplePlayer.y, simplePlayer.roomId, simplePlayer.skin);
-
-        this.x = simplePlayer.getX();
-        this.y = simplePlayer.getY();
-        this.screen = screen;
-
+        this.aimDirection = 0f;
         this.animationSpeed = 0.05f;
-        this.stateTime = simplePlayer.getStateTime();
         this.switchCharacter(super.skin);
         this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 
         int gridsize = Utils.GRIDSIZE;
         this.modifiedGridSizeX = gridsize - 32;
         this.modifiedGridSizeY = gridsize - 16;
+    }
 
-        this.direction = simplePlayer.direction;
+    /**
+     * Special constructor for Player, only use this for playerdata received from
+     * the server. 
+     * 
+     * @param screen the GameScreen that this Player is in. Used to create projectiles
+     */
+    public Player(GameScreen screen) {
+        super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
+
+        this.screen = screen;
+        
+        this.aimDirection = 0f;
+        this.animationSpeed = 0.05f;
+
+        int gridsize = Utils.GRIDSIZE;
+        this.modifiedGridSizeX = gridsize - 32;
+        this.modifiedGridSizeY = gridsize - 16;
+    }
+    
+    /**
+     * Special method for setting all of this Player's data to the given SimplePlayer
+     * data. Use this to prevent having to create a new Player object every time. 
+     * 
+     * @param player the SimplePlayer's data that is to replace this Player's data
+     */
+    public void setData(SimplePlayer player) {
+        super.playerName = player.playerName;
+        super.hitPoints = player.hitPoints;
+        super.score = player.score;
+        super.roomId = player.roomId;
+        super.x = player.x;
+        super.y = player.y;
+        super.speed = player.speed;
+        super.direction = player.direction;
+        super.skin = player.skin;
+        super.animation = player.animation;
+        super.stateTime = player.stateTime;
+        
+        this.switchCharacter(super.skin);
+        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+        switch (super.animation) {
+            case IDLE :
+                this.setIdle();
+            case WALKING :
+                this.setCurrentWalkingAnimation();
+            case SLASHING :
+                this.setCurrentSlashingAnimation();
+            case SHOOTING :
+//                TODO setCurrentShootingAnimation();
+        }
     }
 
     /**
@@ -487,12 +511,11 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     /**
-     * Method that is performed each tick and focusses on drawing.
+     * Method that is performed each tick and focuses on drawing.
      *
      * @param batch The Sprite Batch to use.
      */
     public void render(SpriteBatch batch) {
-        batch.setProjectionMatrix(MainClass.getInstance().camera.combined);
         this.stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
         batch.draw(currentFrame, this.x, this.y, Utils.GRIDSIZE, Utils.GRIDSIZE);

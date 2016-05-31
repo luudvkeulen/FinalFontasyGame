@@ -25,7 +25,7 @@ public class SimplePlayer implements Serializable {
     /**
      * The name of the player. This may not be null or empty.
      */
-    protected final String playerName;
+    protected String playerName;
 
     /**
      * The hitpoints of the player. This may not be null. If it is lower or 0,
@@ -76,7 +76,7 @@ public class SimplePlayer implements Serializable {
     /**
      * The time within the animation.
      */
-    private float stateTime;
+    protected float stateTime;
 
     /**
      * The constructor of the SimplePlayer class. Initializes all the fields in
@@ -116,8 +116,8 @@ public class SimplePlayer implements Serializable {
         if (roomID < 1) {
             throw new IllegalArgumentException("RoomID must be at least 1.");
         }
+        
         this.playerName = playerName;
-
         this.hitPoints = 100;
         this.score = 0;
 
@@ -126,10 +126,10 @@ public class SimplePlayer implements Serializable {
         this.y = posY;
         this.speed = 0.0f;
 
-        this.direction = Direction.DOWN;
+        this.direction = DOWN;
         this.skin = skin;
-        this.animation = PlayerAnimation.IDLE;
-        this.stateTime = 0;
+        this.animation = IDLE;
+        this.stateTime = 0f;
     }
 
     /**
@@ -151,13 +151,16 @@ public class SimplePlayer implements Serializable {
         this.playerName = player.playerName;
         this.hitPoints = player.hitPoints;
         this.score = player.score;
+        
+        this.roomId = player.roomId;
         this.x = player.x;
         this.y = player.y;
         this.speed = player.speed;
+        
         this.direction = player.direction;
         this.skin = player.skin;
         this.animation = player.animation;
-        this.roomId = player.getRoomId();
+        this.stateTime = player.stateTime;
     }
 
     /**

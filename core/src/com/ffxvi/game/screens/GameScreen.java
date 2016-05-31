@@ -44,6 +44,7 @@ import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -72,6 +73,11 @@ public class GameScreen implements Screen, Observer {
      * The players which are in the room.
      */
     private List<SimplePlayer> multiplayers;
+    
+    /**
+     * The received player's data that is currently being rendered. 
+     */
+    private Player multiplayer;
 
     /**
      * The code for this client.
@@ -211,6 +217,7 @@ public class GameScreen implements Screen, Observer {
 
         GameScreen.projectiles = new ArrayList();
         this.multiplayers = new ArrayList();
+        this.multiplayer = new Player(this);
 
         this.textfield = new TextField("", skin);
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
@@ -483,20 +490,18 @@ public class GameScreen implements Screen, Observer {
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
-            List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
-            this.multiplayers.clear();
-            for (SimplePlayer splayer : localMultiplayers) {
-                try {
-                    Player p = new Player(splayer, this);
-                    batch.begin();
-                    p.render(batch);
-                    batch.end();
-                } catch (Exception ex) {
-                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+            List<SimplePlayer> localMultiplayers = this.multiplayers;
+            batch.begin();
+            batch.setProjectionMatrix(MainClass.getInstance().camera.combined);
+            try {
+                for (SimplePlayer splayer : localMultiplayers) {
+                    multiplayer.setData(splayer);
+//                    multiplayer.render(batch);
                 }
+            } catch (ConcurrentModificationException cme) {
+                Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, cme);
             }
-
-            this.batch.begin();
+            
             this.mainPlayer.render(this.batch);
             this.inputManager.checkInput();
             this.batch.end();
