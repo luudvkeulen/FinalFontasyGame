@@ -413,11 +413,10 @@ public class Player extends SimplePlayer implements Observable {
      */
     public void die() {
         // Set dialog message
-        screen.setDialogMessage("You died!");
-        
+        screen.MainPlayerDeath();
         // Wait for X time
         
-        // Respawn player
+        // Respawn player 
         // Hide dialog
     }
 

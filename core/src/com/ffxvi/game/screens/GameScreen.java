@@ -290,10 +290,10 @@ public class GameScreen implements Screen, Observer {
             throw new IllegalArgumentException("Character can not be null.");
         }
 
-        int idx = new Random().nextInt(this.maps.size());
-        map = maps.get(idx);
+        
+        map = getRandomMap();
 
-        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, this.map.getId());
+        
         this.mainPlayer.setPosition(64, 64);
         this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 
@@ -303,6 +303,17 @@ public class GameScreen implements Screen, Observer {
         this.inputManager = new InputManager(this.mainPlayer);
         this.inputManager.addObserver(this);
     }
+    
+    public Map getRandomMap(){
+        int idx = new Random().nextInt(this.maps.size());
+        return maps.get(idx);
+    }
+    
+    public void MainPlayerDeath(){
+        this.mainPlayer = new Player(mainPlayer.getSkin(), mainPlayer.getName(), new Vector(64f, 64f), this, getRandomMap().getId());
+    }
+    
+    
 
     /**
      * Adds a list of other players to this game.
