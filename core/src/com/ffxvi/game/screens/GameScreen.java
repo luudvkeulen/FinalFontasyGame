@@ -504,6 +504,9 @@ public class GameScreen implements Screen, Observer {
                     Player p = new Player(splayer, this);
                     batch.begin();
                     p.render(batch);
+                    Label nametag = new Label(splayer.getName(), this.skin);
+                    nametag.setPosition(p.getX() + 32, p.getY() + 12);
+                    stage.addActor(nametag);
                     batch.end();
                 } catch (Exception ex) {
                     Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
