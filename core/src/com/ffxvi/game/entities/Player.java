@@ -392,6 +392,7 @@ public class Player extends SimplePlayer implements Observable {
             // being shown
             this.hitPoints = 0;
             this.die();
+            this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
         }
         
         // Update the health labels
