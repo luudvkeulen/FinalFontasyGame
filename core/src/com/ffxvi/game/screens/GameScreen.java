@@ -301,6 +301,8 @@ public class GameScreen implements Screen, Observer {
 
         this.inputManager = new InputManager(this.mainPlayer);
         this.inputManager.addObserver(this);
+        
+        this.sendChatMessage("[SERVER]", this.mainPlayer.getName() + " HAS CONNECTED");
     }
 
     public Map getRandomMap() {
@@ -558,14 +560,28 @@ public class GameScreen implements Screen, Observer {
     @Override
     public void update(Observable o, Object arg) {
         String chatMessage = this.textfield.getText();
+        
+        this.sendChatMessage(this.mainPlayer.getName(), chatMessage);
+    }
+    
+    /**
+     * Sends a chat message to every connected player.
+     * 
+     * @param sender The sender of the message.
+     * @param message The message to be send.
+     */
+    public void sendChatMessage(String sender, String message) {
+        try {
+            if (!sender.isEmpty() && !message.isEmpty()) {
+                this.stage.setKeyboardFocus(this.scoreLabel);
 
-        if (!chatMessage.isEmpty()) {
-            this.stage.setKeyboardFocus(this.scoreLabel);
-
-            this.chatManager.addMessage(this.mainPlayer.getName(), chatMessage);
-            this.textfield.setText("");
-        } else {
-            this.stage.setKeyboardFocus(this.textfield);
+                this.chatManager.addMessage(sender, message);
+                this.textfield.setText("");
+            } else {
+                this.stage.setKeyboardFocus(this.textfield);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
