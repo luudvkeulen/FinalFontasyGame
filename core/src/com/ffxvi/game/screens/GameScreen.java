@@ -502,11 +502,12 @@ public class GameScreen implements Screen, Observer {
             for (SimplePlayer splayer : localMultiplayers) {
                 try {
                     Player p = new Player(splayer, this);
+                    batch.setProjectionMatrix(game.camera.combined);
                     batch.begin();
                     p.render(batch);
                     Label nametag = new Label(splayer.getName(), this.skin);
                     nametag.setPosition(p.getX() + 32, p.getY() + 12);
-                    stage.addActor(nametag);
+                    nametag.draw(batch, delta);
                     batch.end();
                 } catch (Exception ex) {
                     Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
