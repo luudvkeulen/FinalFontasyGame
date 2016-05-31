@@ -165,6 +165,16 @@ public class GameScreen implements Screen, Observer {
      * TextField for chat messages.
      */
     private final TextField textfield;
+    
+    /**
+     * font for drawing player names
+     */
+    private final BitmapFont fontwhite;
+    
+    /**
+     * font for drawing health
+     */
+    private final BitmapFont fontred;
 
     /**
      * A controller class which handles all the keyboard/mouse/controller input
@@ -184,6 +194,10 @@ public class GameScreen implements Screen, Observer {
         this.game = MainClass.getInstance();
         this.stage = new Stage();
         this.chatManager = new ChatManager();
+        
+        this.fontwhite = new BitmapFont();
+        this.fontred = new BitmapFont();
+        this.fontred.setColor(Color.RED);
 
         if (!game.selectedIp.equals("")) {
             this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":")), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);
@@ -504,10 +518,9 @@ public class GameScreen implements Screen, Observer {
                     Player p = new Player(splayer, this);
                     batch.setProjectionMatrix(game.camera.combined);
                     batch.begin();
-                    p.render(batch);
-                    Label nametag = new Label(splayer.getName(), this.skin);
-                    nametag.setPosition(p.getX() + 32, p.getY() + 12);
-                    nametag.draw(batch, delta);
+                    p.render(batch);   
+                    this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
+                    this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
                     batch.end();
                 } catch (Exception ex) {
                     Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
