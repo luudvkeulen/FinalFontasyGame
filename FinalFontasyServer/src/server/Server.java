@@ -252,15 +252,52 @@ public class Server {
 		}
 	}
 
-	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer player) {
-		playerData.put(playerAddress, player);
+	/**
+	 * Treats received SimplePlayer the way it is supposed to be treated by
+	 * adding the client's data to the playerData HashMap
+	 *
+	 * @param playerAddress the senders InetSocketAddress (IP + Port)
+	 * @param simplePlayer the received SimplePlayer data
+	 */
+	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer simplePlayer) {
+		// If the senders SimplePlayer data's name isn't the same as the received
+		// data's name, then the received data will be sent to the address that
+		// matches the received SimplePlayer data's name. This is only supposed
+		// to happen when the received SimplePlayer's data's score has been increased. 
+		SimplePlayer localPlayer = playerData.get(playerAddress);
+		if (localPlayer != null) {
+			if (!playerData.get(playerAddress).getName().equals(simplePlayer.getName())) {
+				Collection<InetSocketAddress> localPlayers = playerData.keySet();
+				for (InetSocketAddress localAddress : localPlayers) {
+					if (playerData.get(localAddress).getName().equals(simplePlayer)) {
+						sendSingle(simplePlayer, localAddress);
+						break;
+					}
+				}
+				return;
+			}
+		}
+		playerData.put(playerAddress, simplePlayer);
 //		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+
+		if (simplePlayer.getScore() >= 10) {
+			sendSingle("VICTORY", playerAddress);
+			sendAll("DEFEAT", playerAddress.getAddress());
+			stop();
+		}
 	}
 
-	public void receiveProjectile(InetSocketAddress validSender, SimpleProjectile simpleProjectile) {
+	/**
+	 * Treats received SimpleProjectile the way it is supposed to be treated by sending
+	 * the client's data to all the other clients
+	 *
+	 * @param playerAddress the senders InetSocketAddress (IP + Port)
+	 * @param simpleProjectile the received SimpleProjectile data
+	 */
+	public void receiveProjectile(InetSocketAddress playerAddress, SimpleProjectile simpleProjectile) {
 		for (InetSocketAddress address : players) {
 			if (address != null) {
-				if (!address.equals(validSender)){
+				if (!address.equals(playerAddress)){
 					SimplePlayer sPlayer = playerData.get(address);
 					if (sPlayer != null) {
 						if (sPlayer.getRoomId() == simpleProjectile.getRoomID()){

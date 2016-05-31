@@ -414,15 +414,17 @@ public class Player extends SimplePlayer implements Observable {
      * Receives damage which is subtracted from the player's hitpoints.
      * 
      * @param amount The amount of damage.
+     * @param attacker The name of the player that caused the damage. 
      */
-    public void receiveDamage(int amount) {
+    public void receiveDamage(int amount, String attacker) {
         this.hitPoints -= amount;
         
         if (this.hitPoints <= 0) {
             // Set the amount of hitPoints to 0 to prevent negative values
             // being shown
             this.hitPoints = 0;
-            this.die();
+            
+            this.die(attacker);
             this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
         }
         
@@ -443,10 +445,10 @@ public class Player extends SimplePlayer implements Observable {
     /**
      * Lets the player die.
      */
-    public void die() {
+    public void die(String killer) {
         hitPoints = 100;
         // Set dialog message
-        screen.Respawn();
+        screen.Respawn(killer);
         // Wait for X time
         
         // Respawn player 

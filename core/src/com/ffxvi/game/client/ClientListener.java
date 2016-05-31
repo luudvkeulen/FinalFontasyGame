@@ -115,6 +115,9 @@ public class ClientListener implements Runnable {
             // Check the type of the received object and treat it accordingly
             if (object instanceof String) {
                 this.receiveString(receivePacket, (String) object);
+            } else if (object instanceof SimplePlayer) {
+                System.out.println("Increasing Score");
+                this.screen.getMainPlayer().increaseScore();
             } else if (object instanceof Collection) {
                 // Check what type of collection the received object is
                 for (Object o : (Collection) object) {

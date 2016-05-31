@@ -332,7 +332,18 @@ public class GameScreen implements Screen, Observer {
     }
 
     
-    public void Respawn(){
+    public void Respawn(String killer) {
+        Collection<SimplePlayer> localMultiplayers = this.getMultiplayers();
+        for (SimplePlayer splayer : localMultiplayers) {
+            if (splayer.getName().equals(killer)) {
+                splayer.increaseScore();
+                this.client.sendPlayer(splayer);
+                break;
+            }
+        }
+        
+        updatePlayerHealthLabels(mainPlayer.getHitPoints());
+        
         int mapid = getRandomMap().getId();
         mainPlayer.setRoomId(mapid);
         
