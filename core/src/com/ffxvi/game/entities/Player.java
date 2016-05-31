@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
@@ -733,6 +734,32 @@ public class Player extends SimplePlayer implements Observable {
         }
 
         return rec;
+    }
+    
+    /**
+     * Check if player gets slashed.
+     */
+    public void checkGetSlashed() {   
+        for (SimplePlayer p : this.screen.getMultiplayers()) { 
+            if(p.animation == PlayerAnimation.SLASHING &&
+                    !p.getName().equals(this.playerName)) {
+                
+                Player player = new Player(p, this.screen);
+                Circle cEnemy = new Circle();
+                cEnemy.x = p.getX();
+                cEnemy.y = p.getY();
+                cEnemy.radius = 50.0f;
+
+                Circle cThis = new Circle();
+                cThis.x = this.getX();
+                cThis.y = this.getY();
+                cThis.radius = 50.0f;
+
+                if (cEnemy.overlaps(cThis)) {
+                    this.hitPoints =- 10;
+                }
+            }
+        }
     }
 
     @Override

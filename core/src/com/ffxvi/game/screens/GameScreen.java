@@ -333,6 +333,14 @@ public class GameScreen implements Screen, Observer {
     public Player getMainPlayer() {
         return this.mainPlayer;
     }
+    
+    /**
+     * Get all the players in the game.
+     * @return all the players in the game.
+     */
+    public Collection<SimplePlayer> getMultiplayers() {
+        return this.multiplayers;
+    }
 
     public void setDialogMessage(String message) {
         this.messageDialog.text(message);
@@ -548,6 +556,9 @@ public class GameScreen implements Screen, Observer {
 
             // Remove all expired projectiles
             projectiles.removeAll(projectilesToBeRemoved);
+            
+            //Check for player slashing
+            this.mainPlayer.checkGetSlashed();
         }
     }
 
