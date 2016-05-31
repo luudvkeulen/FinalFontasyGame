@@ -26,6 +26,7 @@ import com.ffxvi.game.MainClass;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
@@ -774,12 +775,15 @@ public class Player extends SimplePlayer implements Observable {
     /**
      * Check if player gets slashed.
      */
-    public void checkGetSlashed() {   
-        for (SimplePlayer p : this.screen.getMultiplayers()) { 
+    public void checkGetSlashed() {
+        Collection<SimplePlayer> localMultiplayers = this.screen.getMultiplayers();
+        for (SimplePlayer p : localMultiplayers) { 
             if(p.animation == PlayerAnimation.SLASHING &&
                     !p.getName().equals(this.playerName)) {
                 
-                Player player = new Player(p, this.screen);
+                Player player = new Player(this.screen);
+                player.setData(p);
+                
                 Circle cEnemy = new Circle();
                 cEnemy.x = p.getX();
                 cEnemy.y = p.getY();
