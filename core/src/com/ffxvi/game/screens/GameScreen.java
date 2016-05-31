@@ -529,7 +529,8 @@ public class GameScreen implements Screen, Observer {
 
                 pl = new Player(splayer, this);
                 batch.setProjectionMatrix(game.camera.combined);
-                //p.render(batch);   
+                
+                pl.render(batch);   
                 this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
                 this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
                     

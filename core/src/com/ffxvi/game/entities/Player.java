@@ -190,7 +190,7 @@ public class Player extends SimplePlayer implements Observable {
         this.animationSpeed = 0.05f;
         this.stateTime = simplePlayer.getStateTime();
         this.switchCharacter(super.skin);
-        //this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 
         int gridsize = Utils.GRIDSIZE;
         this.modifiedGridSizeX = gridsize - 32;
