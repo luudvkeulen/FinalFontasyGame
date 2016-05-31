@@ -25,7 +25,6 @@ import com.ffxvi.game.MainClass;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
@@ -389,7 +388,7 @@ public class Player extends SimplePlayer implements Observable {
     public int getScore() {
         return score;
     }
-
+    
     /**
      * Sets the player's score.
      *
@@ -412,7 +411,7 @@ public class Player extends SimplePlayer implements Observable {
     public void receiveDamage(int amount) {
         this.hitPoints -= amount;
         
-        if (this.hitPoints < 0) {
+        if (this.hitPoints <= 0) {
             // Set the amount of hitPoints to 0 to prevent negative values
             // being shown
             this.hitPoints = 0;
@@ -422,6 +421,7 @@ public class Player extends SimplePlayer implements Observable {
         // Update the health labels
         this.screen.updatePlayerHealthLabels(this.hitPoints);
     }
+    
     
     /**
      * Gets the collision rectangle of this player.
@@ -436,12 +436,12 @@ public class Player extends SimplePlayer implements Observable {
      * Lets the player die.
      */
     public void die() {
+        hitPoints = 100;
         // Set dialog message
-        screen.setDialogMessage("You died!");
-        
+        screen.Respawn();
         // Wait for X time
         
-        // Respawn player
+        // Respawn player 
         // Hide dialog
     }
 
@@ -522,7 +522,7 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     /**
-     * Checks the given rec for collision withthe given (wall)objects.
+     * Checks the given rec for collision with the given (wall)objects.
      *
      * @param rec The rectangle to check.
      * @param objects The objects to make sure are not in the rectangle.

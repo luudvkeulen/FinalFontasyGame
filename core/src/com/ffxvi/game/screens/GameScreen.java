@@ -171,13 +171,23 @@ public class GameScreen implements Screen, Observer {
      * TextField for chat messages.
      */
     private final TextField textfield;
+    
+    /**
+     * font for drawing player names
+     */
+    private final BitmapFont fontwhite;
+    
+    /**
+     * font for drawing health
+     */
+    private final BitmapFont fontred;
 
     /**
      * A controller class which handles all the keyboard/mouse/controller input
      * for the game.
      */
     private InputManager inputManager;
-    
+
     /**
      * Dialog to show messages.
      */
@@ -190,14 +200,17 @@ public class GameScreen implements Screen, Observer {
         this.game = MainClass.getInstance();
         this.stage = new Stage();
         this.chatManager = new ChatManager();
+        
+        this.fontwhite = new BitmapFont();
+        this.fontred = new BitmapFont();
+        this.fontred.setColor(Color.RED);
 
-        if(!game.selectedIp.equals("")) {
+        if (!game.selectedIp.equals("")) {
             this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":")), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);
         } else {
             this.client = null;
             System.out.println("Error no ip selected");
         }
-        
 
         //Setup map stuff
         this.maps = new ArrayList();
@@ -223,11 +236,11 @@ public class GameScreen implements Screen, Observer {
         this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
         this.textfield.setWidth(300);
         this.stage.addActor(this.textfield);
-        
+
         // Setup dialog
         this.messageDialog = new Dialog("This is a message", skin);
         this.messageDialog.setVisible(false);
-        this.messageDialog.setPosition((Gdx.graphics.getWidth()/2) - (this.messageDialog.getWidth()/2), (Gdx.graphics.getHeight()/2) - (this.messageDialog.getHeight()/2));
+        this.messageDialog.setPosition((Gdx.graphics.getWidth() / 2) - (this.messageDialog.getWidth() / 2), (Gdx.graphics.getHeight() / 2) - (this.messageDialog.getHeight() / 2));
 
         //Setup labels
         ////Setup label variables
@@ -297,10 +310,10 @@ public class GameScreen implements Screen, Observer {
             throw new IllegalArgumentException("Character can not be null.");
         }
 
-        int idx = new Random().nextInt(this.maps.size());
-        map = maps.get(idx);
+        map = getRandomMap();
 
-        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, this.map.getId());
+        this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, map.getId());
+
         this.mainPlayer.setPosition(64, 64);
         this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 
@@ -310,6 +323,21 @@ public class GameScreen implements Screen, Observer {
         this.inputManager = new InputManager(this.mainPlayer);
         this.inputManager.addObserver(this);
     }
+
+    public Map getRandomMap() {
+        int idx = new Random().nextInt(this.maps.size());
+        return maps.get(idx);
+    }
+
+    
+    public void Respawn(){
+        int mapid = getRandomMap().getId();
+        mainPlayer.setRoomId(mapid);
+        
+        setLevel(mapid, Direction.UPLEFT);
+        this.mainPlayer.setPosition(64, 64);
+    }
+    
 
     /**
      * Adds a list of other players to this game.
@@ -325,16 +353,16 @@ public class GameScreen implements Screen, Observer {
 
         this.multiplayers.addAll(multiplayers);
     }
-    
+
     /**
      * Gets a list with the currently connected players.
-     * 
+     *
      * @return The currently connected players.
      */
     public Player getMainPlayer() {
         return this.mainPlayer;
     }
-    
+
     public void setDialogMessage(String message) {
         this.messageDialog.text(message);
         this.messageDialog.setVisible(true);
@@ -410,7 +438,7 @@ public class GameScreen implements Screen, Observer {
      * Adds a projectile to the screen.
      *
      * @param projectile The projectile to add.
-     * @param receivedFromServer True if the projectile was sent by the server, 
+     * @param receivedFromServer True if the projectile was sent by the server,
      * false if the projectile was created by this client
      */
     public void addProjectile(Projectile projectile, boolean receivedFromServer) {
@@ -439,13 +467,13 @@ public class GameScreen implements Screen, Observer {
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile can not be null.");
         }
-        
+
         projectiles.remove(projectile);
     }
-    
+
     /**
      * Updates the player health labels to match the player's health.
-     * 
+     *
      * @param health The player's health.
      */
     public void updatePlayerHealthLabels(int health) {
@@ -492,11 +520,13 @@ public class GameScreen implements Screen, Observer {
             //Render other players
             List<SimplePlayer> localMultiplayers = this.multiplayers;
             batch.begin();
-            batch.setProjectionMatrix(MainClass.getInstance().camera.combined);
+            batch.setProjectionMatrix(game.camera.combined);
             try {
                 for (SimplePlayer splayer : localMultiplayers) {
                     multiplayer.setData(splayer);
-//                    multiplayer.render(batch);
+                    multiplayer.render(batch);
+                    this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
+                    this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
                 }
             } catch (ConcurrentModificationException cme) {
                 Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, cme);

@@ -59,7 +59,7 @@ public class Map {
         if (fileName == null || fileName.trim().isEmpty()) {
             throw new IllegalArgumentException("FileName can neither be null nor an empty String (excluding spaces).");
         }
-
+        
         if (id < 0) {
             throw new IllegalArgumentException("ID can not be a negative value.");
         }
