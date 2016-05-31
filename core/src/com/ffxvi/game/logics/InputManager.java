@@ -67,6 +67,10 @@ public class InputManager extends Observable {
     private final Player mainPlayer;
 
     /**
+     * Boolean to check if the player is chatting so we can disable input
+     */
+    public boolean isChatting;
+    /**
      * The Constructor which is used to create an inputManager
      *
      * @param mainPlayer The player which needs to be moved by this inputManager.
@@ -78,6 +82,7 @@ public class InputManager extends Observable {
             throw new IllegalArgumentException("MainPlayer can not be null.");
         }
         
+        this.isChatting = false;
         this.game = MainClass.getInstance();
         this.mainPlayer = mainPlayer;
     }
@@ -124,76 +129,76 @@ public class InputManager extends Observable {
         }
         
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-                || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-            mainPlayer.setSprint(true);
-            returnValue = true;
-        }
-
-        if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-                && !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-            mainPlayer.setSprint(false);
-            returnValue = true;
-        }
-
-        boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                || Gdx.input.isKeyPressed(Input.Keys.A);
-        boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                || Gdx.input.isKeyPressed(Input.Keys.D);
-
-        if (leftPressed) {
-            if (rightPressed) {
-                // to prevent setting the animation to right when right is pressed while left is held
-                mainPlayer.setIdle();
-            } else {
-                mainPlayer.setDirection(Direction.LEFT);
+        if(!isChatting) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+                    || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                mainPlayer.setSprint(true);
                 returnValue = true;
             }
-        } else if (rightPressed) {
-            mainPlayer.setDirection(Direction.RIGHT);
-            returnValue = true;
-        }
 
-        boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP)
-                || Gdx.input.isKeyPressed(Input.Keys.W);
-        boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN)
-                || Gdx.input.isKeyPressed(Input.Keys.S);
+            if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+                    && !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                mainPlayer.setSprint(false);
+                returnValue = true;
+            }
 
-        if (upPressed) {
-            if (downPressed) {
-                // To prevent setting the animation to idle when both up and down are pressed, but not both left and right
-                if (!(leftPressed || rightPressed)) {
+            boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                    || Gdx.input.isKeyPressed(Input.Keys.A);
+            boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                    || Gdx.input.isKeyPressed(Input.Keys.D);
+
+            if (leftPressed) {
+                if (rightPressed) {
+                    // to prevent setting the animation to right when right is pressed while left is held
                     mainPlayer.setIdle();
+                } else {
+                    mainPlayer.setDirection(Direction.LEFT);
+                    returnValue = true;
                 }
-            } else {
-                mainPlayer.setDirection(Direction.UP);
+            } else if (rightPressed) {
+                mainPlayer.setDirection(Direction.RIGHT);
                 returnValue = true;
             }
-        } else if (downPressed) {
-            mainPlayer.setDirection(Direction.DOWN);
-            returnValue = true;
-        }
 
-        if (!leftPressed && !rightPressed && !upPressed && !downPressed) {
-            mainPlayer.setIdle();
-            returnValue = true;
-        }
+            boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP)
+                    || Gdx.input.isKeyPressed(Input.Keys.W);
+            boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN)
+                    || Gdx.input.isKeyPressed(Input.Keys.S);
 
-        int mouseX = Gdx.input.getX();
-        int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
+            if (upPressed) {
+                if (downPressed) {
+                    // To prevent setting the animation to idle when both up and down are pressed, but not both left and right
+                    if (!(leftPressed || rightPressed)) {
+                        mainPlayer.setIdle();
+                    }
+                } else {
+                    mainPlayer.setDirection(Direction.UP);
+                    returnValue = true;
+                }
+            } else if (downPressed) {
+                mainPlayer.setDirection(Direction.DOWN);
+                returnValue = true;
+            }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
-            mainPlayer.fire();
-            returnValue = true;
-        }
+            if (!leftPressed && !rightPressed && !upPressed && !downPressed) {
+                mainPlayer.setIdle();
+                returnValue = true;
+            }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            mainPlayer.slash();
-            returnValue = true;
+            int mouseX = Gdx.input.getX();
+            int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
+
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
+                mainPlayer.fire();
+                returnValue = true;
+            }
+
+            if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+                mainPlayer.slash();
+                returnValue = true;
+            }
         }
-        
-        
 
         return returnValue;
     }

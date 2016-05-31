@@ -624,11 +624,12 @@ public class GameScreen implements Screen, Observer {
         try {
             if (!sender.isEmpty() && !message.isEmpty()) {
                 this.stage.setKeyboardFocus(this.scoreLabel);
-
+                inputManager.isChatting = false;
                 this.chatManager.addMessage(sender, message);
                 this.textfield.setText("");
             } else {
                 this.stage.setKeyboardFocus(this.textfield);
+                inputManager.isChatting = true;
             }
         } catch (Exception ex) {
             Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
