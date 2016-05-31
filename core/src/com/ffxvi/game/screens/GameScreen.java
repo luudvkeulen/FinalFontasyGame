@@ -310,7 +310,13 @@ public class GameScreen implements Screen, Observer {
         return maps.get(idx);
     }
     
-    
+    public void Respawn(){
+        int mapid = getRandomMap().getId();
+        mainPlayer.setRoomId(mapid);
+        
+        setLevel(mapid, Direction.UPLEFT);
+        this.mainPlayer.setPosition(64, 64);
+    }
     
     
 
