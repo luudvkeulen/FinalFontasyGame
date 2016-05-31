@@ -25,7 +25,6 @@ import com.ffxvi.game.MainClass;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
@@ -500,7 +499,7 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     /**
-     * Checks the given rec for collision withthe given (wall)objects.
+     * Checks the given rec for collision with the given (wall)objects.
      *
      * @param rec The rectangle to check.
      * @param objects The objects to make sure are not in the rectangle.
