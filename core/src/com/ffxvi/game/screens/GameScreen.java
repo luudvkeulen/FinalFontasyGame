@@ -310,9 +310,7 @@ public class GameScreen implements Screen, Observer {
         return maps.get(idx);
     }
     
-    public void MainPlayerDeath(){
-        this.mainPlayer = new Player(mainPlayer.getSkin(), mainPlayer.getName(), new Vector(64f, 64f), this, getRandomMap().getId());
-    }
+    
     
     
 
