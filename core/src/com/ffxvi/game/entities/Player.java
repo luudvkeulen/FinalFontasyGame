@@ -35,6 +35,10 @@ import javafx.beans.Observable;
  * Entity which represents a player.
  */
 public class Player extends SimplePlayer implements Observable {
+    
+    protected static Texture WALKSHEET = null;
+    
+    protected static Texture SLASHSHEET = null;
 
     /**
      * The amount of coordinates a player moves per tick while walking.
@@ -186,7 +190,7 @@ public class Player extends SimplePlayer implements Observable {
         this.animationSpeed = 0.05f;
         this.stateTime = simplePlayer.getStateTime();
         this.switchCharacter(super.skin);
-        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+        //this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
 
         int gridsize = Utils.GRIDSIZE;
         this.modifiedGridSizeX = gridsize - 32;
@@ -676,10 +680,13 @@ public class Player extends SimplePlayer implements Observable {
         int walkSheetCols = 9;
         int walkSheetRows = 4;
 
-        Texture walkSheet = new Texture(Gdx.files.internal(walkingAnimation));
-        TextureRegion[][] anims = TextureRegion.split(walkSheet, walkSheet.getWidth()
-                / walkSheetCols, walkSheet.getHeight() / walkSheetRows);
-
+        if(WALKSHEET == null) {
+            WALKSHEET = new Texture(Gdx.files.internal(walkingAnimation));
+        }
+        
+        TextureRegion[][] anims = TextureRegion.split(WALKSHEET, WALKSHEET.getWidth()
+                / walkSheetCols, WALKSHEET.getHeight() / walkSheetRows);
+        
         this.walkUp = new Animation(walkSpeed, anims[0]);
         this.walkLeft = new Animation(walkSpeed, anims[1]);
         this.walkDown = new Animation(walkSpeed, anims[2]);
@@ -697,9 +704,12 @@ public class Player extends SimplePlayer implements Observable {
         int slashSheetCols = 6;
         int slashSheetRows = 4;
 
-        Texture slashSheet = new Texture(Gdx.files.internal(slashingAnimation));
-        TextureRegion[][] anims = TextureRegion.split(slashSheet, slashSheet.getWidth()
-                / slashSheetCols, slashSheet.getHeight() / slashSheetRows);
+        if (SLASHSHEET == null) {
+            SLASHSHEET = new Texture(Gdx.files.internal(slashingAnimation));
+        }
+        TextureRegion[][] anims = TextureRegion.split(SLASHSHEET, SLASHSHEET.getWidth()
+                / slashSheetCols, SLASHSHEET.getHeight() / slashSheetRows);
+        
 
         this.slashUp = new Animation(slashSpeed, anims[0]);
         this.slashLeft = new Animation(slashSpeed, anims[1]);
@@ -762,6 +772,10 @@ public class Player extends SimplePlayer implements Observable {
                 }
             }
         }
+    }
+    
+    public void destroy() {
+        this.currentAnimation = null;
     }
 
     @Override

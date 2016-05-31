@@ -12,7 +12,7 @@ public class QueryServer {
 	static final String BINDINGNAME = "serverList";
 	
 	public QueryServer(){
-		System.setProperty("java.rmi.server.hostname","192.168.1.1");
+		System.setProperty("java.rmi.server.hostname","localhost");
 		//Try creating the serverlist
 		try {
 			serverList = new ServerList();

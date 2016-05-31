@@ -521,21 +521,20 @@ public class GameScreen implements Screen, Observer {
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
+            batch.begin();
             List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
             this.multiplayers.clear();
+            Player pl;
             for (SimplePlayer splayer : localMultiplayers) {
-                try {
-                    Player p = new Player(splayer, this);
-                    batch.setProjectionMatrix(game.camera.combined);
-                    batch.begin();
-                    p.render(batch);   
-                    this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
-                    this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
-                    batch.end();
-                } catch (Exception ex) {
-                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+
+                pl = new Player(splayer, this);
+                batch.setProjectionMatrix(game.camera.combined);
+                //p.render(batch);   
+                this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
+                this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
+                    
+            } 
+            batch.end();
 
             this.batch.begin();
             this.mainPlayer.render(this.batch);
