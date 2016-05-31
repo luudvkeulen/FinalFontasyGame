@@ -26,6 +26,7 @@ import com.ffxvi.game.MainClass;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -503,16 +504,16 @@ public class Player extends SimplePlayer implements Observable {
         switch (character) {
             default:
             case SKELETON_DAGGER:
-                setAnimations("Units/Skeleton_Dagger/Walk.png",
-                        "Units/Skeleton_Dagger/Slash.png");
+                setAnimations("Units/Normal_Skeleton/Walk.png",
+                        "Units/Normal_Skeleton/Slash.png");
                 break;
             case SKELETON_HOODED_BOW:
-                setAnimations("Units/Skeleton_Hooded_Bow/Walk.png",
+                setAnimations("Units/Hooded_Skeleton/Walk.png",
                         "");
                 break;
             case SKELETON_HOODED_DAGGER:
-                setAnimations("Units/Skeleton_Hooded_Dagger/Walk.png",
-                        "Units/Skeleton_Hooded_Dagger/Slash.png");
+                setAnimations("Units/Hooded_Skeleton/Walk.png",
+                        "Units/Hooded_Skeleton/Slash.png");
                 break;
         }
     }
@@ -776,7 +777,7 @@ public class Player extends SimplePlayer implements Observable {
      * Check if player gets slashed.
      */
     public void checkGetSlashed() {
-        Collection<SimplePlayer> localMultiplayers = this.screen.getMultiplayers();
+        Collection<SimplePlayer> localMultiplayers = new ArrayList(this.screen.getMultiplayers());
         for (SimplePlayer p : localMultiplayers) { 
             if(p.animation == PlayerAnimation.SLASHING &&
                     !p.getName().equals(this.playerName)) {
