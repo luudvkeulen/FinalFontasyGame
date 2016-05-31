@@ -537,20 +537,28 @@ public class GameScreen implements Screen, Observer {
 
             // Render projectiles
             ArrayList projectilesToBeRemoved = new ArrayList();
-
-            for (Projectile p : GameScreen.projectiles) {
-                if (p != null) {
-                    if (!p.shouldRemove()) {
-                        // Update and render projectile only if the room IDs match
-                        // This should always be the case when projectiles are send
-                        // through multiplayer
-                        if (p.getRoomID() == this.mainPlayer.getRoomId()) {
-                            p.update();
-                            p.render(this.shape, this.game.camera);
+            
+            // Loop through all projectiles to render projectiles and check
+            // for removed projectiles
+            for (int i = 0; i < GameScreen.projectiles.size(); i++) {
+                try {
+                    Projectile p = GameScreen.projectiles.get(i);
+                    
+                    if (p != null) {
+                        if (!p.shouldRemove()) {
+                            // Update and render projectile only if the room IDs match
+                            // This should always be the case when projectiles are send
+                            // through multiplayer
+                            if (p.getRoomID() == this.mainPlayer.getRoomId()) {
+                                p.update();
+                                p.render(this.shape, this.game.camera);
+                            }
+                        } else {
+                            projectilesToBeRemoved.add(p);
                         }
-                    } else {
-                        projectilesToBeRemoved.add(p);
                     }
+                } catch (Exception ex) {
+                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
