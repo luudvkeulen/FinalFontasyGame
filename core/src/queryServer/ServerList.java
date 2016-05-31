@@ -28,10 +28,17 @@ public class ServerList extends UnicastRemoteObject implements IServerList{
 	
 	@Override
 	public void removeServer(String address) throws RemoteException {
-		for(IServer s : servers) {
-			if(s.getFullAddress().equals(address)) {
-				servers.remove(s);
-			}
-		}
+            ArrayList<Integer> index = new ArrayList<Integer>();
+
+            for(IServer s : servers) {
+                if(s.getFullAddress().equals(address)) {
+                        index.add(servers.indexOf(s));
+                }
+            }
+            
+            for (Integer i : index) {
+                int toRemove = i;
+                servers.remove(toRemove);
+            }
 	}
 }
