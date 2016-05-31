@@ -388,7 +388,7 @@ public class Player extends SimplePlayer implements Observable {
     public void receiveDamage(int amount) {
         this.hitPoints -= amount;
         
-        if (this.hitPoints < 0) {
+        if (this.hitPoints <= 0) {
             // Set the amount of hitPoints to 0 to prevent negative values
             // being shown
             this.hitPoints = 0;
