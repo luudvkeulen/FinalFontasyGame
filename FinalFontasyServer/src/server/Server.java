@@ -269,8 +269,8 @@ public class Server {
 			if (!playerData.get(playerAddress).getName().equals(simplePlayer.getName())) {
 				Collection<InetSocketAddress> localPlayers = playerData.keySet();
 				for (InetSocketAddress localAddress : localPlayers) {
-					if (playerData.get(localAddress).getName().equals(simplePlayer)) {
-						System.out.println("Sending data");
+					SimplePlayer splayer = playerData.get(localAddress);
+					if (splayer.getName().equals(simplePlayer.getName())) {
 						sendSingle(simplePlayer, localAddress);
 						break;
 					}
