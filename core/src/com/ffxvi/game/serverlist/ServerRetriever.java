@@ -12,6 +12,7 @@
  */
 package com.ffxvi.game.serverlist;
 
+import com.ffxvi.game.persistance.PropertiesHandler;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -31,14 +32,19 @@ import queryServer.IServerList;
 public class ServerRetriever {
 
     /**
+     * The filepath for the properties file containing the ip and port.
+     */
+    private static final String PROPERTIESFILEPATH = "Properties/IPSettings.properties";
+    
+    /**
      * The static IP address used for RMI.
      */
-    private static final String IP = "localhost";
+    private static final String IP = PropertiesHandler.getQueryServerIP(PROPERTIESFILEPATH);
 
     /**
      * The static port used for RMI.
      */
-    private static final int PORT = 420;
+    private static final int PORT = PropertiesHandler.getQueryServerPort(PROPERTIESFILEPATH);
 
     /**
      * The static binding name used for RMI.
