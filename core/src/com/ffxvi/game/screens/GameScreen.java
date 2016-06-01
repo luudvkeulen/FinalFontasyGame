@@ -374,10 +374,11 @@ public class GameScreen implements Screen, Observer {
         if (multiplayers == null) {
             throw new IllegalArgumentException("The multiplayers can not be null.");
         }
+        
         if (this.multiplayers == null) {
             this.multiplayers = new ArrayList();
         }
-
+        
         this.multiplayers.clear();
         this.multiplayers = (List<SimplePlayer>)multiplayers;
     }
@@ -576,6 +577,7 @@ public class GameScreen implements Screen, Observer {
             this.mainPlayer.render(this.batch);
             this.inputManager.checkInput();
             this.batch.end();
+            this.multiplayer = null;
 
             //Remove old chat labels
             for (Label l : this.oldchatlabels) {
