@@ -576,7 +576,6 @@ public class Player extends SimplePlayer implements Observable {
                 y -= this.speed;
                 break;
         }
-        //screen.client.sendPlayer(new SimplePlayer(this));
     }
 
     /**
@@ -637,7 +636,7 @@ public class Player extends SimplePlayer implements Observable {
                 cThis.radius = 50.0f;
 
                 if (cEnemy.overlaps(cThis)) {
-                    this.hitPoints =- 10;
+                    this.receiveDamage(1, p.playerName);
                 }
             }
         }
