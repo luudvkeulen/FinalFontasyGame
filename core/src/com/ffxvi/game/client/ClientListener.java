@@ -172,8 +172,7 @@ public class ClientListener implements Runnable {
         if (message.equals("CONNECTED")) {
             // TODO start the game clientside
         } else if (message.equals("DISCONNECTED")) {
-            MainClass game = MainClass.getInstance();
-            game.getScreen().dispose();
+            screen.client.returnToServerBrowser();
         }
     }
 

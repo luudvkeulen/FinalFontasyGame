@@ -12,9 +12,11 @@
  */
 package com.ffxvi.game.client;
 
+import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.screens.ServerBrowserScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -185,5 +187,11 @@ public final class Client {
         ObjectOutputStream o = new ObjectOutputStream(b);
         o.writeObject(obj);
         return b.toByteArray();
+    }
+    
+    public void returnToServerBrowser() {
+        MainClass game = MainClass.getInstance();
+        game.getScreen().dispose();
+        game.setScreen(new ServerBrowserScreen());
     }
 }
