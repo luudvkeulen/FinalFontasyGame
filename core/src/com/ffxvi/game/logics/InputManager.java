@@ -200,10 +200,6 @@ public class InputManager extends Observable {
 				mainPlayer.slash();
 				returnValue = true;
 			}
-			
-			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-				game.setScreen(new EndScreen(Ending.VICTORY));
-			}
 		}
 
 		return returnValue;

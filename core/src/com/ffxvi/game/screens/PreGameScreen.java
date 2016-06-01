@@ -35,175 +35,175 @@ import com.ffxvi.game.entities.PlayerCharacter;
  */
 public class PreGameScreen implements Screen {
 
-    /**
-     * The game controller.
-     */
-    private final MainClass game;
+	/**
+	 * The game controller.
+	 */
+	private final MainClass game;
 
-    /**
-     * The stage for the screen.
-     */
-    private final Stage stage;
+	/**
+	 * The stage for the screen.
+	 */
+	private final Stage stage;
 
-    /**
-     * A textfield for the username.
-     */
-    private final TextField txtUsername;
+	/**
+	 * A textfield for the username.
+	 */
+	private final TextField txtUsername;
 
-    /**
-     * A label for the username.
-     */
-    private final Label label;
+	/**
+	 * A label for the username.
+	 */
+	private final Label label;
 
-    /**
-     * The layout.
-     */
-    private final GlyphLayout layout;
+	/**
+	 * The layout.
+	 */
+	private final GlyphLayout layout;
 
-    /**
-     * Initializes a new PreGamScreen.
-     */
-    public PreGameScreen() {
-        this.game = MainClass.getInstance();
-        this.stage = new Stage();
-        this.layout = new GlyphLayout();
-        Gdx.input.setInputProcessor(this.stage);
+	/**
+	 * Initializes a new PreGamScreen.
+	 */
+	public PreGameScreen() {
+		this.game = MainClass.getInstance();
+		this.stage = new Stage();
+		this.layout = new GlyphLayout();
+		Gdx.input.setInputProcessor(this.stage);
 
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // Store the default libgdx font under the name "default".
-        BitmapFont bfont = new BitmapFont();
-        //bfont.scale(1);
-        skin.add("default", bfont);
+		// Store the default libgdx font under the name "default".
+		BitmapFont bfont = new BitmapFont();
+		//bfont.scale(1);
+		skin.add("default", bfont);
 
-        // Create textfield
-        this.txtUsername = new TextField("Papyrus", skin);
-        this.txtUsername.setSize(200, 40);
-        this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 25);
+		// Create textfield
+		this.txtUsername = new TextField("Papyrus", skin);
+		this.txtUsername.setSize(200, 40);
+		this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 25);
 
-        // Add the textfield to the stage
-        this.stage.addActor(this.txtUsername);
+		// Add the textfield to the stage
+		this.stage.addActor(this.txtUsername);
 
-        // Create text
-        this.label = new Label("Voer een naam in:", skin);
-        this.layout.setText(skin.getFont("default"), this.label.getText());
-        this.label.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
-        
-        // Add the label to the stage
-        this.stage.addActor(this.label);
+		// Create text
+		this.label = new Label("Voer een naam in:", skin);
+		this.layout.setText(skin.getFont("default"), this.label.getText());
+		this.label.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
 
-        // Create new button
-        TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", skin);
-        enterAsSkeletonDaggerButton.setSize(200, 50);
-        enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50);
-        enterAsSkeletonDaggerButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                enterGame(PlayerCharacter.SKELETON_DAGGER);
-            }
-        });
+		// Add the label to the stage
+		this.stage.addActor(this.label);
 
-        // Add the button to the stage
-        this.stage.addActor(enterAsSkeletonDaggerButton);
+		// Create new button
+		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", skin);
+		enterAsSkeletonDaggerButton.setSize(200, 50);
+		enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50);
+		enterAsSkeletonDaggerButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				enterGame(PlayerCharacter.SKELETON_DAGGER);
+			}
+		});
 
-        // Create new button
-        TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", skin);
-        enterAsSkeletonHoodedBowButton.setSize(200, 50);
-        enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
-        enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
-            }
-        });
-        enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
-        enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
+		// Add the button to the stage
+		this.stage.addActor(enterAsSkeletonDaggerButton);
 
-        // Add the button to the stage
-        this.stage.addActor(enterAsSkeletonHoodedBowButton);
+		// Create new button
+		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", skin);
+		enterAsSkeletonHoodedBowButton.setSize(200, 50);
+		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
+		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+			}
+		});
+		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
+		enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
 
-        // Create new button
-        TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", skin);
-        enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
-        enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
-        enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                enterGame(PlayerCharacter.SKELETON_HOODED_DAGGER);
-            }
-        });
+		// Add the button to the stage
+		this.stage.addActor(enterAsSkeletonHoodedBowButton);
 
-        // Add the button to the stage
-        this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
-    }
+		// Create new button
+		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", skin);
+		enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
+		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
+		enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				enterGame(PlayerCharacter.SKELETON_HOODED_DAGGER);
+			}
+		});
 
-    /**
-     * Makes the user enter the game.
-     *
-     * @param character The player character which was chosen by the user.
-     */
-    public void enterGame(PlayerCharacter character) {
+		// Add the button to the stage
+		this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
+	}
 
-        if (character == null) {
-            throw new IllegalArgumentException("Character can not be null.");
-        }
+	/**
+	 * Makes the user enter the game.
+	 *
+	 * @param character The player character which was chosen by the user.
+	 */
+	public void enterGame(PlayerCharacter character) {
 
-        this.game.getScreen().dispose();
-        GameScreen gameScreen = new GameScreen();
-        gameScreen.addPlayer(this.txtUsername.getText(), character);
-        this.game.setScreen(gameScreen);
-    }
-    
-    /**
-     * Is executed each time the screen is drawn. Contains all drawing logic for
-     * this screen.
-     *
-     * @param delta the time between the last and current use of this method
-     */
-    @Override
-    public void render(float delta) {
-        
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.getScreen().dispose();
-            this.game.setScreen(new MenuScreen());
-            return;
-        }
-        
-        // Draw background color
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+		if (character == null) {
+			throw new IllegalArgumentException("Character can not be null.");
+		}
 
-        this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        this.stage.draw();
-    }
+		this.game.getScreen().dispose();
+		GameScreen gameScreen = new GameScreen();
+		gameScreen.addPlayer(this.txtUsername.getText(), character);
+		this.game.setScreen(gameScreen);
+	}
 
-    @Override
-    public void show() {
-        
-    }
+	/**
+	 * Is executed each time the screen is drawn. Contains all drawing logic for
+	 * this screen.
+	 *
+	 * @param delta the time between the last and current use of this method
+	 */
+	@Override
+	public void render(float delta) {
 
-    @Override
-    public void resize(int width, int height) {
-        
-    }
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			game.getScreen().dispose();
+			this.game.setScreen(new MenuScreen());
+			return;
+		}
 
-    @Override
-    public void pause() {
-        
-    }
+		// Draw background color
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-    @Override
-    public void resume() {
-        
-    }
+		this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+		this.stage.draw();
+	}
 
-    @Override
-    public void hide() {
-        
-    }
+	@Override
+	public void show() {
 
-    @Override
-    public void dispose() {
-        
-    }
+	}
+
+	@Override
+	public void resize(int width, int height) {
+
+	}
+
+	@Override
+	public void pause() {
+
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void hide() {
+
+	}
+
+	@Override
+	public void dispose() {
+
+	}
 }
