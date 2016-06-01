@@ -406,7 +406,6 @@ public class Player extends SimplePlayer implements Observable {
         
         // Respawn player 
         // Hide dialog
-        screen.client.sendPlayer(new SimplePlayer(this));
     }
 
     /**
