@@ -548,10 +548,12 @@ public class GameScreen implements Screen, Observer {
             this.playerHealthLabel.setPosition(playerPos.x + 16, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
 
             this.playerHealthLabelHUD.setPosition(0, this.playerHealthLabelHUD.getHeight());
-
+            this.playerHealthLabelHUD.setText(String.valueOf(mainPlayer.getHitPoints()));
+            
             this.playerLabelNameHUD.setAlignment((int) this.playerLabelNameHUD.getWidth() / 2);
             this.playerLabelNameHUD.setPosition(Gdx.graphics.getWidth() / 2, this.playerLabelNameHUD.getHeight());
 
+            this.scoreLabel.setText(String.valueOf(mainPlayer.getScore()));
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
