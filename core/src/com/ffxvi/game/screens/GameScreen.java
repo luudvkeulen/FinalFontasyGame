@@ -363,6 +363,9 @@ public class GameScreen implements Screen, Observer {
         if (multiplayers == null) {
             throw new IllegalArgumentException("The multiplayers can not be null.");
         }
+        if (this.multiplayers == null) {
+            this.multiplayers = new ArrayList();
+        }
 
         this.multiplayers.clear();
         this.multiplayers = (List<SimplePlayer>)multiplayers;
