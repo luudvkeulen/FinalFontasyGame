@@ -333,6 +333,8 @@ public class GameScreen implements Screen, Observer {
 
     
     public void Respawn(String killer) {
+        this.client.sendPlayer(mainPlayer);
+        
         Collection<SimplePlayer> localMultiplayers = this.getMultiplayers();
         for (SimplePlayer splayer : localMultiplayers) {
             if (splayer.getName().equals(killer)) {
