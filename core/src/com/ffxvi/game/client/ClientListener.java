@@ -182,7 +182,16 @@ public class ClientListener implements Runnable {
                     game.setScreen(new ServerBrowserScreen());
                 }
             });
-        }
+        } else if (message.equals("DEFEAT") || message.equals("VICTORY")) {
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    MainClass game = MainClass.getInstance();
+                    game.getScreen().dispose();
+                    game.setScreen(new ServerBrowserScreen());
+                }
+            });
+        }     
     }
 
     /**
