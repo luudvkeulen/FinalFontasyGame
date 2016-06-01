@@ -39,13 +39,13 @@ public class ServerRetriever {
     /**
      * The static IP address used for RMI.
      */
-    private static final String IP = PropertiesHandler.getQueryServerIP(PROPERTIESFILEPATH);
+    private static final String IP = "192.168.1.1";
 
 
     /**
      * The static port used for RMI.
      */
-    private static final int PORT = PropertiesHandler.getQueryServerPort(PROPERTIESFILEPATH);
+    private static final int PORT = 420;
 
     /**
      * The static binding name used for RMI.

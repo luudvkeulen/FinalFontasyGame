@@ -536,6 +536,7 @@ public class Player extends SimplePlayer implements Observable {
      */
     public void slash() {
         super.animation = SLASHING;
+        this.animation = SLASHING;
         this.changeAnimation();
     }
 
@@ -619,7 +620,7 @@ public class Player extends SimplePlayer implements Observable {
         }
         for (SimplePlayer p : localMultiplayers) { 
             if(p.animation == PlayerAnimation.SLASHING &&
-                    !p.getName().equals(this.playerName)) {
+                !p.getName().equals(this.playerName)) {
                 
                 Player player = new Player(this.screen);
                 player.setData(p);
