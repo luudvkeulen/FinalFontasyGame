@@ -333,8 +333,6 @@ public class GameScreen implements Screen, Observer {
 
     
     public void Respawn(String killer) {
-        this.client.sendPlayer(new SimplePlayer(mainPlayer));
-        
         Collection<SimplePlayer> localMultiplayers = this.getMultiplayers();
         for (SimplePlayer splayer : localMultiplayers) {
             if (splayer.getName().equals(killer)) {
@@ -351,6 +349,8 @@ public class GameScreen implements Screen, Observer {
         
         setLevel(mapid, Direction.UPLEFT);
         this.mainPlayer.setPosition(64, 64);
+        
+        this.client.sendPlayer(new SimplePlayer(mainPlayer));
     }
     
 
