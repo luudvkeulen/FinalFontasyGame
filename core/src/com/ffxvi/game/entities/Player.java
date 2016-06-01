@@ -777,24 +777,15 @@ public class Player extends SimplePlayer implements Observable {
      * Check if player gets slashed.
      */
     public void checkGetSlashed() {
-        Collection<SimplePlayer> localMultiplayers = new ArrayList(this.screen.getMultiplayers());
-        for (SimplePlayer p : localMultiplayers) { 
-            if(p.animation == PlayerAnimation.SLASHING &&
-                    !p.getName().equals(this.playerName)) {
+        for (SimplePlayer p : this.screen.getMultiplayers()) {
+            
+            System.out.println(p.getAnimation());
+            
+            if(p.getAnimation() == PlayerAnimation.SLASHING && !p.getName().equals(this.playerName)) {
+                int slashRadius = 50;
                 
-                Player player = new Player(this.screen);
-                player.setData(p);
-                
-                Circle cEnemy = new Circle();
-                cEnemy.x = p.getX();
-                cEnemy.y = p.getY();
-                cEnemy.radius = 50.0f;
-
-                Circle cThis = new Circle();
-                cThis.x = this.getX();
-                cThis.y = this.getY();
-                cThis.radius = 50.0f;
-
+                Circle cEnemy = new Circle(p.getX(), p.getY(), slashRadius);
+                Circle cThis = new Circle(this.getX(), this.getY(), slashRadius);
                 if (cEnemy.overlaps(cThis)) {
                     this.hitPoints =- 10;
                 }
@@ -802,6 +793,9 @@ public class Player extends SimplePlayer implements Observable {
         }
     }
     
+    /**
+     * Destroy this instance.
+     */
     public void destroy() {
         this.currentAnimation = null;
     }
