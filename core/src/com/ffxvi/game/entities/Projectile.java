@@ -122,7 +122,7 @@ public class Projectile extends SimpleProjectile {
                         this.despawnDelay = 0;
                         this.speed = 0;
                     
-                        screen.getMainPlayer().receiveDamage(10);
+                        screen.getMainPlayer().receiveDamage(10, this.playerName);
                     
                         // Return, as the bullet should be removed and should no
                         // longer be checked for collision with walls

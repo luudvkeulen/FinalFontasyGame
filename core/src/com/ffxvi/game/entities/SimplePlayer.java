@@ -261,4 +261,11 @@ public class SimplePlayer implements Serializable {
     public float getY() {
         return this.y;
     }
+    
+    /**
+     * Increase the score of this player by 1
+     */
+    public void increaseScore() {
+        this.score++;
+    }
 }

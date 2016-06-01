@@ -34,7 +34,7 @@ public class SkinManager {
         hoodedSkeleton = new PlayerSkin(0.05f, "Units/Hooded_Skeleton");
     }
     
-    private class PlayerSkin {
+    public class PlayerSkin {
         
         private float animationSpeed;
         private String skinDirectoryPath;
@@ -88,28 +88,31 @@ public class SkinManager {
             Animation ret = null;
             switch(animation) {
                 case IDLE:
-                    ret = this.idle;
+                    ret = this.idle; break;
                 case WALKING:
                     switch(direction) {
-                        case UP: ret = this.walkUp;
-                        case LEFT: ret = this.walkLeft;
-                        case DOWN: ret = this.walkDown;
-                        case RIGHT: ret = this.walkRight;
+                        case UP: ret = this.walkUp; break;
+                        case LEFT: ret = this.walkLeft; break;
+                        case DOWN: ret = this.walkDown; break;
+                        case RIGHT: ret = this.walkRight; break;
                     }
+                    break;
                 case SLASHING:
                     switch(direction) {
-                        case UP: ret = this.slashUp;
-                        case LEFT: ret = this.slashLeft;
-                        case DOWN: ret = this.slashDown;
-                        case RIGHT: ret = this.slashRight;
+                        case UP: ret = this.slashUp; break;
+                        case LEFT: ret = this.slashLeft; break;
+                        case DOWN: ret = this.slashDown; break;
+                        case RIGHT: ret = this.slashRight; break;
                     }
+                    break;
                 case SHOOTING:
                     switch(direction) {
-                        case UP: ret = this.shootUp;
-                        case LEFT: ret = this.shootLeft;
-                        case DOWN: ret = this.shootDown;
-                        case RIGHT: ret = this.shootRight;
+                        case UP: ret = this.shootUp; break;
+                        case LEFT: ret = this.shootLeft; break;
+                        case DOWN: ret = this.shootDown; break;
+                        case RIGHT: ret = this.shootRight; break;
                     }
+                    break;
             }
             this.idle = new Animation(0, ret.getKeyFrame(0));
             return ret;
@@ -125,7 +128,8 @@ public class SkinManager {
         private void setWalkingAnimations() {
             float walkSpeed = this.animationSpeed * 1f;
             
-            Texture walkSheet = new Texture(Gdx.files.internal(skinDirectoryPath + "/Walk.png"));
+            String path = skinDirectoryPath + "/Walk.png";
+            Texture walkSheet = new Texture(Gdx.files.internal(path));
             TextureRegion[][] anims = TextureRegion.split(walkSheet, walkSheet.getWidth()
                     / walkSheetCols, walkSheet.getHeight() / walkSheetRows);
             
@@ -138,7 +142,8 @@ public class SkinManager {
         private void setSlashingAnimations() {
             float slashSpeed = this.animationSpeed * 0.5f;
             
-            Texture slashSheet = new Texture(Gdx.files.internal(skinDirectoryPath + "/Slash.png"));
+            String path = skinDirectoryPath + "/Slash.png";
+            Texture slashSheet = new Texture(Gdx.files.internal(path));
             TextureRegion[][] anims = TextureRegion.split(slashSheet, slashSheet.getWidth()
                     / slashSheetCols, slashSheet.getHeight() / slashSheetRows);
             
@@ -151,7 +156,8 @@ public class SkinManager {
         private void setShootingAnimations() {
             float shootSpeed = this.animationSpeed * 0.5f;
             
-            Texture shootSheet = new Texture(Gdx.files.internal(skinDirectoryPath + "/Shoot.png"));
+            String path = skinDirectoryPath + "/Shoot.png";
+            Texture shootSheet = new Texture(Gdx.files.internal(path));
             TextureRegion[][] anims = TextureRegion.split(shootSheet, shootSheet.getWidth()
                     / shootSheetCols, shootSheet.getHeight() / shootSheetRows);
             

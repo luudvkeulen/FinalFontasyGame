@@ -40,10 +40,10 @@ import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
+import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Observable;
@@ -62,6 +62,11 @@ public class GameScreen implements Screen, Observer {
      * The main class for the game.
      */
     private final MainClass game;
+    
+    /**
+     * The manager for all player textures (skins)
+     */
+    private static final SkinManager skinManager = new SkinManager();
 
     /**
      * The main player of the game.
@@ -270,6 +275,10 @@ public class GameScreen implements Screen, Observer {
 
         this.oldchatlabels = new ArrayList();
     }
+    
+    public static SkinManager getSkinManager() {
+        return skinManager;
+    }
 
     /**
      * Gets the current map.
@@ -332,12 +341,25 @@ public class GameScreen implements Screen, Observer {
     }
 
     
-    public void Respawn(){
+    public void Respawn(String killer) {
+        Collection<SimplePlayer> localMultiplayers = this.getMultiplayers();
+        for (SimplePlayer splayer : localMultiplayers) {
+            if (splayer.getName().equals(killer)) {
+                splayer.increaseScore();
+                this.client.sendPlayer(splayer);
+                break;
+            }
+        }
+        
+        updatePlayerHealthLabels(mainPlayer.getHitPoints());
+        
         int mapid = getRandomMap().getId();
         mainPlayer.setRoomId(mapid);
         
         setLevel(mapid, Direction.UPLEFT);
         this.mainPlayer.setPosition(64, 64);
+        
+        this.client.sendPlayer(new SimplePlayer(mainPlayer));
     }
     
 
@@ -351,6 +373,9 @@ public class GameScreen implements Screen, Observer {
 
         if (multiplayers == null) {
             throw new IllegalArgumentException("The multiplayers can not be null.");
+        }
+        if (this.multiplayers == null) {
+            this.multiplayers = new ArrayList();
         }
 
         this.multiplayers.clear();
@@ -529,6 +554,12 @@ public class GameScreen implements Screen, Observer {
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
+            if (this.multiplayers == null) {
+                this.multiplayers = new ArrayList();
+            }
+            if (this.multiplayer == null) {
+                this.multiplayer = new Player(this);
+            }
             List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
             batch.begin();
             batch.setProjectionMatrix(game.camera.combined);

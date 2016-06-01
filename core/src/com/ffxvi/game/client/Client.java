@@ -12,9 +12,11 @@
  */
 package com.ffxvi.game.client;
 
+import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.screens.ServerBrowserScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;

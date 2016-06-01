@@ -91,7 +91,7 @@ public class Server {
 						if (playerData.get(address) != null) {
 							HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
 							int clientRoomId = dataMapWithoutSender.get(address).getRoomId();
-							//dataMapWithoutSender.remove(address);
+							dataMapWithoutSender.remove(address);
 							Collection<SimplePlayer> dataListWithoutSender = new ArrayList();
 							// Remove the data from players that are not in the client's room from the Collection
 //							for (SimplePlayer sp : dataListWithoutSender){
@@ -252,15 +252,64 @@ public class Server {
 		}
 	}
 
-	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer player) {
-		playerData.put(playerAddress, player);
-//		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+	/**
+	 * Treats received SimplePlayer the way it is supposed to be treated by
+	 * adding the client's data to the playerData HashMap
+	 *
+	 * @param playerAddress the senders InetSocketAddress (IP + Port)
+	 * @param simplePlayer the received SimplePlayer data
+	 */
+	public void receivePlayer(InetSocketAddress playerAddress, SimplePlayer simplePlayer) {
+		// If the senders SimplePlayer data's name isn't the same as the received
+		// data's name, then the received data will be sent to the address that
+		// matches the received SimplePlayer data's name. This is only supposed
+		// to happen when the received SimplePlayer's data's score has been increased. 
+		SimplePlayer localPlayer = playerData.get(playerAddress);
+		if (localPlayer != null) {
+			if (!playerData.get(playerAddress).getName().equals(simplePlayer.getName())) {
+				Collection<InetSocketAddress> localPlayers = playerData.keySet();
+				for (InetSocketAddress localAddress : localPlayers) {
+					SimplePlayer splayer = playerData.get(localAddress);
+					if (splayer.getName().equals(simplePlayer.getName())) {
+						sendSingle(simplePlayer, localAddress);
+						break;
+					}
+				}
+				return;
+			} else {
+				playerData.put(playerAddress, simplePlayer);
+//				System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+
+				if (simplePlayer.getScore() >= 10) {
+					sendSingle("VICTORY", playerAddress);
+					sendAll("DEFEAT", playerAddress.getAddress());
+					stop();
+				}
+			}
+		} else {
+			Collection<SimplePlayer> localPlayers = playerData.values();
+			for (SimplePlayer splayer : localPlayers) {
+				if (splayer.getName().equals(simplePlayer.getName())) {
+					sendSingle("That name is already taken", playerAddress);
+					sendSingle("DISCONNECTED", playerAddress);
+					return;
+				}
+			}
+			playerData.put(playerAddress, simplePlayer);
+		}
 	}
 
-	public void receiveProjectile(InetSocketAddress validSender, SimpleProjectile simpleProjectile) {
+	/**
+	 * Treats received SimpleProjectile the way it is supposed to be treated by sending
+	 * the client's data to all the other clients
+	 *
+	 * @param playerAddress the senders InetSocketAddress (IP + Port)
+	 * @param simpleProjectile the received SimpleProjectile data
+	 */
+	public void receiveProjectile(InetSocketAddress playerAddress, SimpleProjectile simpleProjectile) {
 		for (InetSocketAddress address : players) {
 			if (address != null) {
-				if (!address.equals(validSender)){
+				if (!address.equals(playerAddress)){
 					SimplePlayer sPlayer = playerData.get(address);
 					if (sPlayer != null) {
 						if (sPlayer.getRoomId() == simpleProjectile.getRoomID()){

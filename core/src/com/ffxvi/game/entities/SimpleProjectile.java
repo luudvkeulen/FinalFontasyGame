@@ -69,7 +69,7 @@ public class SimpleProjectile implements Serializable {
     public SimpleProjectile(float rotation, float speed, float x, float y, String playerName, int roomID) {
 
         if (rotation < 0 || rotation >= 360) {
-            throw new IllegalArgumentException("Rotation must be in the range >= 0 <= 360.");
+            throw new IllegalArgumentException("Rotation must be in the range >= 0 <= 359.");
         }
 
         if (speed < 0) {
@@ -99,74 +99,81 @@ public class SimpleProjectile implements Serializable {
         this.playerName = playerName;
         this.roomID = roomID;
     }
-	
-	public SimpleProjectile(Projectile projectile) {
+
+    public SimpleProjectile(Projectile projectile) {
 
         if (projectile == null) {
             throw new IllegalArgumentException("Projectile may not be null");
         }
-		
-		this.rotation = projectile.rotation;
-		this.speed = projectile.speed;
-		this.x = projectile.x;
-		this.y = projectile.y;
-		this.playerName = projectile.playerName;
-		this.roomID = projectile.roomID;
-	}
-	
-	/**
-	 * Get the angle that this projectile was fired at
-	 * @return the angle that this projectile was fired at
-	 */
-	public float getRotation() {
-		return rotation;
-	}
-	
-	/**
-	 * Get the speed of this projectile
-	 * @return the speed of this projectile
-	 */
-	public float getSpeed() {
-		return speed;
-	}
-	
-	/**
-	 * Get the X position of this projectile
-	 * @return the X position of this projectile
-	 */
-	public float getX() {
-		return x;
-	}
-	
-	/**
-	 * Get the Y position of this projectile
-	 * @return the Y position of this projectile
-	 */
-	public float getY() {
-		return y;
-	}
-	
-	/**
-	 * Get the name of the player that shot this projectile
-	 * @return the name of the player that shot this projectile
-	 */
-	public String getShooterName() {
-		return playerName;
-	}
-	
-	/**
-	 * Get the ID of the room that this projectile is in
-	 * @return the ID of the room that this projectile is in
-	 */
-	public int getRoomID() {
-		return roomID;
-	}
-	
-	/**
-	 * Get the player name (and owner) of this projectile.
-	 * @return a string containing the player name of this projectile.
-	 */
-	public String getPlayerName() {
-		return this.playerName;
-	}
+
+        this.rotation = projectile.rotation;
+        this.speed = projectile.speed;
+        this.x = projectile.x;
+        this.y = projectile.y;
+        this.playerName = projectile.playerName;
+        this.roomID = projectile.roomID;
+    }
+
+    /**
+     * Get the angle that this projectile was fired at
+     *
+     * @return the angle that this projectile was fired at
+     */
+    public float getRotation() {
+        return rotation;
+    }
+
+    /**
+     * Get the speed of this projectile
+     *
+     * @return the speed of this projectile
+     */
+    public float getSpeed() {
+        return speed;
+    }
+
+    /**
+     * Get the X position of this projectile
+     *
+     * @return the X position of this projectile
+     */
+    public float getX() {
+        return x;
+    }
+
+    /**
+     * Get the Y position of this projectile
+     *
+     * @return the Y position of this projectile
+     */
+    public float getY() {
+        return y;
+    }
+
+    /**
+     * Get the name of the player that shot this projectile
+     *
+     * @return the name of the player that shot this projectile
+     */
+    public String getShooterName() {
+        return playerName;
+    }
+
+    /**
+     * Get the ID of the room that this projectile is in
+     *
+     * @return the ID of the room that this projectile is in
+     */
+    public int getRoomID() {
+        return roomID;
+    }
+
+    /**
+     * Get the player name (and owner) of this projectile.
+     *
+     * @return a string containing the player name of this projectile.
+     */
+    public String getPlayerName() {
+        return this.playerName;
+    }
 }

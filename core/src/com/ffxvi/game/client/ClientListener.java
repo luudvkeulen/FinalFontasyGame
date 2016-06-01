@@ -12,10 +12,13 @@
  */
 package com.ffxvi.game.client;
 
+import com.badlogic.gdx.Gdx;
+import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.screens.ServerBrowserScreen;
 import com.ffxvi.game.support.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -115,6 +118,9 @@ public class ClientListener implements Runnable {
             // Check the type of the received object and treat it accordingly
             if (object instanceof String) {
                 this.receiveString(receivePacket, (String) object);
+            } else if (object instanceof SimplePlayer) {
+                System.out.println("Increasing Score");
+                this.screen.getMainPlayer().increaseScore();
             } else if (object instanceof Collection) {
                 // Check what type of collection the received object is
                 for (Object o : (Collection) object) {
@@ -165,10 +171,17 @@ public class ClientListener implements Runnable {
         String message = data.trim();
         System.out.println(String.format("SERVER AT %1$s SENT: %2$s", packet.getSocketAddress().toString(), message));
 
-        if ("CONNECTED".equals(message)) {
+        if (message.equals("CONNECTED")) {
             // TODO start the game clientside
-        } else if ("DISCONNECTED".equals(message)) {
-            // TODO stop the game clientside
+        } else if (message.equals("DISCONNECTED")) {
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    MainClass game = MainClass.getInstance();
+                    game.getScreen().dispose();
+                    game.setScreen(new ServerBrowserScreen());
+                }
+            });
         }
     }
 
