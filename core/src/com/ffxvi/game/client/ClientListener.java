@@ -17,7 +17,7 @@ import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
-import com.ffxvi.game.screens.ServerBrowserScreen;
+import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -175,7 +175,7 @@ public class ClientListener implements Runnable {
         } else if (message.equals("DISCONNECTED")) {
             MainClass game = MainClass.getInstance();
             game.getScreen().dispose();
-            game.setScreen(new ServerBrowserScreen());
+            game.setScreen(new MenuScreen());
         }
     }
 
