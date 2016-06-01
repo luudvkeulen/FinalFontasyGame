@@ -12,11 +12,13 @@
  */
 package com.ffxvi.game.client;
 
+import com.badlogic.gdx.Gdx;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.Projectile;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.screens.ServerBrowserScreen;
 import com.ffxvi.game.support.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -172,7 +174,14 @@ public class ClientListener implements Runnable {
         if (message.equals("CONNECTED")) {
             // TODO start the game clientside
         } else if (message.equals("DISCONNECTED")) {
-            screen.client.returnToServerBrowser();
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    MainClass game = MainClass.getInstance();
+                    game.getScreen().dispose();
+                    game.setScreen(new ServerBrowserScreen());
+                }
+            });
         }
     }
 

@@ -188,10 +188,4 @@ public final class Client {
         o.writeObject(obj);
         return b.toByteArray();
     }
-    
-    public void returnToServerBrowser() {
-        MainClass game = MainClass.getInstance();
-        game.getScreen().dispose();
-        game.setScreen(new ServerBrowserScreen());
-    }
 }
