@@ -276,15 +276,26 @@ public class Server {
 					}
 				}
 				return;
-			}
-		}
-		playerData.put(playerAddress, simplePlayer);
-//		System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
+			} else {
+				playerData.put(playerAddress, simplePlayer);
+//				System.out.println(String.format("DATA ADDED FROM %1$s", playerAddress.toString()));
 
-		if (simplePlayer.getScore() >= 10) {
-			sendSingle("VICTORY", playerAddress);
-			sendAll("DEFEAT", playerAddress.getAddress());
-			stop();
+				if (simplePlayer.getScore() >= 10) {
+					sendSingle("VICTORY", playerAddress);
+					sendAll("DEFEAT", playerAddress.getAddress());
+					stop();
+				}
+			}
+		} else {
+			Collection<SimplePlayer> localPlayers = playerData.values();
+			for (SimplePlayer splayer : localPlayers) {
+				if (splayer.getName().equals(simplePlayer.getName())) {
+					sendSingle("That name is already taken", playerAddress);
+					sendSingle("DISCONNECTED", playerAddress);
+					return;
+				}
+			}
+			playerData.put(playerAddress, simplePlayer);
 		}
 	}
 
