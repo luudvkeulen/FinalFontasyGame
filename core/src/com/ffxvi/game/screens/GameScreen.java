@@ -675,5 +675,6 @@ public class GameScreen implements Screen, Observer {
     @Override
     public void dispose() {
         client.stop();
+        game.setScreen(new ServerBrowserScreen());
     }
 }
