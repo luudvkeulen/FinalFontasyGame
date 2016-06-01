@@ -100,13 +100,13 @@ public class Server {
 //								}
 //							}
 
-							for (InetSocketAddress key : dataMapWithoutSender.keySet()) {
+							/*for (InetSocketAddress key : dataMapWithoutSender.keySet()) {
 								SimplePlayer sp = dataMapWithoutSender.get(key);
 								if (sp.getRoomId() == clientRoomId) {
 									dataListWithoutSender.add(sp);
 								}
-							}
-							sendSingle(dataListWithoutSender, address);
+							}*/
+							sendSingle(dataMapWithoutSender.values(), address);
 						}
 					}
 				}

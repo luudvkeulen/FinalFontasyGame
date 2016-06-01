@@ -568,10 +568,12 @@ public class GameScreen implements Screen, Observer {
             batch.setProjectionMatrix(game.camera.combined);
             try {
                 for (SimplePlayer splayer : localMultiplayers) {
-                    multiplayer.setData(splayer);
-                    multiplayer.render(batch);
-                    this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
-                    this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
+                    if(splayer.getRoomId() == mainPlayer.getRoomId()) {
+                        multiplayer.setData(splayer);
+                        multiplayer.render(batch);
+                        this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
+                        this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
+                    }
                 }
             } catch (ConcurrentModificationException cme) {
                 Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, cme);
