@@ -12,7 +12,6 @@
  */
 package com.ffxvi.game.serverlist;
 
-import com.ffxvi.game.persistance.PropertiesHandler;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -39,7 +38,7 @@ public class ServerRetriever {
     /**
      * The static IP address used for RMI.
      */
-    private static final String IP = "192.168.1.1";
+    private static final String IP = "localhost";
 
 
     /**
