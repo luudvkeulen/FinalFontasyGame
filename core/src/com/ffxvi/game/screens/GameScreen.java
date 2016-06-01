@@ -545,6 +545,9 @@ public class GameScreen implements Screen, Observer {
             this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
             //Render other players
+            if (this.multiplayers == null) {
+                this.multiplayers = new ArrayList();
+            }
             List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
             batch.begin();
             batch.setProjectionMatrix(game.camera.combined);
