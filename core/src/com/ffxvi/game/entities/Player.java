@@ -129,7 +129,7 @@ public class Player extends SimplePlayer implements Observable {
         this.aimDirection = 0f;
         this.animationSpeed = 0.05f;
         this.changeSkin();
-        this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+        this.changeAnimation();
 
         int gridsize = Utils.GRIDSIZE;
         this.modifiedGridSizeX = gridsize - 32;
@@ -175,7 +175,7 @@ public class Player extends SimplePlayer implements Observable {
         super.stateTime = player.stateTime;
         
         this.changeSkin();
-        this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+        this.changeAnimation();
     }
 
     /**
@@ -454,7 +454,7 @@ public class Player extends SimplePlayer implements Observable {
      * @param batch The Sprite Batch to use.
      */
     public void render(SpriteBatch batch) {
-        this.stateTime += Gdx.graphics.getDeltaTime();
+        super.stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
         batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
     }
