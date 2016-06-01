@@ -23,7 +23,9 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
+import static com.ffxvi.game.entities.PlayerAnimation.*;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.support.SkinManager.PlayerSkin;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
@@ -37,26 +39,32 @@ import javafx.beans.Observable;
  * Entity which represents a player.
  */
 public class Player extends SimplePlayer implements Observable {
-    
-    protected static Texture WALKSHEET = null;
-    
-    protected static Texture SLASHSHEET = null;
 
     /**
      * The amount of coordinates a player moves per tick while walking.
      */
-    protected static final float WALK_SPEED = 5f;
+    private static final float WALK_SPEED = 5f;
 
     /**
      * The amount of coordinates a player moves per tick while
      * running/sprinting.
      */
-    protected static final float RUN_SPEED = 8f;
+    private static final float RUN_SPEED = 8f;
 
     /**
      * The cooldown between firing.
      */
     private static final float SHOOTCOOLDOWN = 0.5f;
+    
+    /**
+     * The textures (skin) that this player is using
+     */
+    private PlayerSkin playerSkin;
+    
+    /**
+     * The animation that this player is currently in
+     */
+    private Animation currentAnimation;
 
     /**
      * The direction where the player is aiming his/her weapon in degrees.
@@ -67,51 +75,6 @@ public class Player extends SimplePlayer implements Observable {
      * The speed at which the animation runs.
      */
     private final float animationSpeed;
-
-    /**
-     * The current animation of the player.
-     */
-    private Animation currentAnimation;
-
-    /**
-     * An animation for walking in the up direction.
-     */
-    private Animation walkUp;
-
-    /**
-     * An animation for walking in the left direction.
-     */
-    private Animation walkLeft;
-
-    /**
-     * An animation for walking in the down direction.
-     */
-    private Animation walkDown;
-
-    /**
-     * An animation for walking in the right direction.
-     */
-    private Animation walkRight;
-
-    /**
-     * An animation for slashing in the up direction.
-     */
-    private Animation slashUp;
-
-    /**
-     * An animation for slashing in the left direction.
-     */
-    private Animation slashLeft;
-
-    /**
-     * An animation for slashing in the down direction.
-     */
-    private Animation slashDown;
-
-    /**
-     * An animation for slashing in the right direction.
-     */
-    private Animation slashRight;
 
     /**
      * The grid size of the player in width.
@@ -165,8 +128,8 @@ public class Player extends SimplePlayer implements Observable {
 
         this.aimDirection = 0f;
         this.animationSpeed = 0.05f;
-        this.switchCharacter(super.skin);
-        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
+        this.changeSkin();
+        this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 
         int gridsize = Utils.GRIDSIZE;
         this.modifiedGridSizeX = gridsize - 32;
@@ -174,7 +137,7 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     /**
-     * Special constructor for Player, only use this for playerdata received from
+     * Special constructor for Player, only use this for player data received from
      * the server. 
      * 
      * @param screen the GameScreen that this Player is in. Used to create projectiles
@@ -211,18 +174,8 @@ public class Player extends SimplePlayer implements Observable {
         super.animation = player.animation;
         super.stateTime = player.stateTime;
         
-        this.switchCharacter(super.skin);
-        this.currentAnimation = new Animation(0, this.walkDown.getKeyFrame(0));
-        switch (super.animation) {
-            case IDLE :
-                this.setIdle();
-            case WALKING :
-                this.setCurrentWalkingAnimation();
-            case SLASHING :
-                this.setCurrentSlashingAnimation();
-            case SHOOTING :
-//                TODO setCurrentShootingAnimation();
-        }
+        this.changeSkin();
+        this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
     }
 
     /**
@@ -282,7 +235,7 @@ public class Player extends SimplePlayer implements Observable {
     /**
      * Gets the players movement speed.
      *
-     * @return The movementspeed of the player.
+     * @return The movement speed of the player.
      */
     public float getMoveSpeed() {
         return this.speed;
@@ -468,54 +421,29 @@ public class Player extends SimplePlayer implements Observable {
      * A boolean indicating whether the player can fire, based on whether the
      * cooldown since the last shot has passed.
      *
-     * @return A boolean indicating whether the playre can fire.
+     * @return A boolean indicating whether the player can fire.
      */
     private boolean canFire() {
         return System.nanoTime() - this.shootStart > SHOOTCOOLDOWN * 1000000000;
     }
-
-    /**
-     * Sets the animations of the walking and slashing animations.
-     *
-     * @param walkingAnimation File name of the walking animations, located in
-     * assets.
-     * @param slashingAnimation File name of the slashing animations, located in
-     * assets.
-     */
-    private void setAnimations(String walkingAnimation, String slashingAnimation) {
-        if (walkingAnimation == null || walkingAnimation.trim().isEmpty()) {
-            throw new IllegalArgumentException("Walking animation can not be null.");
-        }
-
-        if (slashingAnimation == null || slashingAnimation.trim().isEmpty()) {
-            throw new IllegalArgumentException("Slashing animation can not be null.");
-        }
-
-        this.setWalkingAnimations(walkingAnimation);
-        this.setSlashingAnimations(slashingAnimation);
-
-        this.currentAnimation = null;
+    
+    private void changeAnimation() {
+        this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
     }
 
     /**
-     * Switches the character of this player to the given character.
-     *
-     * @param character The character to switch to.
+     * Switches the textures (skin) of this player.
      */
-    private void switchCharacter(PlayerCharacter character) {
-        switch (character) {
-            default:
+    private void changeSkin() {
+        switch (super.skin) {
             case SKELETON_DAGGER:
-                setAnimations("Units/Normal_Skeleton/Walk.png",
-                        "Units/Normal_Skeleton/Slash.png");
+                this.playerSkin = screen.getSkinManager().getNormalSkeleton();
                 break;
             case SKELETON_HOODED_BOW:
-                setAnimations("Units/Hooded_Skeleton/Walk.png",
-                        "");
+                this.playerSkin = screen.getSkinManager().getHoodedSkeleton();
                 break;
             case SKELETON_HOODED_DAGGER:
-                setAnimations("Units/Hooded_Skeleton/Walk.png",
-                        "Units/Hooded_Skeleton/Slash.png");
+                this.playerSkin = screen.getSkinManager().getHoodedSkeleton();
                 break;
         }
     }
@@ -527,8 +455,8 @@ public class Player extends SimplePlayer implements Observable {
      */
     public void render(SpriteBatch batch) {
         this.stateTime += Gdx.graphics.getDeltaTime();
-        TextureRegion currentFrame = this.currentAnimation.getKeyFrame(this.stateTime, true);
-        batch.draw(currentFrame, this.x, this.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
+        TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+        batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
     }
 
     /**
@@ -596,10 +524,19 @@ public class Player extends SimplePlayer implements Observable {
     }
 
     /**
+     * Sets the player's animation to idle.
+     */
+    public void setIdle() {
+        super.animation = IDLE;
+        this.changeAnimation();
+    }
+    
+    /**
      * Slashes in the given direction, given the player can slash.
      */
     public void slash() {
-        this.setCurrentSlashingAnimation();
+        super.animation = SLASHING;
+        this.changeAnimation();
     }
 
     /**
@@ -608,9 +545,9 @@ public class Player extends SimplePlayer implements Observable {
      * @param direction The new direction.
      */
     public void setDirection(Direction direction) {
-        this.direction = direction;
-
-        this.setCurrentWalkingAnimation();
+        super.animation = WALKING;
+        super.direction = direction;
+        this.changeAnimation();
 
         if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
             this.move();
@@ -639,109 +576,6 @@ public class Player extends SimplePlayer implements Observable {
                 break;
         }
         screen.client.sendPlayer(new SimplePlayer(this));
-//        System.out.println("Sending SimplePlayer data");
-    }
-
-    /**
-     * Sets the current walking animation.
-     */
-    private void setCurrentWalkingAnimation() {
-        this.animation = PlayerAnimation.WALKING;
-
-        switch (this.direction) {
-            default:
-            case LEFT:
-                this.currentAnimation = this.walkLeft;
-                break;
-            case RIGHT:
-                this.currentAnimation = this.walkRight;
-                break;
-            case UP:
-                this.currentAnimation = this.walkUp;
-                break;
-            case DOWN:
-                this.currentAnimation = this.walkDown;
-                break;
-        }
-    }
-
-    /**
-     * Sets the animation for slashing in this player's direction.
-     */
-    private void setCurrentSlashingAnimation() {
-        this.animation = PlayerAnimation.SLASHING;
-
-        switch (this.direction) {
-            default:
-            case LEFT:
-                this.currentAnimation = this.slashLeft;
-                break;
-            case RIGHT:
-                this.currentAnimation = this.slashRight;
-                break;
-            case UP:
-                this.currentAnimation = this.slashUp;
-                break;
-            case DOWN:
-                this.currentAnimation = this.slashDown;
-                break;
-        }
-    }
-
-    /**
-     * Sets the player's animation to idle.
-     */
-    public void setIdle() {
-        this.animation = PlayerAnimation.IDLE;
-        this.currentAnimation = new Animation(0, this.currentAnimation.getKeyFrame(0));
-    }
-
-    /**
-     * This methods gets called once to load the animations
-     *
-     * @param walkingAnimation Filename of the walking animations, located in
-     * assets.
-     */
-    private void setWalkingAnimations(String walkingAnimation) {
-        float walkSpeed = animationSpeed * 1f;
-        int walkSheetCols = 9;
-        int walkSheetRows = 4;
-
-        if(WALKSHEET == null) {
-            WALKSHEET = new Texture(Gdx.files.internal(walkingAnimation));
-        }
-        
-        TextureRegion[][] anims = TextureRegion.split(WALKSHEET, WALKSHEET.getWidth()
-                / walkSheetCols, WALKSHEET.getHeight() / walkSheetRows);
-        
-        this.walkUp = new Animation(walkSpeed, anims[0]);
-        this.walkLeft = new Animation(walkSpeed, anims[1]);
-        this.walkDown = new Animation(walkSpeed, anims[2]);
-        this.walkRight = new Animation(walkSpeed, anims[3]);
-    }
-
-    /**
-     * This method gets called once to load the animations.
-     *
-     * @param slashingAnimation Filename of the walking animations, located in
-     * assets.
-     */
-    private void setSlashingAnimations(String slashingAnimation) {
-        float slashSpeed = this.animationSpeed * 0.5f;
-        int slashSheetCols = 6;
-        int slashSheetRows = 4;
-
-        if (SLASHSHEET == null) {
-            SLASHSHEET = new Texture(Gdx.files.internal(slashingAnimation));
-        }
-        TextureRegion[][] anims = TextureRegion.split(SLASHSHEET, SLASHSHEET.getWidth()
-                / slashSheetCols, SLASHSHEET.getHeight() / slashSheetRows);
-        
-
-        this.slashUp = new Animation(slashSpeed, anims[0]);
-        this.slashLeft = new Animation(slashSpeed, anims[1]);
-        this.slashDown = new Animation(slashSpeed, anims[2]);
-        this.slashRight = new Animation(slashSpeed, anims[3]);
     }
 
     /**

@@ -40,10 +40,10 @@ import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
+import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Observable;
@@ -62,6 +62,11 @@ public class GameScreen implements Screen, Observer {
      * The main class for the game.
      */
     private final MainClass game;
+    
+    /**
+     * The manager for all player textures (skins)
+     */
+    private static final SkinManager skinManager = new SkinManager();
 
     /**
      * The main player of the game.
@@ -269,6 +274,10 @@ public class GameScreen implements Screen, Observer {
         this.stage.addActor(this.scoreLabel);
 
         this.oldchatlabels = new ArrayList();
+    }
+    
+    public static SkinManager getSkinManager() {
+        return skinManager;
     }
 
     /**
@@ -547,6 +556,9 @@ public class GameScreen implements Screen, Observer {
             //Render other players
             if (this.multiplayers == null) {
                 this.multiplayers = new ArrayList();
+            }
+            if (this.multiplayer == null) {
+                this.multiplayer = new Player(this);
             }
             List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
             batch.begin();
