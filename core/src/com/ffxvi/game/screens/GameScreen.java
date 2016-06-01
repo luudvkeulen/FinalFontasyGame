@@ -577,7 +577,6 @@ public class GameScreen implements Screen, Observer {
             this.mainPlayer.render(this.batch);
             this.inputManager.checkInput();
             this.batch.end();
-            this.multiplayer = null;
 
             //Remove old chat labels
             for (Label l : this.oldchatlabels) {
