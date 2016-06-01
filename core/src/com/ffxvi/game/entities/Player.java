@@ -576,7 +576,7 @@ public class Player extends SimplePlayer implements Observable {
                 y -= this.speed;
                 break;
         }
-        screen.client.sendPlayer(new SimplePlayer(this));
+        //screen.client.sendPlayer(new SimplePlayer(this));
     }
 
     /**
@@ -611,9 +611,10 @@ public class Player extends SimplePlayer implements Observable {
     }
     
     /**
-     * Check if player gets slashed.
+     * Update method
      */
-    public void checkGetSlashed() {
+    public void update() {
+        //Check if player gets slashed
         Collection<SimplePlayer> localMultiplayers = new ArrayList(this.screen.getMultiplayers());
         if (localMultiplayers.size() == 0) {
             return;
@@ -640,6 +641,9 @@ public class Player extends SimplePlayer implements Observable {
                 }
             }
         }
+        
+        //Send new player
+        screen.client.sendPlayer(new SimplePlayer(this));
     }
     
     /**

@@ -627,8 +627,8 @@ public class GameScreen implements Screen, Observer {
             // Remove all expired projectiles
             projectiles.removeAll(projectilesToBeRemoved);
             
-            //Check for player slashing
-            this.mainPlayer.checkGetSlashed();
+            //Update the player
+            this.mainPlayer.update();
         }
     }
 
