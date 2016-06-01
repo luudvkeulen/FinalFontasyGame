@@ -780,6 +780,9 @@ public class Player extends SimplePlayer implements Observable {
      */
     public void checkGetSlashed() {
         Collection<SimplePlayer> localMultiplayers = new ArrayList(this.screen.getMultiplayers());
+        if (localMultiplayers.size() == 0) {
+            return;
+        }
         for (SimplePlayer p : localMultiplayers) { 
             if(p.animation == PlayerAnimation.SLASHING &&
                     !p.getName().equals(this.playerName)) {

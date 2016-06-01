@@ -266,10 +266,13 @@ public class Server {
 		// to happen when the received SimplePlayer's data's score has been increased. 
 		SimplePlayer localPlayer = playerData.get(playerAddress);
 		if (localPlayer != null) {
+			System.out.println("Player found in playerData");
 			if (!playerData.get(playerAddress).getName().equals(simplePlayer.getName())) {
+				System.out.println("Sender name != data name");
 				Collection<InetSocketAddress> localPlayers = playerData.keySet();
 				for (InetSocketAddress localAddress : localPlayers) {
 					if (playerData.get(localAddress).getName().equals(simplePlayer)) {
+						System.out.println("Sending data");
 						sendSingle(simplePlayer, localAddress);
 						break;
 					}
