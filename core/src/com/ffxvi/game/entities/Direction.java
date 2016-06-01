@@ -17,12 +17,12 @@ package com.ffxvi.game.entities;
  * currently used for players and projectiles.
  */
 public enum Direction {
-    UP,
-    UPLEFT,
-    LEFT,
-    DOWNLEFT,
-    DOWN,
-    DOWNRIGHT,
-    RIGHT,
-    UPRIGHT
+	UP,
+	UPLEFT,
+	LEFT,
+	DOWNLEFT,
+	DOWN,
+	DOWNRIGHT,
+	RIGHT,
+	UPRIGHT
 }
