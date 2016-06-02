@@ -24,19 +24,19 @@ public class ServerSubscriber {
 		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
 		System.out.println(Inet4Address.getLocalHost().getHostAddress());
 		
-		startTimer();
+		startTimer("", 0);
 	}
 	
 	public ServerSubscriber(String address) throws RemoteException, UnknownHostException {
 		connectToRegistry();
 		serverList.addServer(address, 1338);
-		startTimer();
+		startTimer(address, 0);
 	}
 	
 	public ServerSubscriber(String address, int port) throws RemoteException, UnknownHostException {
 		connectToRegistry();
 		serverList.addServer(address, port);
-		startTimer();
+		startTimer(address, port);
 	}
 	
 	private void connectToRegistry() {
@@ -62,9 +62,15 @@ public class ServerSubscriber {
 		}
 	}
 	
-	private void startTimer() throws UnknownHostException {
+	private void startTimer(String address, int port) throws UnknownHostException {
 		Timer timer = new Timer();
-		timer.schedule(new ServerSubscriberTask(serverList, Inet4Address.getLocalHost().getHostAddress(), 1338), 0, 500);
+		if(address.equals("") && port == 0) {
+			timer.schedule(new ServerSubscriberTask(serverList, Inet4Address.getLocalHost().getHostAddress(), 1338), 0, 500);
+		} else if(!address.equals("") && port == 0) {
+			timer.schedule(new ServerSubscriberTask(serverList, address, 1338), 0, 500);
+		} else {
+			timer.schedule(new ServerSubscriberTask(serverList, address, port), 0, 500);
+		}
 	}
 	
 	public void removeServer(String address) throws RemoteException {		

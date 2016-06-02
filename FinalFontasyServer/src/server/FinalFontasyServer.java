@@ -35,12 +35,6 @@ public class FinalFontasyServer {
 		// Write a welcome message
 		System.out.println("\n---Welcome to the Final Fontasy XVI server---");
 
-		try {
-			serverSubscriber = new ServerSubscriber();
-		} catch (IOException ex) {
-			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
 		Scanner sc = new Scanner(System.in);
 		Scanner lineSc;
 		String line = "";
@@ -50,12 +44,15 @@ public class FinalFontasyServer {
 		switch (args.length) {
 			case 0:
 				f.startAndSubscribe("", 0);
+				System.out.println("0 args");
 				break;
 			case 1:
 				f.startAndSubscribe(args[0], 0);
+				System.out.println("1 args:" + args[0]);
 				break;
 			case 2:
 				f.startAndSubscribe(args[0], Integer.getInteger(args[1]));
+				System.out.println("2 args");
 				break;
 			default:
 				break;
@@ -115,7 +112,7 @@ public class FinalFontasyServer {
 		if(address.equals("") && port == 0) {
 			server = new Server(1338);
 			startChatServer(port);
-		} else if (port == 0) {
+		} else if (port == 0 && !address.equals("")) {
 			server = new Server(1338);
 			try {
 				serverSubscriber = new ServerSubscriber(address);
