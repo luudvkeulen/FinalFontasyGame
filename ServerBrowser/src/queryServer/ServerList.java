@@ -23,10 +23,6 @@ public class ServerList extends UnicastRemoteObject implements IServerList{
 			if(s.getAddress().equals(address) && s.getPort() == port) return;
 		}
 		servers.add(new Server(address, port));
-		System.out.println("added server:" + address + port);
-		for(IServer server : servers) {
-			System.out.println(server.getFullAddress());
-		}
 	}
 	
 	@Override
@@ -36,5 +32,9 @@ public class ServerList extends UnicastRemoteObject implements IServerList{
 				servers.remove(s);
 			}
 		}
+	}
+	
+	public void clearServers() {
+		this.servers.clear();
 	}
 }

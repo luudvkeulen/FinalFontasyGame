@@ -22,9 +22,12 @@ import server.chat.ChatListener;
 public class FinalFontasyServer {
 
 	private static ServerSubscriber serverSubscriber;
-	
+	private static Server server;
+	private static ChatListener chatListener;
 	/**
 	 * @param args the command line arguments
+	 * @throws java.rmi.RemoteException
+	 * @throws java.net.UnknownHostException
 	 */
 	public static void main(String[] args) throws RemoteException, UnknownHostException {
 		// Clear the console window
@@ -43,17 +46,22 @@ public class FinalFontasyServer {
 		String line = "";
 		String input = "";
 
-		// Start the server
-		Server server = new Server(1338);
-
-		ChatListener chatListener = null;
-		try {
-			//Start the chatserver
-			chatListener = new ChatListener(server, 1338);
-			new Thread(chatListener).start();
-		} catch (IOException ex) {
-			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
+		FinalFontasyServer f = new FinalFontasyServer();
+		switch (args.length) {
+			case 0:
+				f.startAndSubscribe("", 0);
+				break;
+			case 1:
+				f.startAndSubscribe(args[0], 0);
+				break;
+			case 2:
+				f.startAndSubscribe(args[0], Integer.getInteger(args[1]));
+				break;
+			default:
+				break;
 		}
+		
+		
 
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
 		boolean stop = false;
@@ -101,5 +109,43 @@ public class FinalFontasyServer {
 			lineSc.close();
 		}
 		sc.close();
+	}
+	
+	private void startAndSubscribe(String address, int port) throws RemoteException {
+		if(address.equals("") && port == 0) {
+			server = new Server(1338);
+			startChatServer(port);
+		} else if (port == 0) {
+			server = new Server(1338);
+			try {
+				serverSubscriber = new ServerSubscriber(address);
+			} catch (IOException ex) {
+				System.out.println(ex.getMessage());
+			}
+			startChatServer(port);
+		} else {
+			server = new Server(port);
+			try {
+				serverSubscriber = new ServerSubscriber(address, port);
+			} catch (IOException ex) {
+				System.out.println(ex.getMessage());
+			}
+			startChatServer(port);
+		}
+	}
+	
+	private void startChatServer(int port) {
+		chatListener = null;
+		try {
+			//Start the chatserver
+			if(port == 0) {
+				chatListener = new ChatListener(server, 1338);
+			} else {
+				chatListener = new ChatListener(server, port);
+			}
+			new Thread(chatListener).start();
+		} catch (IOException ex) {
+			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 }

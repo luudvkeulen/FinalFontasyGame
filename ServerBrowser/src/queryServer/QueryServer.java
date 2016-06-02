@@ -3,6 +3,7 @@ package queryServer;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Timer;
 
 public class QueryServer {
 	private ServerList serverList;
@@ -12,7 +13,7 @@ public class QueryServer {
 	static final String BINDINGNAME = "serverList";
 	
 	public QueryServer(){
-		System.setProperty("java.rmi.server.hostname","192.168.1.1");
+		System.setProperty("java.rmi.server.hostname","localhost");
 		//Try creating the serverlist
 		try {
 			serverList = new ServerList();
@@ -38,8 +39,12 @@ public class QueryServer {
 		} catch (RemoteException re) {
 			System.out.println("queryServer: RemoteException: " + re.getMessage());
 		}
+		
+		Timer timer = new Timer();
+		timer.schedule(new ClearServers(serverList, registry), 0, 5000);
 	}
+	
 	public static void main(String[] args) {
-		QueryServer qServer = new QueryServer();
+		QueryServer queryServer = new QueryServer();
 	}
 }

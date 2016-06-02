@@ -2,10 +2,12 @@ package server;
 
 import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Timer;
 import queryServer.IServerList;
 public class ServerSubscriber {
 	
@@ -16,15 +18,28 @@ public class ServerSubscriber {
 	private static final String IP = "localhost";
 	static final String BINDINGNAME = "serverList";
 	
-	public ServerSubscriber() throws IOException {
-		Runtime.getRuntime().addShutdownHook(
-		new Thread("app-shutdown-hook") {
-			@Override 
-			public void run() { 
-			  System.out.println("bye"); 
-			}
-		});
+	public ServerSubscriber() throws IOException {		
+		connectToRegistry();
 		
+		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
+		System.out.println(Inet4Address.getLocalHost().getHostAddress());
+		
+		startTimer();
+	}
+	
+	public ServerSubscriber(String address) throws RemoteException, UnknownHostException {
+		connectToRegistry();
+		serverList.addServer(address, 1338);
+		startTimer();
+	}
+	
+	public ServerSubscriber(String address, int port) throws RemoteException, UnknownHostException {
+		connectToRegistry();
+		serverList.addServer(address, port);
+		startTimer();
+	}
+	
+	private void connectToRegistry() {
 		//Try to get the registry
 		try {
 			registry = LocateRegistry.getRegistry(IP, PORT);
@@ -45,9 +60,11 @@ public class ServerSubscriber {
 				serverList = null;
 			}
 		}
-		
-		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
-		System.out.println(Inet4Address.getLocalHost().getHostAddress());
+	}
+	
+	private void startTimer() throws UnknownHostException {
+		Timer timer = new Timer();
+		timer.schedule(new ServerSubscriberTask(serverList, Inet4Address.getLocalHost().getHostAddress(), 1338), 0, 500);
 	}
 	
 	public void removeServer(String address) throws RemoteException {		
