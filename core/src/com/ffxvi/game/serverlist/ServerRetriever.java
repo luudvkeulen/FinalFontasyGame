@@ -38,7 +38,7 @@ public class ServerRetriever {
     /**
      * The static IP address used for RMI.
      */
-    private static final String IP = "localhost";
+    private static final String IP = "128.199.32.134";
 
 
     /**

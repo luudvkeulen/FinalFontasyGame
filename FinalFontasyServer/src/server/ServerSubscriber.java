@@ -15,7 +15,7 @@ public class ServerSubscriber {
 	private IServerList serverList;
 	
 	private static final int PORT = 420;
-	private static final String IP = "localhost";
+	private static final String IP = "128.199.32.134";
 	static final String BINDINGNAME = "serverList";
 	
 	public ServerSubscriber() throws IOException {		
