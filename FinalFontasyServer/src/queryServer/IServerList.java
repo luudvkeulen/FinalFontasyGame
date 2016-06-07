@@ -9,5 +9,7 @@ public interface IServerList extends Remote {
 	
 	public void addServer(String address, int port) throws RemoteException;
 	
+	public void addServer(String address, int port, String name) throws RemoteException;
+	
 	public void removeServer(String address) throws RemoteException;
 }

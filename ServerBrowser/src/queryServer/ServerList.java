@@ -19,10 +19,21 @@ public class ServerList extends UnicastRemoteObject implements IServerList{
 	
 	@Override
 	public void addServer(String address, int port) throws RemoteException {
-		for (IServer s : servers) {
-			if(s.getAddress().equals(address) && s.getPort() == port) return;
-		}
+		if(serverExists(address, port)) return;
 		servers.add(new Server(address, port));
+	}
+	
+	@Override
+	public void addServer(String address, int port, String name) throws RemoteException {
+		if(serverExists(address, port)) return;
+		servers.add(new Server(address, port, name));
+	}
+	
+	public boolean serverExists(String address, int port) throws RemoteException {
+		for (IServer s : servers) {
+			if(s.getAddress().equals(address) && s.getPort() == port) return true;
+		}
+		return false;
 	}
 	
 	@Override

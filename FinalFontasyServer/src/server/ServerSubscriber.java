@@ -13,6 +13,8 @@ public class ServerSubscriber {
 	
 	private Registry registry;
 	private IServerList serverList;
+	private String address;
+	private int port;
 	
 	private static final int PORT = 420;
 	private static final String IP = "128.199.32.134";
@@ -22,19 +24,25 @@ public class ServerSubscriber {
 		connectToRegistry();
 		
 		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
-		System.out.println(Inet4Address.getLocalHost().getHostAddress());
+		System.out.println("Added server");
+		this.address = Inet4Address.getLocalHost().getHostAddress();
+		this.port = 0;
 		
 		startTimer("", 0);
 	}
 	
 	public ServerSubscriber(String address) throws RemoteException, UnknownHostException {
 		connectToRegistry();
+		this.address = address;
+		this.port = 0;
 		serverList.addServer(address, 1338);
 		startTimer(address, 0);
 	}
 	
 	public ServerSubscriber(String address, int port) throws RemoteException, UnknownHostException {
 		connectToRegistry();
+		this.address = address;
+		this.port = port;
 		serverList.addServer(address, port);
 		startTimer(address, port);
 	}
@@ -52,6 +60,7 @@ public class ServerSubscriber {
 		if(registry != null) {
 			try {
 				serverList = (IServerList) registry.lookup(BINDINGNAME);
+				System.out.println("ServerList binded");
 			} catch (RemoteException re) {
 				System.out.println("GameServer: RemoteException: " + re.getMessage());
 				serverList = null;
@@ -76,6 +85,15 @@ public class ServerSubscriber {
 	public void removeServer(String address) throws RemoteException {		
 		if(serverList != null) {
 			serverList.removeServer(address);
+		}
+	}
+	
+	public void renameServer(String name) throws RemoteException {
+		serverList.removeServer(this.address);
+		if(port != 0) {
+			serverList.addServer(address, port);
+		} else {
+			serverList.addServer(address, 1338);
 		}
 	}
 }
