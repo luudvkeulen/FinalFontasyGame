@@ -428,7 +428,11 @@ public class Player extends SimplePlayer implements Observable {
     }
     
     private void changeAnimation() {
-        this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+		if (super.animation != IDLE) {
+			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+		} else {
+			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(super.animation, super.direction).getKeyFrame(0));
+		}
     }
 
     /**
