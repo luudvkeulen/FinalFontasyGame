@@ -431,7 +431,7 @@ public class Player extends SimplePlayer implements Observable {
 		if (super.animation != IDLE) {
 			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
-			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(super.animation, super.direction).getKeyFrame(0));
+			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
 		}
     }
 
