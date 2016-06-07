@@ -39,25 +39,22 @@ public class FinalFontasyServer {
 		Scanner lineSc;
 		String line = "";
 		String input = "";
-
-		FinalFontasyServer f = new FinalFontasyServer();
 		switch (args.length) {
 			case 0:
-				f.startAndSubscribe("", 0);
+				startAndSubscribe("", 0);
 				System.out.println("0 args");
 				break;
 			case 1:
-				f.startAndSubscribe(args[0], 0);
+				startAndSubscribe(args[0], 0);
 				System.out.println("1 args:" + args[0]);
 				break;
 			case 2:
-				f.startAndSubscribe(args[0], Integer.getInteger(args[1]));
+				startAndSubscribe(args[0], Integer.getInteger(args[1]));
 				System.out.println("2 args");
 				break;
 			default:
 				break;
-		}
-		
+		}		
 		
 
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
@@ -93,6 +90,13 @@ public class FinalFontasyServer {
 					}
 					System.out.println("----------------");
 					break;
+				case "name":
+					String name;
+					Scanner in = new Scanner(System.in);
+					name = in.next();
+					serverSubscriber.renameServer(name);
+					System.out.println("renamed to: " + name);
+					break;
 				// Display all available commands
 				case "help":
 					System.out.println("----------------\n"
@@ -100,6 +104,7 @@ public class FinalFontasyServer {
 							+ "stop - Stops the server.\n"
 							+ "port - Shows the port that the server is listening on.\n"
 							+ "players - Shows the addresses of all the connected players.\n"
+							+ "name - sets the name of the server"
 							+ "----------------");
 					break;
 			}
@@ -108,9 +113,14 @@ public class FinalFontasyServer {
 		sc.close();
 	}
 	
-	private void startAndSubscribe(String address, int port) throws RemoteException {
+	private static void startAndSubscribe(String address, int port) throws RemoteException {
 		if(address.equals("") && port == 0) {
 			server = new Server(1338);
+			try {
+				serverSubscriber = new ServerSubscriber();
+			} catch (IOException ex) {
+				System.out.println(ex.getMessage());
+			}
 			startChatServer(port);
 		} else if (port == 0 && !address.equals("")) {
 			server = new Server(1338);
@@ -131,7 +141,7 @@ public class FinalFontasyServer {
 		}
 	}
 	
-	private void startChatServer(int port) {
+	private static void startChatServer(int port) {
 		chatListener = null;
 		try {
 			//Start the chatserver
