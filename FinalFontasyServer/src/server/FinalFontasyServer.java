@@ -83,10 +83,8 @@ public class FinalFontasyServer {
 				// Display the currently connected clients in the form of IP Addresses
 				case "players":
 					System.out.println("Current players:");
-					for (InetSocketAddress player : server.getPlayerAddresses()) {
-						if (player != null) {
-							System.out.println(player.toString());
-						}
+					for (String s : server.getPlayerInfo()) {
+						System.out.println(s);
 					}
 					System.out.println("----------------");
 					break;
