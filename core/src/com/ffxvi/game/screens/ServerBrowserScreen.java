@@ -18,15 +18,19 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.ffxvi.game.MainClass;
@@ -44,19 +48,19 @@ import queryServer.IServer;
 public class ServerBrowserScreen implements Screen {
 
 	/**
-	 * The width of buttons.
-	 */
-	private static final int BUTTON_WIDTH = 200;
+     * The width of buttons.
+     */
+    private static final int BUTTON_WIDTH = 200;
 
-	/**
-	 * The height of buttons.
-	 */
-	private static final int BUTTON_HEIGHT = 60;
+    /**
+     * The height of buttons.
+     */
+    private static final int BUTTON_HEIGHT = 60;
 
-	/**
-	 * The skin of this class.
-	 */
-	private Skin skin;
+    /**
+     * The offset of buttons.
+     */
+    private static final int BUTTON_OFFSET = 30;
 
 	/**
 	 * The stage.
@@ -85,54 +89,62 @@ public class ServerBrowserScreen implements Screen {
 	private Table table;
 
 	/**
-	 * The serverretriever for getting the server list
+	 * The ServerRetriever for getting the server list.
 	 */
 	private ServerRetriever serverRetriever;
+	
+	/**
+	 * The layout.
+	 */
+	private final GlyphLayout layout;
+	
+	/**
+	 * A label for rendering the header text.
+	 */
+	private final Label headerLabel;
 
 	/**
 	 * Initializes a new ServerBrowserScreen.
 	 */
 	public ServerBrowserScreen() {
-		this.game = MainClass.getInstance();
-	}
-
-	/**
-	 * Shows the screen.
-	 */
-	@Override
-	public void show() {
+        this.game = MainClass.getInstance();
 		this.stage = new Stage();
+		this.layout = new GlyphLayout();
 		Gdx.input.setInputProcessor(this.stage);
-
-		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-		// Generate a 1x1 white texture and store it in the skin named "white".
-		Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.WHITE);
-		pixmap.fill();
-
-		this.skin.add("white", new Texture(pixmap));
-
-		this.skin.add("white", new Texture(pixmap));
-
-		// Store the default libgdx font under the name "default".
+		
+		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+		Skin buttonSkin = new Skin();
+		
+        Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+		
+		buttonSkin.add("white", new Texture(pixmap));
+		
 		BitmapFont bfont = new BitmapFont();
-		//bfont.scale(1);
-		this.skin.add("default", bfont);
+		skin.add("default", bfont);
+		buttonSkin.add("default", bfont);
 
-		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		textButtonStyle.up = this.skin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.down = this.skin.newDrawable("white", Color.WHITE);
-		textButtonStyle.over = this.skin.newDrawable("white", Color.LIGHT_GRAY);
+        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+        TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
+        textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
+        textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
 
-		textButtonStyle.font = this.skin.getFont("default");
+        textButtonStyle.font = buttonSkin.getFont("default");
 
-		this.skin.add("default", textButtonStyle);
+        buttonSkin.add("default", textButtonStyle);
+		
+		// Create header text
+		this.headerLabel = new Label("SERVER BROWSER", skin);
+		this.headerLabel.setFontScale(2);
+		this.headerLabel.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2) - this.headerLabel.getWidth(), this.stage.getHeight() - 50);
 
+		this.stage.addActor(this.headerLabel);
+		
 		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
-		final TextButton playButton = new TextButton("PLAY", textButtonStyle);
-		playButton.setPosition((this.stage.getWidth() / 2) - (playButton.getWidth() / 2), (playButton.getHeight() / 2) - 10);
+		TextButton playButton = new TextButton("PLAY", textButtonStyle);
+		playButton.setPosition((this.stage.getWidth() / 2) - (playButton.getWidth() / 2), (playButton.getHeight() / 2) - 20);
 		playButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -154,9 +166,9 @@ public class ServerBrowserScreen implements Screen {
 		servers.getSelection().setRequired(false);
 		this.servers.setItems(new String[]{});
 
-		this.scrollPane = new ScrollPane(servers, this.skin);
+		this.scrollPane = new ScrollPane(servers, skin);
 
-		this.table = new Table(this.skin);
+		this.table = new Table(skin);
 		this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		this.scrollPane.setSmoothScrolling(false);
 		this.table.add(this.scrollPane).size(800, 600);
@@ -170,6 +182,12 @@ public class ServerBrowserScreen implements Screen {
 			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
+
+	/**
+	 * Shows the screen.
+	 */
+	@Override
+	public void show() {}
 
 	/**
 	 * Refreshes the server list.
@@ -195,17 +213,16 @@ public class ServerBrowserScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			game.getScreen().dispose();
+			this.game.getScreen().dispose();
 			this.game.setScreen(new MenuScreen());
 			return;
 		}
 
-		// Draw background color
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-		stage.draw();
+		this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+		this.stage.draw();
 	}
 
 	@Override

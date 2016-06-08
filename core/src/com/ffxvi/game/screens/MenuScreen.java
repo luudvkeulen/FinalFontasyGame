@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -34,7 +35,12 @@ import com.ffxvi.game.MainClass;
  * The screen for the main menu.
  */
 public class MenuScreen implements Screen {
-
+	
+	/**
+	 * The game version.
+	 */
+	private static final String version = "alpha 4.2.0";
+	
     /**
      * The width of buttons.
      */
@@ -74,6 +80,11 @@ public class MenuScreen implements Screen {
      * The sprite.
      */
     private final Sprite sprite;
+	
+	/**
+	 * A label to draw the version
+	 */
+	private final Label versionLabel;
 
     /**
      * Initializes the menu screen.
@@ -83,29 +94,32 @@ public class MenuScreen implements Screen {
         this.batch = new SpriteBatch();
         this.stage = new Stage();
         Gdx.input.setInputProcessor(this.stage);
-
-        this.skin = new Skin();
+		
+		Skin buttonSkin = new Skin();
 
         Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
 
-        this.skin.add("white", new Texture(pixmap));
+        buttonSkin.add("white", new Texture(pixmap));
+		
+		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         // Store the default libgdx font under the name "default".
         BitmapFont bfont = new BitmapFont();
         //bfont.scale(1);
         this.skin.add("default", bfont);
+		buttonSkin.add("default", bfont);
 
         // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
         TextButtonStyle textButtonStyle = new TextButtonStyle();
-        textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);
-        textButtonStyle.down = skin.newDrawable("white", Color.WHITE);
-        textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
+        textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
+        textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
+        textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
 
-        textButtonStyle.font = skin.getFont("default");
+        textButtonStyle.font = buttonSkin.getFont("default");
 
-        this.skin.add("default", textButtonStyle);
+        buttonSkin.add("default", textButtonStyle);
 
         // Create the logo
         Texture texture = new Texture(Gdx.files.internal("Logo.png"));
@@ -121,7 +135,6 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getScreen().dispose();
-//				game.setScreen(new PreGameScreen(game));
                 game.setScreen(new ServerBrowserScreen());
             }
         });
@@ -149,6 +162,13 @@ public class MenuScreen implements Screen {
             }
         });
         this.stage.addActor(quitButton);
+		
+		// Render version label
+		this.versionLabel = new Label(this.version, this.skin);
+		this.versionLabel.setPosition(Gdx.graphics.getWidth() - this.versionLabel.getWidth(), 10);
+		this.versionLabel.setFontScale(0.8f);
+		
+		this.stage.addActor(this.versionLabel);
     }
 
     /**
