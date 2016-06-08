@@ -58,7 +58,7 @@ public class ChatManager {
 	 * @param message The content of the message. When an empty String
 	 * (excluding spaces), throw an IllegalArgumentException.
 	 */
-	public void addMessage(String playerName, String message) {
+	public void sendMessage(String playerName, String message) {
 
 		if (playerName == null || playerName.trim().isEmpty()) {
 			throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");

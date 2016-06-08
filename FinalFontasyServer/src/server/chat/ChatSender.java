@@ -15,21 +15,28 @@ import java.net.*;
  */
 public class ChatSender {
     
-    ChatServer chatServer;
+    private final static int SENDPORT = 1335;
+    
+    private final ChatServer chatServer;
     
     public ChatSender(ChatServer chatServer) {
         this.chatServer = chatServer;
     }
     
     public void sendMessage(String message) throws IOException {
-        for (InetSocketAddress p : chatServer.getGameServer().getPlayerAddresses()) {
-            InetAddress adress = p.getAddress();
-            int port = p.getPort();
+        for (Socket s : chatServer.getAllSockets()) {
+            try {
+                System.out.println("CHAT: trying to send msg back");
+                DataOutputStream out = new DataOutputStream(s.getOutputStream());
+                System.out.println("CHAT: Got out");
+                out.writeBytes(message);
+                System.out.println("CHAT: Have written");
+            }
             
-            Socket s = new Socket(adress, port);
-            DataOutputStream out = new DataOutputStream(s.getOutputStream());
-            out.writeBytes(message);
-            s.close();
+            catch (Exception ex) {
+                System.out.println("CHAT: error sending back to client!");
+            }
+
         }
     }
     

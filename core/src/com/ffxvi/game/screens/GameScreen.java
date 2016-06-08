@@ -664,7 +664,7 @@ public class GameScreen implements Screen, Observer {
 			if (!sender.isEmpty() && !message.isEmpty()) {
 				this.stage.setKeyboardFocus(this.scoreLabel);
 				inputManager.isChatting = false;
-				this.chatManager.addMessage(sender, message);
+				this.chatManager.sendMessage(sender, message);
 				this.textfield.setText("");
 			} else {
 				this.stage.setKeyboardFocus(this.textfield);
