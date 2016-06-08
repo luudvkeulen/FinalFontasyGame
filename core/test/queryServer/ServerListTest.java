@@ -13,6 +13,7 @@ import org.junit.*;
  * @author Acer
  */
 public class ServerListTest {
+	/*
     ServerList serverList;
     
     @Before
@@ -52,5 +53,5 @@ public class ServerListTest {
     public void getServers() {
         Assert.assertNotNull(serverList.getServers());
     }
-   
+	 */
 }

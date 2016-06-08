@@ -20,7 +20,6 @@ import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
 import com.ffxvi.game.screens.EndScreen;
 import com.ffxvi.game.screens.GameScreen;
-import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.screens.ServerBrowserScreen;
 import com.ffxvi.game.support.Vector;
 import java.io.ByteArrayInputStream;
@@ -123,7 +122,7 @@ public class ClientListener implements Runnable {
 				this.receiveString(receivePacket, (String) object);
 			} else if (object instanceof SimplePlayer) {
 				System.out.println("Increasing Score");
-				this.screen.getMainPlayer().increaseScore();
+				this.screen.getGameManager().getMainPlayer().increaseScore();
 			} else if (object instanceof Collection) {
 				// Check what type of collection the received object is
 				for (Object o : (Collection) object) {
@@ -212,7 +211,7 @@ public class ClientListener implements Runnable {
 	 */
 	private void receivePlayers(DatagramPacket packet, Collection<SimplePlayer> data) {
 		// System.out.println(String.format("RECEIVED DATA FROM %1$s PLAYERS", data.size()));
-		this.screen.addMultiPlayers(data);
+		this.screen.getGameManager().addMultiPlayers(data);
 	}
 
 	/**
@@ -225,7 +224,7 @@ public class ClientListener implements Runnable {
 	private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
 		// Convert the SimpleProjectile to a Projectile
 		Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
-				data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName(), this.screen);
+				data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName(), this.screen.getGameManager());
 
 		// Add the projectile to the GameScreen
 		screen.addProjectile(projectile, true);

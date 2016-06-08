@@ -30,6 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.LibPlayer;
+import com.ffxvi.game.entities.LibProjectile;
 import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.models.Player;
 import com.ffxvi.game.models.PlayerCharacter;
@@ -55,7 +56,6 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static sun.audio.AudioPlayer.player;
 
 /**
  * The screen for the game.
@@ -235,7 +235,7 @@ public class GameScreen implements Screen, Observer {
 		this.shape = new ShapeRenderer();
 		this.batch = new SpriteBatch();
 
-		gameManager.setMultiplayer(player);
+		gameManager.setMultiplayer(new LibPlayer(this));
 
 		this.textfield = new TextField("", skin);
 		this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
@@ -321,7 +321,7 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		Player mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.gameManager, map.getId());
+		Player mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.gameManager, map.getId(), this);
 		mainPlayer.setPosition(64, 64);
 		gameManager.setMainPlayer(mainPlayer);
 
@@ -332,7 +332,7 @@ public class GameScreen implements Screen, Observer {
 		this.playerLabelName.setText(playerName);
 		this.playerLabelNameHUD.setText(playerName);
 
-		this.inputManager = new InputManager(gameManager.getMainPlayer());
+		this.inputManager = new InputManager((LibPlayer) gameManager.getMainPlayer());
 		this.inputManager.addObserver(this);
 
 		this.sendChatMessage("[SERVER]", gameManager.getMainPlayer().getName() + " HAS CONNECTED");
@@ -525,7 +525,7 @@ public class GameScreen implements Screen, Observer {
 				gameManager.setMultiplayers(new ArrayList());
 			}
 			if (gameManager.getMultiplayer() == null) {
-				gameManager.setMultiplayer(new Player(this.gameManager));
+				gameManager.setMultiplayer(new Player(this.gameManager, this));
 			}
 			List<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 			batch.begin();
@@ -573,7 +573,7 @@ public class GameScreen implements Screen, Observer {
 			// for removed projectiles
 			for (int i = 0; i < gameManager.getProjectiles().size(); i++) {
 				try {
-					Projectile p = gameManager.getProjectiles().get(i);
+					LibProjectile p = (LibProjectile) gameManager.getProjectiles().get(i);
 
 					if (p != null) {
 						if (!p.shouldRemove()) {

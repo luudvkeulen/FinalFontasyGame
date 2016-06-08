@@ -45,7 +45,7 @@ public class LibPlayer extends Player {
 	private final float animationSpeed;
 
 	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId) {
-		super(character, playerName, position, gameScreen.getGameManager(), roomId);
+		super(character, playerName, position, gameScreen.getGameManager(), roomId, gameScreen);
 		this.screen = gameScreen;
 		this.animationSpeed = 0.05f;
 		this.changeSkin();
@@ -53,7 +53,7 @@ public class LibPlayer extends Player {
 	}
 
 	public LibPlayer(GameScreen screen) {
-		super(screen.getGameManager());
+		super(screen.getGameManager(), screen);
 		this.screen = screen;
 
 		this.animationSpeed = 0.05f;

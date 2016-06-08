@@ -5,9 +5,8 @@
  */
 package server;
 
-import com.ffxvi.game.entities.PlayerCharacter;
-import com.ffxvi.game.entities.SimplePlayer;
-import com.ffxvi.game.entities.SimpleProjectile;
+import com.ffxvi.game.models.SimplePlayer;
+import com.ffxvi.game.models.SimpleProjectile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;

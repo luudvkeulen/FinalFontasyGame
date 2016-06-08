@@ -76,6 +76,8 @@ public class Player extends SimplePlayer {
 
 	private PropertyChangeSupport propertyChangeSupport;
 
+	private GameScreen screen;
+
 	/**
 	 * Default constructor for Player.
 	 *
@@ -85,7 +87,7 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param roomId The id of the room where the player is in.
 	 */
-	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
+	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId, GameScreen screen) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
 
 		if (character == null) {
@@ -106,16 +108,15 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
+
+		this.screen = screen;
 	}
 
 	/**
 	 * Special constructor for Player, only use this for player data received
 	 * from the server.
-	 *
-	 * @param screen the GameScreen that this Player is in. Used to create
-	 * projectiles
 	 */
-	public Player(GameManager gameManager) {
+	public Player(GameManager gameManager, GameScreen screen) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
 
 		this.gameManager = gameManager;
@@ -125,6 +126,8 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
+		
+		this.screen = screen;
 	}
 
 	/**
@@ -421,7 +424,7 @@ public class Player extends SimplePlayer {
 	 * @return
 	 */
 	protected Rectangle getCollisionBox() {
-		Rectangle rec = null;
+		Rectangle rec;
 
 		switch (this.direction) {
 			default:
