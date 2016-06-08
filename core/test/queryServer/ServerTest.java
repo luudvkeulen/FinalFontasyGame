@@ -9,13 +9,12 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.*;
-
 /**
  *
  * @author Acer
  */
 public class ServerTest {
-    
+    /*
     Server server;
     
     @Before
@@ -50,5 +49,5 @@ public class ServerTest {
             System.out.println("ERROR: " + ex);
         }
     }
-    
+ */   
 }
