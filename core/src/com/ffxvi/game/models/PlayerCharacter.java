@@ -17,7 +17,16 @@ package com.ffxvi.game.models;
  * might be.
  */
 public enum PlayerCharacter {
-    SKELETON_DAGGER,
-    SKELETON_HOODED_BOW,
-    SKELETON_HOODED_DAGGER
+	/**
+	 * A character representing a skeleton with a dagger.
+	 */
+	SKELETON_DAGGER,
+	/**
+	 * A character representing a hooded skeleton with a bow.
+	 */
+	SKELETON_HOODED_BOW,
+	/**
+	 * A character representing a hooded skeleton with a dagger.
+	 */
+	SKELETON_HOODED_DAGGER
 }

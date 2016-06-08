@@ -17,12 +17,36 @@ package com.ffxvi.game.models;
  * currently used for players and projectiles.
  */
 public enum Direction {
+	/**
+	 * Towards the top side of the screen.
+	 */
 	UP,
+	/**
+	 * Towards the top left side of the screen.
+	 */
 	UPLEFT,
+	/**
+	 * Towards the left side of the screen.
+	 */
 	LEFT,
+	/**
+	 * Towards the bottom left side of the screen.
+	 */
 	DOWNLEFT,
+	/**
+	 * Towards the bottom side of the screen.
+	 */
 	DOWN,
+	/**
+	 * Towards the bottom right side of the screen.
+	 */
 	DOWNRIGHT,
+	/**
+	 * Towards the right side of the screen.
+	 */
 	RIGHT,
+	/**
+	 * Towards the upper right side of the screen.
+	 */
 	UPRIGHT
 }
