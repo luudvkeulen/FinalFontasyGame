@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -127,7 +128,7 @@ public class PreGameScreen implements Screen {
 		// Create textfield
 		this.txtUsername = new TextField("Papyrus", skin);
 		this.txtUsername.setSize(200, 40);
-		this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 25);
+		this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 100);
 
 		// Add the textfield to the stage
 		this.stage.addActor(this.txtUsername);
@@ -135,29 +136,26 @@ public class PreGameScreen implements Screen {
 		// Create username text
 		this.usernameLabel = new Label("Voer een naam in:", skin);
 		this.layout.setText(skin.getFont("default"), this.usernameLabel.getText());
-		this.usernameLabel.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
+		this.usernameLabel.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 100 + this.txtUsername.getHeight());
 
 		// Add the label to the stage
 		this.stage.addActor(this.usernameLabel);
-
-		// Create new button
+		
+		// Create imageButtons
 		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
-		enterAsSkeletonDaggerButton.setSize(200, 50);
-		enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50);
+		enterAsSkeletonDaggerButton.setSize(200, 200);
+		enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() * 2) - (BUTTON_OFFSET * 1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
 		enterAsSkeletonDaggerButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				enterGame(PlayerCharacter.SKELETON_DAGGER);
 			}
 		});
-
-		// Add the button to the stage
 		this.stage.addActor(enterAsSkeletonDaggerButton);
-
-		// Create new button
+		
 		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", textButtonStyle);
-		enterAsSkeletonHoodedBowButton.setSize(200, 50);
-		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
+		enterAsSkeletonHoodedBowButton.setSize(200, 200);
+		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - enterAsSkeletonHoodedBowButton.getWidth() - (BUTTON_OFFSET/2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
 		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -166,22 +164,30 @@ public class PreGameScreen implements Screen {
 		});
 		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
 		enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
-
-		// Add the button to the stage
 		this.stage.addActor(enterAsSkeletonHoodedBowButton);
-
-		// Create new button
-		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", textButtonStyle);
-		enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
-		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
+		
+		TextButton enterAsSkeletonHoodedBowButton2 = new TextButton("Skeleton Hooded Bow 2", textButtonStyle);
+		enterAsSkeletonHoodedBowButton2.setSize(200, 200);
+		enterAsSkeletonHoodedBowButton2.setPosition((this.stage.getWidth() / 2) + (BUTTON_OFFSET/2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
+		enterAsSkeletonHoodedBowButton2.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+			}
+		});
+		enterAsSkeletonHoodedBowButton2.setTouchable(Touchable.disabled);
+		enterAsSkeletonHoodedBowButton2.setColor(Color.GRAY);
+		this.stage.addActor(enterAsSkeletonHoodedBowButton2);
+		
+		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
+		enterAsSkeletonHoodedDaggerButton.setSize(200, 200);
+		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) + enterAsSkeletonHoodedDaggerButton.getWidth() + (BUTTON_OFFSET*1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
 		enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				enterGame(PlayerCharacter.SKELETON_HOODED_DAGGER);
 			}
 		});
-
-		// Add the button to the stage
 		this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
 	}
 
