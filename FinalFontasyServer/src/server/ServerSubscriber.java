@@ -15,6 +15,7 @@ public class ServerSubscriber {
 	private IServerList serverList;
 	private String address;
 	private int port;
+	private Timer timer;
 	
 	private static final int PORT = 420;
 	private static final String IP = "128.199.32.134";
@@ -72,7 +73,7 @@ public class ServerSubscriber {
 	}
 	
 	private void startTimer(String address, int port) throws UnknownHostException {
-		Timer timer = new Timer();
+		timer = new Timer();
 		if(address.equals("") && port == 0) {
 			timer.schedule(new ServerSubscriberTask(serverList, Inet4Address.getLocalHost().getHostAddress(), 1338), 0, 500);
 		} else if(!address.equals("") && port == 0) {
@@ -82,18 +83,33 @@ public class ServerSubscriber {
 		}
 	}
 	
+	private void startTimer(String address, int port, String name) throws UnknownHostException {
+		timer = new Timer();
+		if(address.equals("") && port == 0) {
+			timer.schedule(new ServerSubscriberTask(serverList, Inet4Address.getLocalHost().getHostAddress(), 1338), 0, 500);
+		} else if(!address.equals("") && port == 0) {
+			timer.schedule(new ServerSubscriberTask(serverList, address, 1338, name), 0, 500);
+		} else {
+			timer.schedule(new ServerSubscriberTask(serverList, address, port, name), 0, 500);
+		}
+	}
+	
 	public void removeServer(String address) throws RemoteException {		
 		if(serverList != null) {
 			serverList.removeServer(address);
 		}
 	}
 	
-	public void renameServer(String name) throws RemoteException {
-		serverList.removeServer(this.address);
+	public void renameServer(String name) throws RemoteException, UnknownHostException {
+		if(name.equals("")) return;
+		timer.cancel();
+		serverList.removeServer(this.address + ":" + this.port);
 		if(port != 0) {
-			serverList.addServer(address, port);
+			serverList.addServer(address, port, name);
+			startTimer(address, port, name);
 		} else {
-			serverList.addServer(address, 1338);
+			serverList.addServer(address, 1338, name);
+			startTimer(address, 1338, name);
 		}
 	}
 }

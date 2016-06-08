@@ -91,7 +91,7 @@ public class FinalFontasyServer {
 				case "name":
 					String name;
 					Scanner in = new Scanner(System.in);
-					name = in.next();
+					name = in.nextLine();
 					serverSubscriber.renameServer(name);
 					System.out.println("renamed to: " + name);
 					break;
@@ -102,7 +102,7 @@ public class FinalFontasyServer {
 							+ "stop - Stops the server.\n"
 							+ "port - Shows the port that the server is listening on.\n"
 							+ "players - Shows the addresses of all the connected players.\n"
-							+ "name - sets the name of the server"
+							+ "name - sets the name of the server.\n"
 							+ "----------------");
 					break;
 			}

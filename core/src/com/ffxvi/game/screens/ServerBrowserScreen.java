@@ -28,201 +28,208 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.serverlist.ServerRetriever;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import queryServer.IServer;
 
 /**
  * A screen used for selecting a server to play on.
  */
 public class ServerBrowserScreen implements Screen {
 
-    /**
-     * The width of buttons.
-     */
-    private static final int BUTTON_WIDTH = 200;
+	/**
+	 * The width of buttons.
+	 */
+	private static final int BUTTON_WIDTH = 200;
 
-    /**
-     * The height of buttons.
-     */
-    private static final int BUTTON_HEIGHT = 60;
+	/**
+	 * The height of buttons.
+	 */
+	private static final int BUTTON_HEIGHT = 60;
 
+	/**
+	 * The skin of this class.
+	 */
+	private Skin skin;
 
-    /**
-     * The skin of this class.
-     */
-    private Skin skin;
+	/**
+	 * The stage.
+	 */
+	private Stage stage;
 
-    /**
-     * The stage.
-     */
-    private Stage stage;
+	/**
+	 * The game controller.
+	 */
+	private final MainClass game;
 
-    /**
-     * The game controller.
-     */
-    private final MainClass game;
+	// TEMP SERVER LIST
+	/**
+	 * A list of servers which the user can connect to.
+	 */
+	private List<String> servers;
 
-    // TEMP SERVER LIST
-    /**
-     * A list of servers which the user can connect to.
-     */
-    private List<String> servers;
+	/**
+	 * A scrollpane GUI control.
+	 */
+	private ScrollPane scrollPane;
 
-    /**
-     * A scrollpane GUI control.
-     */
-    private ScrollPane scrollPane;
+	/**
+	 * A table used for displaying the server list.
+	 */
+	private Table table;
 
-    /**
-     * A table used for displaying the server list.
-     */
-    private Table table;
-	
-    /**
-     * The serverretriever for getting the server list
-     */
-    private ServerRetriever serverRetriever;
-    
-    /**
-     * Initializes a new ServerBrowserScreen.
-     */
-    public ServerBrowserScreen() {
-        this.game = MainClass.getInstance();
-    }
+	/**
+	 * The serverretriever for getting the server list
+	 */
+	private ServerRetriever serverRetriever;
 
-    /**
-     * Shows the screen.
-     */
-    @Override
-    public void show() {
-        this.stage = new Stage();
-        Gdx.input.setInputProcessor(this.stage);
+	/**
+	 * Initializes a new ServerBrowserScreen.
+	 */
+	public ServerBrowserScreen() {
+		this.game = MainClass.getInstance();
+	}
 
-        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+	/**
+	 * Shows the screen.
+	 */
+	@Override
+	public void show() {
+		this.stage = new Stage();
+		Gdx.input.setInputProcessor(this.stage);
 
-        // Generate a 1x1 white texture and store it in the skin named "white".
-        Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.fill();
+		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        this.skin.add("white", new Texture(pixmap));
+		// Generate a 1x1 white texture and store it in the skin named "white".
+		Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.WHITE);
+		pixmap.fill();
 
-        this.skin.add("white", new Texture(pixmap));
+		this.skin.add("white", new Texture(pixmap));
 
-        // Store the default libgdx font under the name "default".
-        BitmapFont bfont = new BitmapFont();
-        //bfont.scale(1);
-        this.skin.add("default", bfont);
+		this.skin.add("white", new Texture(pixmap));
 
-        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = this.skin.newDrawable("white", Color.DARK_GRAY);
-        textButtonStyle.down = this.skin.newDrawable("white", Color.WHITE);
-        textButtonStyle.over = this.skin.newDrawable("white", Color.LIGHT_GRAY);
+		// Store the default libgdx font under the name "default".
+		BitmapFont bfont = new BitmapFont();
+		//bfont.scale(1);
+		this.skin.add("default", bfont);
 
-        textButtonStyle.font = this.skin.getFont("default");
+		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		textButtonStyle.up = this.skin.newDrawable("white", Color.DARK_GRAY);
+		textButtonStyle.down = this.skin.newDrawable("white", Color.WHITE);
+		textButtonStyle.over = this.skin.newDrawable("white", Color.LIGHT_GRAY);
 
-        this.skin.add("default", textButtonStyle);
+		textButtonStyle.font = this.skin.getFont("default");
 
-        // Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
-        final TextButton playButton = new TextButton("PLAY", textButtonStyle);
-        playButton.setPosition((this.stage.getWidth() / 2) - (playButton.getWidth() / 2), (playButton.getHeight() / 2) - 10);
-        playButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.selectedIp = servers.getSelected();
-                game.getScreen().dispose();
-                game.setScreen(new PreGameScreen());
-            }
-        });
-        this.stage.addActor(playButton);
+		this.skin.add("default", textButtonStyle);
 
-        /* Connect to the RMI Server */       
-        try {
-            this.serverRetriever = new ServerRetriever();
-        } catch (IOException ex) {
-            Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        this.servers = new List(skin);
-        servers.getSelection().setMultiple(true);
-        servers.getSelection().setRequired(false);
-        this.servers.setItems(new String[]{});
+		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
+		final TextButton playButton = new TextButton("PLAY", textButtonStyle);
+		playButton.setPosition((this.stage.getWidth() / 2) - (playButton.getWidth() / 2), (playButton.getHeight() / 2) - 10);
+		playButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				game.selectedIp = servers.getSelected();
+				game.getScreen().dispose();
+				game.setScreen(new PreGameScreen());
+			}
+		});
+		this.stage.addActor(playButton);
 
-        this.scrollPane = new ScrollPane(servers, this.skin);
+		/* Connect to the RMI Server */
+		try {
+			this.serverRetriever = new ServerRetriever();
+		} catch (IOException ex) {
+			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		this.servers = new List(skin);
+		servers.getSelection().setMultiple(true);
+		servers.getSelection().setRequired(false);
+		this.servers.setItems(new String[]{});
 
-        this.table = new Table(this.skin);
-        this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.scrollPane.setSmoothScrolling(false);
-        this.table.add(this.scrollPane).size(800, 600);
-        //this.table.debug(); //Deze laat lijnen rondom de serverlist zien voor te debuggen
+		this.scrollPane = new ScrollPane(servers, this.skin);
 
-        this.stage.addActor(this.table);
+		this.table = new Table(this.skin);
+		this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		this.scrollPane.setSmoothScrolling(false);
+		this.table.add(this.scrollPane).size(800, 600);
+		//this.table.debug(); //Deze laat lijnen rondom de serverlist zien voor te debuggen
 
-        try {
-            this.refreshServers();
-        } catch (RemoteException ex) {
-            Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+		this.stage.addActor(this.table);
 
-    /**
-     * Refreshes the server list.
-     *
-     * @throws RemoteException When an (un)expected remote exception occurs.
-     */
-    private void refreshServers() throws RemoteException {
-        String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
-	this.servers.setItems(serverAddresses);
-    }
+		try {
+			this.refreshServers();
+		} catch (RemoteException ex) {
+			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-    /**
-     * Is executed when the screen is (re)drawn. Contains all logic regarding
-     * the drawing in the ServerBrowserScreen.
-     *
-     * @param delta The time which has passed since the last update.
-     */
-    @Override
-    public void render(float delta) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.getScreen().dispose();
-            this.game.setScreen(new MenuScreen());
-            return;
-        }
+	/**
+	 * Refreshes the server list.
+	 *
+	 * @throws RemoteException When an (un)expected remote exception occurs.
+	 */
+	private void refreshServers() throws RemoteException {
+		//String[] serverAddresses = serverRetriever.getAddresses().toArray(new String[0]);
+		java.util.List<IServer> serverlist = serverRetriever.getIServers();
+		Array serverNames = new Array();
+		for (IServer s : serverlist) {
+			serverNames.add(s.getName() + " - " + s.getFullAddress());
+		}
+		this.servers.setItems(serverNames);
+	}
 
-        // Draw background color
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+	/**
+	 * Is executed when the screen is (re)drawn. Contains all logic regarding
+	 * the drawing in the ServerBrowserScreen.
+	 *
+	 * @param delta The time which has passed since the last update.
+	 */
+	@Override
+	public void render(float delta) {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			game.getScreen().dispose();
+			this.game.setScreen(new MenuScreen());
+			return;
+		}
 
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        stage.draw();
-    }
+		// Draw background color
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-    @Override
-    public void resize(int width, int height) {
-        
-    }
+		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+		stage.draw();
+	}
 
-    @Override
-    public void pause() {
-        
-    }
+	@Override
+	public void resize(int width, int height) {
 
-    @Override
-    public void resume() {
-        
-    }
+	}
 
-    @Override
-    public void hide() {
-        
-    }
+	@Override
+	public void pause() {
 
-    @Override
-    public void dispose() {
-        
-    }
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void hide() {
+
+	}
+
+	@Override
+	public void dispose() {
+
+	}
 }
