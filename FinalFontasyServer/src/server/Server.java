@@ -46,6 +46,10 @@ public class Server {
 		return players;
 	}
 	
+	public int getPlayerCount() {
+		return playerData.size();
+	}
+	
 	/**
 	 * Return the addresses + names of the connected Players
 	 * @return a List of the connected Player's info
