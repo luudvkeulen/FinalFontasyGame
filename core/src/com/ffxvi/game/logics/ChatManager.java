@@ -67,16 +67,9 @@ public class ChatManager {
 		if (message == null || message.trim().isEmpty()) {
 			throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");
 		}
-
-		this.chatLabels.add(new Label(String.format("%s: %s", playerName, message), skin));
-	
+		
 		ChatTextMessage ctm = new ChatTextMessage(playerName, message);
 		gameScreen.client.sendMessage(ctm);
-		
-
-		if (this.chatLabels.size() > 10) {
-			this.chatLabels.remove(0);
-		}
 	}
 
 	public void receiveMessage(String message) {

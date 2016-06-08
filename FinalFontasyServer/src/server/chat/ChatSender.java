@@ -8,6 +8,7 @@ package server.chat;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,9 +17,11 @@ import java.net.*;
 public class ChatSender {
 
     private final ChatServer chatServer;
+    private ArrayList<Socket> toDelete;
     
     public ChatSender(ChatServer chatServer) {
         this.chatServer = chatServer;
+        this.toDelete = new ArrayList<>();
     }
     
     public void sendMessage(String message) throws IOException {
@@ -31,9 +34,16 @@ public class ChatSender {
             
             catch (Exception ex) {
                 System.out.println("CHAT: error sending back to client!");
+                System.out.println("CHAT: will delete socket from list");
+                toDelete.add(s);
             }
-
         }
+        
+        for (Socket s : toDelete) {
+            chatServer.getAllSockets().remove(s);
+        }
+        
+        toDelete.clear();
     }
     
 }
