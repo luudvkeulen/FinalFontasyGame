@@ -9,7 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.ffxvi.game.entities.Direction;
+import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.entities.PlayerAnimation;
 
 /**

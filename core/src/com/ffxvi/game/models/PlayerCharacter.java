@@ -10,7 +10,7 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
 /**
  * An enumeration containing the possible values which a player's character

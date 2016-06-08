@@ -10,10 +10,9 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -23,6 +22,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.entities.PlayerAnimation;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.SkinManager.PlayerSkin;
@@ -55,16 +55,6 @@ public class Player extends SimplePlayer implements Observable {
      * The cooldown between firing.
      */
     private static final float SHOOTCOOLDOWN = 0.5f;
-    
-    /**
-     * The textures (skin) that this player is using
-     */
-    private PlayerSkin playerSkin;
-    
-    /**
-     * The animation that this player is currently in
-     */
-    private Animation currentAnimation;
 
     /**
      * The direction where the player is aiming his/her weapon in degrees.

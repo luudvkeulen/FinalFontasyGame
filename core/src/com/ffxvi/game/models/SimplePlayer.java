@@ -10,9 +10,12 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
-import static com.ffxvi.game.entities.Direction.*;
+import com.ffxvi.game.entities.PlayerAnimation;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.models.Direction;
+import static com.ffxvi.game.models.Direction.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 import java.io.Serializable;
 

@@ -10,8 +10,9 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
+import com.ffxvi.game.models.Player;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

@@ -1,4 +1,4 @@
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
 public enum Ending {
 	DEFEAT,

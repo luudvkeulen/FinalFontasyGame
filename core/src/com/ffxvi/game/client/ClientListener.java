@@ -14,10 +14,10 @@ package com.ffxvi.game.client;
 
 import com.badlogic.gdx.Gdx;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.entities.Ending;
-import com.ffxvi.game.entities.Projectile;
-import com.ffxvi.game.entities.SimplePlayer;
-import com.ffxvi.game.entities.SimpleProjectile;
+import com.ffxvi.game.models.Ending;
+import com.ffxvi.game.models.Projectile;
+import com.ffxvi.game.models.SimplePlayer;
+import com.ffxvi.game.models.SimpleProjectile;
 import com.ffxvi.game.screens.EndScreen;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.screens.MenuScreen;

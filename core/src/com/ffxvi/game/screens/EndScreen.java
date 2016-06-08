@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.entities.Ending;
+import com.ffxvi.game.models.Ending;
 
 public class EndScreen implements Screen{
 

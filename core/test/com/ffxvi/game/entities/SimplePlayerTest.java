@@ -5,6 +5,9 @@
  */
 package com.ffxvi.game.entities;
 
+import com.ffxvi.game.models.PlayerCharacter;
+import com.ffxvi.game.models.SimplePlayer;
+import com.ffxvi.game.models.Direction;
 import org.junit.*;
 
 /**
