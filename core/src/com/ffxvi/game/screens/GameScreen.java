@@ -40,8 +40,11 @@ import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.entities.Map;
 import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.MapType;
+import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Vector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -51,6 +54,7 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static sun.audio.AudioPlayer.player;
 
 /**
  * The screen for the game.
@@ -62,7 +66,7 @@ public class GameScreen implements Screen, Observer {
 	 * The main class for the game.
 	 */
 	private final MainClass game;
-	
+
 	/**
 	 * The GameManager
 	 */
@@ -127,8 +131,6 @@ public class GameScreen implements Screen, Observer {
 	 * A SpriteBatch which contains all the sprites which are used.
 	 */
 	private final SpriteBatch batch;
-
-
 
 	/**
 	 * The stage.
@@ -196,9 +198,9 @@ public class GameScreen implements Screen, Observer {
 	 * Initializes a new GameScreen.
 	 */
 	public GameScreen() {
-		
+
 		gameManager = new GameManager();
-		
+
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
@@ -231,7 +233,6 @@ public class GameScreen implements Screen, Observer {
 		this.batch = new SpriteBatch();
 
 		gameManager.setMultiplayer(player);
-	
 
 		this.textfield = new TextField("", skin);
 		this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
@@ -317,8 +318,11 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		gameManager.setMainPlayer(new Player(character, playerName, new Vector(64f, 64f), this, map.getId()));
-	    gameManager.getMainPlayer().setPosition(64, 64);
+		Player mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.gameManager, map.getId());
+		mainPlayer.setPosition(64, 64);
+		gameManager.setMainPlayer(mainPlayer);
+
+		mainPlayer.subscribe(this., playerName);
 
 		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 
@@ -356,7 +360,6 @@ public class GameScreen implements Screen, Observer {
 
 		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 	}
-
 
 	public void setDialogMessage(String message) {
 		this.messageDialog.text(message);
@@ -519,7 +522,7 @@ public class GameScreen implements Screen, Observer {
 				gameManager.setMultiplayers(new ArrayList());
 			}
 			if (gameManager.getMultiplayer() == null) {
-				gameManager.setMultiplayer(new Player(this)); 
+				gameManager.setMultiplayer(new Player(this));
 			}
 			List<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 			batch.begin();
@@ -653,5 +656,21 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void dispose() {
 		client.stop();
+	}
+
+	private class PlayerListener implements PropertyChangeListener {
+
+		public PlayerListener() {
+			GameScreen.this.gameManager.getMainPlayer().subscribe(this, "PlayerHealthUpdated");
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			String propertyName = evt.getPropertyName();
+
+			if (propertyName.equals(PropertyListenerNames.PLAYER_HEALTH)) {
+				GameScreen.this.updatePlayerHealthLabels((Integer) evt.getNewValue());
+			}
+		}
 	}
 }

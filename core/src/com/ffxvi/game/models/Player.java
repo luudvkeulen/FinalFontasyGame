@@ -18,11 +18,14 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.entities.PlayerAnimation;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -68,8 +71,10 @@ public class Player extends SimplePlayer {
 	 * The grid size of the player in height.
 	 */
 	private final int modifiedGridSizeY;
-	
+
 	private GameManager gameManager;
+
+	private PropertyChangeSupport propertyChangeSupport;
 
 	/**
 	 * Default constructor for Player.
@@ -337,7 +342,7 @@ public class Player extends SimplePlayer {
 		}
 
 		// Update the health labels
-		this.screen.updatePlayerHealthLabels(this.hitPoints);
+		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, this.hitPoints);
 	}
 
 	/**
@@ -462,7 +467,6 @@ public class Player extends SimplePlayer {
 
 //				LibPlayer player = new LibPlayer(this.screen);
 //				player.setData(p);
-
 				Circle cEnemy = new Circle();
 				cEnemy.x = p.getX();
 				cEnemy.y = p.getY();
@@ -545,5 +549,17 @@ public class Player extends SimplePlayer {
 	 */
 	public Rectangle getRectangle() {
 		return new Rectangle(this.x, this.y, this.modifiedGridSizeX, this.modifiedGridSizeY);
+	}
+
+	public void subscribe(PropertyChangeListener listener, String property) {
+		this.propertyChangeSupport.addPropertyChangeListener(property, listener);
+	}
+
+	public void unsubsribe(PropertyChangeListener listener) {
+		this.propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+
+	private void firePropertyChangeEvent(String property, Object newValue) {
+		this.propertyChangeSupport.firePropertyChange(new PropertyChangeEvent(this, property, null, newValue));
 	}
 }
