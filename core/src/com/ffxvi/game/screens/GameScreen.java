@@ -15,6 +15,7 @@ package com.ffxvi.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -197,6 +198,11 @@ public class GameScreen implements Screen, Observer {
 	 * Dialog to show messages.
 	 */
 	private Dialog messageDialog;
+	
+	/**
+	 * Boolean indicating whether to render the scoreboard.
+	 */
+	private boolean renderScoreboard;
 
 	/**
 	 * Initializes a new GameScreen.
@@ -278,6 +284,13 @@ public class GameScreen implements Screen, Observer {
 
 	public static SkinManager getSkinManager() {
 		return skinManager;
+	}
+	
+	/**
+	 * Toggles the boolean to render the scoreboard.
+	 */
+	public void toggleShowScoreboard() {
+		this.renderScoreboard = !this.renderScoreboard;
 	}
 
 	/**
@@ -633,6 +646,24 @@ public class GameScreen implements Screen, Observer {
 
 			//Update the player
 			this.mainPlayer.update();
+		}
+		
+		// Render scoreboard overlay
+		if (this.renderScoreboard) {
+			int padding = 200;
+			float opacity = 0.3f;
+			
+			// render background
+			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			this.shape.begin(ShapeRenderer.ShapeType.Filled);
+			
+			this.shape.setColor(new Color(1, 1, 1, opacity));
+			
+			this.shape.rect(padding, padding, Gdx.graphics.getWidth() - padding, Gdx.graphics.getHeight() - padding);
+			
+			this.shape.end();
+			Gdx.gl.glDisable(GL20.GL_BLEND);
 		}
 	}
 

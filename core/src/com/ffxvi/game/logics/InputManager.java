@@ -200,6 +200,10 @@ public class InputManager extends Observable {
 				mainPlayer.slash();
 				returnValue = true;
 			}
+			
+			if (Gdx.input.isButtonPressed(Input.Keys.TAB)) {
+				mainPlayer.toggleShowScoreboard();
+			}
 		}
 
 		return returnValue;

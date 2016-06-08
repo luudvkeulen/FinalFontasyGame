@@ -267,6 +267,13 @@ public class Player extends SimplePlayer implements Observable {
             this.speed = Player.WALK_SPEED;
         }
     }
+	
+	/**
+	 * Toggles the boolean in GameScreen to render the scoreboard.
+	 */
+	public void toggleShowScoreboard() {
+		this.screen.toggleShowScoreboard();
+	}
 
     /**
      * Sets the aim direction of this player by the given coördinates of the
