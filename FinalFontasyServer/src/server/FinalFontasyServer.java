@@ -91,7 +91,7 @@ public class FinalFontasyServer {
 				case "name":
 					String name;
 					Scanner in = new Scanner(System.in);
-					name = in.next();
+					name = in.nextLine();
 					serverSubscriber.renameServer(name);
 					System.out.println("renamed to: " + name);
 					break;
@@ -102,7 +102,7 @@ public class FinalFontasyServer {
 							+ "stop - Stops the server.\n"
 							+ "port - Shows the port that the server is listening on.\n"
 							+ "players - Shows the addresses of all the connected players.\n"
-							+ "name - sets the name of the server"
+							+ "name - sets the name of the server.\n"
 							+ "----------------");
 					break;
 			}
@@ -115,7 +115,7 @@ public class FinalFontasyServer {
 		if(address.equals("") && port == 0) {
 			server = new Server(1338);
 			try {
-				serverSubscriber = new ServerSubscriber();
+				serverSubscriber = new ServerSubscriber(server);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -123,7 +123,7 @@ public class FinalFontasyServer {
 		} else if (port == 0 && !address.equals("")) {
 			server = new Server(1338);
 			try {
-				serverSubscriber = new ServerSubscriber(address);
+				serverSubscriber = new ServerSubscriber(server, address);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -131,7 +131,7 @@ public class FinalFontasyServer {
 		} else {
 			server = new Server(port);
 			try {
-				serverSubscriber = new ServerSubscriber(address, port);
+				serverSubscriber = new ServerSubscriber(server, address, port);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
