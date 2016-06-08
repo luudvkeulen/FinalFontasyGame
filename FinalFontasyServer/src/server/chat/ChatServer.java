@@ -34,14 +34,14 @@ public class ChatServer implements Runnable{
     public void run() {
         try {
             ServerSocket welcomeSocket = new ServerSocket(LISTENPORT);
-            System.out.println("CHAT: Server is now waiting at port: " + LISTENPORT);
             while (listening) {
+                System.out.println("CHATMASTER: Server is now waiting at port: " + LISTENPORT);
                 Socket s = welcomeSocket.accept();
                 allClients.add(s);
                 ChatListenerThread clt = new ChatListenerThread(s, chatSender);
                 Thread t = new Thread(clt);
                 t.start();
-                System.out.println("CHAT: Server Made new connection!");
+                System.out.println("CHATMASTER: Server Made new connection!");
             }
         } catch (IOException ex) {
             Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
