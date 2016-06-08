@@ -115,7 +115,7 @@ public class FinalFontasyServer {
 		if(address.equals("") && port == 0) {
 			server = new Server(1338);
 			try {
-				serverSubscriber = new ServerSubscriber();
+				serverSubscriber = new ServerSubscriber(server);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -123,7 +123,7 @@ public class FinalFontasyServer {
 		} else if (port == 0 && !address.equals("")) {
 			server = new Server(1338);
 			try {
-				serverSubscriber = new ServerSubscriber(address);
+				serverSubscriber = new ServerSubscriber(server, address);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -131,7 +131,7 @@ public class FinalFontasyServer {
 		} else {
 			server = new Server(port);
 			try {
-				serverSubscriber = new ServerSubscriber(address, port);
+				serverSubscriber = new ServerSubscriber(server, address, port);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}

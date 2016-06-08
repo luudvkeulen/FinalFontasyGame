@@ -181,7 +181,7 @@ public class ServerBrowserScreen implements Screen {
 		java.util.List<IServer> serverlist = serverRetriever.getIServers();
 		Array serverNames = new Array();
 		for (IServer s : serverlist) {
-			serverNames.add(s.getName() + " - " + s.getFullAddress());
+			serverNames.add(s.getPlayers() + "/16 | " + s.getName() + " - " + s.getFullAddress());
 		}
 		this.servers.setItems(serverNames);
 	}
