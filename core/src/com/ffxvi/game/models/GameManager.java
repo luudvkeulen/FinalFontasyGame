@@ -94,6 +94,10 @@ public class GameManager {
 	public void removeProjectile(Projectile projectile){
 		projectiles.remove(projectile);
 	}
+
+	public void setMultiplayers(ArrayList arrayList) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 	
 

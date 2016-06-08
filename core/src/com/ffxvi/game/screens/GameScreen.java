@@ -29,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.client.Client;
+import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.models.Player;
 import com.ffxvi.game.models.PlayerCharacter;
@@ -194,6 +195,8 @@ public class GameScreen implements Screen, Observer {
 	 */
 	private Dialog messageDialog;
 
+	private PlayerListener playerListener;
+
 	/**
 	 * Initializes a new GameScreen.
 	 */
@@ -322,7 +325,7 @@ public class GameScreen implements Screen, Observer {
 		mainPlayer.setPosition(64, 64);
 		gameManager.setMainPlayer(mainPlayer);
 
-		mainPlayer.subscribe(this., playerName);
+		mainPlayer.subscribe(this.playerListener, PropertyListenerNames.PLAYER_HEALTH);
 
 		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 
@@ -395,32 +398,32 @@ public class GameScreen implements Screen, Observer {
 			throw new IllegalArgumentException("direction can not be null.");
 		}
 
-		Map oldMap = this.map;
+		Map oldMap = map;
 		for (Map m : this.maps) {
 			if (m.getId() == mapId) {
-				this.map = m;
+				map = m;
 			}
 		}
 
-		if (oldMap == this.map) {
+		if (oldMap == map) {
 			return;
 		}
 
-		for (RectangleMapObject rmo : this.map.getDoors().getByType(RectangleMapObject.class)) {
+		for (RectangleMapObject rmo : map.getDoors().getByType(RectangleMapObject.class)) {
 			if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
 				switch (direction) {
 					case UP:
-						this.mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
+						this.gameManager.getMainPlayer().setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
 						break;
 					case DOWN:
-						this.mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y - 64);
+						this.gameManager.getMainPlayer().setPosition(rmo.getRectangle().x, rmo.getRectangle().y - 64);
 						break;
 					default:
 					case LEFT:
-						this.mainPlayer.setPosition(rmo.getRectangle().x - 64, rmo.getRectangle().y);
+						this.gameManager.getMainPlayer().setPosition(rmo.getRectangle().x - 64, rmo.getRectangle().y);
 						break;
 					case RIGHT:
-						this.mainPlayer.setPosition(rmo.getRectangle().x + 64, rmo.getRectangle().y);
+						this.gameManager.getMainPlayer().setPosition(rmo.getRectangle().x + 64, rmo.getRectangle().y);
 						break;
 				}
 				break;
@@ -429,7 +432,7 @@ public class GameScreen implements Screen, Observer {
 
 		this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
 		this.renderer.setView(this.game.camera);
-		this.mainPlayer.setRoomId(this.map.getId());
+		this.gameManager.getMainPlayer().setRoomId(this.map.getId());
 	}
 
 	/**
@@ -502,11 +505,11 @@ public class GameScreen implements Screen, Observer {
 
 			float playerLabelWidth = this.playerLabelName.getWidth();
 			this.playerLabelName.setAlignment((int) playerLabelWidth / 2);
-			this.playerLabelName.setPosition(playerPos.x + 32, playerPos.y + gameManager.getMainPlayer().getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
+			this.playerLabelName.setPosition(playerPos.x + 32, playerPos.y + ((LibPlayer) gameManager.getMainPlayer()).getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
 
 			float playerHealthLabelWidth = this.playerHealthLabel.getWidth();
 			this.playerHealthLabel.setAlignment((int) (playerHealthLabelWidth / 2));
-			this.playerHealthLabel.setPosition(playerPos.x + 16, playerPos.y + gameManager.getMainPlayer().getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
+			this.playerHealthLabel.setPosition(playerPos.x + 16, playerPos.y + ((LibPlayer) gameManager.getMainPlayer()).getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
 
 			this.playerHealthLabelHUD.setPosition(0, this.playerHealthLabelHUD.getHeight());
 			this.playerHealthLabelHUD.setText(String.valueOf(gameManager.getMainPlayer().getHitPoints()));
@@ -522,7 +525,7 @@ public class GameScreen implements Screen, Observer {
 				gameManager.setMultiplayers(new ArrayList());
 			}
 			if (gameManager.getMultiplayer() == null) {
-				gameManager.setMultiplayer(new Player(this));
+				gameManager.setMultiplayer(new Player(this.gameManager));
 			}
 			List<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 			batch.begin();
@@ -530,8 +533,8 @@ public class GameScreen implements Screen, Observer {
 			try {
 				for (SimplePlayer splayer : localMultiplayers) {
 					if (splayer.getRoomId() == gameManager.getMainPlayer().getRoomId()) {
-						gameManager.getMultiplayer().setData(splayer);
-						gameManager.getMultiplayer().render(batch);
+						((LibPlayer) gameManager.getMultiplayer()).setData(splayer);
+						((LibPlayer) gameManager.getMultiplayer()).render(batch);
 						this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
 						this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
 					}
@@ -539,7 +542,7 @@ public class GameScreen implements Screen, Observer {
 			} catch (ConcurrentModificationException cme) {
 				Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, cme);
 			}
-			gameManager.getMainPlayer().render(this.batch);
+			((LibPlayer) gameManager.getMainPlayer()).render(this.batch);
 			this.inputManager.checkInput();
 			this.batch.end();
 
@@ -594,7 +597,7 @@ public class GameScreen implements Screen, Observer {
 			gameManager.getProjectiles().removeAll(projectilesToBeRemoved);
 
 			//Update the player
-			this.mainPlayer.update();
+			this.gameManager.getMainPlayer().update();
 		}
 	}
 
@@ -608,7 +611,7 @@ public class GameScreen implements Screen, Observer {
 	public void update(Observable o, Object arg) {
 		String chatMessage = this.textfield.getText();
 
-		this.sendChatMessage(this.mainPlayer.getName(), chatMessage);
+		this.sendChatMessage(this.gameManager.getMainPlayer().getName(), chatMessage);
 	}
 
 	/**

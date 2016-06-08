@@ -61,8 +61,6 @@ public class Projectile extends SimpleProjectile {
 	 * not greater than 0, throw an IllegalArgumentException.
 	 * @param playerName The name of the player which fired the bullet. When an
 	 * empty String (excluding spaces), throw an IllegalArgumentException.
-	 * @param screen The screen of the player which fired the bullet. When null,
-	 * throw an IllegalArgumentException.
 	 */
 	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameManager gameManager) {
 		super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
