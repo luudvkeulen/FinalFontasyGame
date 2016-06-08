@@ -90,15 +90,9 @@ public class Projectile extends SimpleProjectile {
 	protected boolean checkPlayerCollision(Rectangle rec, Player mainPlayer) {
 		// Get rectangle of this player
 		Rectangle playerRectangle = mainPlayer.getRectangle();
-
 		// Check if the rectangles overlap
-		if (rec.overlaps(playerRectangle)) {
-			// Return true if it has collision
-			return true;
-		}
-
 		// Return false if no collision has been found
-		return false;
+		return rec.overlaps(playerRectangle);
 	}
 
 	/**
@@ -132,7 +126,6 @@ public class Projectile extends SimpleProjectile {
 
 		// Check collision with player if the player's name is not equal
 		// to the owner's name of the projectile
-		System.out.printf("GameManager = %s.\n", gameManager);
 		if (!this.playerName.equals(gameManager.getMainPlayer().getName())) {
 			boolean collisionPlayer = checkPlayerCollision(playerCollision, gameManager.getMainPlayer());
 
@@ -175,34 +168,4 @@ public class Projectile extends SimpleProjectile {
         }
         return false;
     }
-
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 13 * hash + Objects.hashCode(this.position);
-		hash = 13 * hash + Float.floatToIntBits(this.rotation);
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Projectile other = (Projectile) obj;
-		if (Float.floatToIntBits(this.rotation) != Float.floatToIntBits(other.rotation)) {
-			return false;
-		}
-		if (!Objects.equals(this.position, other.position)) {
-			return false;
-		}
-		return true;
-	}
-
 }

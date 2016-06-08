@@ -80,7 +80,6 @@ public class SimpleProjectile implements Serializable {
             throw new IllegalArgumentException("X can not be negative.");
         }
 
-		System.out.println(y);
         if (y < 0) {
 			throw new IllegalArgumentException("Y can not be negative.");
         }
