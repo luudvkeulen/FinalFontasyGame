@@ -211,8 +211,9 @@ public class GameScreen implements Screen, Observer {
 		this.fontred.setColor(Color.RED);
 
 		if (!game.selectedIp.equals("")) {
-			String fullip = game.selectedIp.replaceAll("\\s+","");
-			fullip = fullip.substring(game.selectedIp.indexOf("-") - 1);
+			String fulltext = game.selectedIp.replaceAll("\\s+","");
+			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
+			System.out.println(fullip);
 			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this);
 			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
 		} else {
