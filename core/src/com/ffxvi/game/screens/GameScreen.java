@@ -300,6 +300,7 @@ public class GameScreen implements Screen, Observer {
 		this.mapTypes.add(new MapType(1, "level1"));
 		this.mapTypes.add(new MapType(2, "level2"));
 		this.mapTypes.add(new MapType(3, "level3"));
+		this.mapTypes.add(new MapType(4, "level4"));
 
 		for (MapType mapType : this.mapTypes) {
 			this.maps.add(new Map(mapType.getName() + ".tmx", mapType.getId()));
@@ -340,7 +341,10 @@ public class GameScreen implements Screen, Observer {
 	}
 
 	public Map getRandomMap() {
-		int idx = new Random().nextInt(this.maps.size());
+		int idx  = new Random().nextInt(this.maps.size());
+		while (idx == 1) {
+			idx  = new Random().nextInt(this.maps.size());
+		}
 		return maps.get(idx);
 	}
 
@@ -447,9 +451,11 @@ public class GameScreen implements Screen, Observer {
 		if (oldMap == this.map) {
 			return;
 		}
-
+		
+		boolean founddoor = false;
 		for (RectangleMapObject rmo : this.map.getDoors().getByType(RectangleMapObject.class)) {
 			if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
+				founddoor = true;
 				switch (direction) {
 					case UP:
 						this.mainPlayer.setPosition(rmo.getRectangle().x, rmo.getRectangle().y + 64);
@@ -467,6 +473,10 @@ public class GameScreen implements Screen, Observer {
 				}
 				break;
 			}
+		}
+		
+		if(!founddoor) {
+			this.mainPlayer.setPosition(this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().x + 64, this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().y);
 		}
 
 		this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
