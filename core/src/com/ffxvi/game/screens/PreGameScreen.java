@@ -17,6 +17,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -34,6 +36,21 @@ import com.ffxvi.game.entities.PlayerCharacter;
  * The screen which is shown before the game.
  */
 public class PreGameScreen implements Screen {
+	
+    /**
+     * The width of buttons.
+     */
+    private static final int BUTTON_WIDTH = 200;
+
+    /**
+     * The height of buttons.
+     */
+    private static final int BUTTON_HEIGHT = 60;
+
+    /**
+     * The offset of buttons.
+     */
+    private static final int BUTTON_OFFSET = 30;
 
 	/**
 	 * The game controller.
@@ -53,7 +70,12 @@ public class PreGameScreen implements Screen {
 	/**
 	 * A label for the username.
 	 */
-	private final Label label;
+	private final Label usernameLabel;
+	
+	/**
+	 * A label for rendering the header text.
+	 */
+	private final Label headerLabel;
 
 	/**
 	 * The layout.
@@ -70,11 +92,37 @@ public class PreGameScreen implements Screen {
 		Gdx.input.setInputProcessor(this.stage);
 
 		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+		
+		Skin buttonSkin = new Skin();
+
+        Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+
+        buttonSkin.add("white", new Texture(pixmap));
 
 		// Store the default libgdx font under the name "default".
 		BitmapFont bfont = new BitmapFont();
 		//bfont.scale(1);
 		skin.add("default", bfont);
+		buttonSkin.add("default", bfont);
+
+        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
+        textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
+        textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+
+        textButtonStyle.font = buttonSkin.getFont("default");
+
+        buttonSkin.add("default", textButtonStyle);
+		
+		// Create header text
+		this.headerLabel = new Label("CHARACTER SELECT", skin);
+		this.headerLabel.setFontScale(2);
+		this.headerLabel.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2) - this.headerLabel.getWidth(), this.stage.getHeight() - 50);
+
+		this.stage.addActor(this.headerLabel);
 
 		// Create textfield
 		this.txtUsername = new TextField("Papyrus", skin);
@@ -83,17 +131,17 @@ public class PreGameScreen implements Screen {
 
 		// Add the textfield to the stage
 		this.stage.addActor(this.txtUsername);
-
-		// Create text
-		this.label = new Label("Voer een naam in:", skin);
-		this.layout.setText(skin.getFont("default"), this.label.getText());
-		this.label.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
+		
+		// Create username text
+		this.usernameLabel = new Label("Voer een naam in:", skin);
+		this.layout.setText(skin.getFont("default"), this.usernameLabel.getText());
+		this.usernameLabel.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2), (this.stage.getHeight() / 2) + 25 + this.txtUsername.getHeight());
 
 		// Add the label to the stage
-		this.stage.addActor(this.label);
+		this.stage.addActor(this.usernameLabel);
 
 		// Create new button
-		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", skin);
+		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
 		enterAsSkeletonDaggerButton.setSize(200, 50);
 		enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50);
 		enterAsSkeletonDaggerButton.addListener(new ClickListener() {
@@ -107,7 +155,7 @@ public class PreGameScreen implements Screen {
 		this.stage.addActor(enterAsSkeletonDaggerButton);
 
 		// Create new button
-		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", skin);
+		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", textButtonStyle);
 		enterAsSkeletonHoodedBowButton.setSize(200, 50);
 		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedBowButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - enterAsSkeletonHoodedBowButton.getHeight());
 		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
@@ -123,7 +171,7 @@ public class PreGameScreen implements Screen {
 		this.stage.addActor(enterAsSkeletonHoodedBowButton);
 
 		// Create new button
-		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", skin);
+		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Hooded Dagger", textButtonStyle);
 		enterAsSkeletonHoodedDaggerButton.setSize(200, 50);
 		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonHoodedDaggerButton.getWidth() / 2), (this.stage.getHeight() / 2) - 50 - (enterAsSkeletonHoodedDaggerButton.getHeight() * 2));
 		enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
@@ -143,7 +191,6 @@ public class PreGameScreen implements Screen {
 	 * @param character The player character which was chosen by the user.
 	 */
 	public void enterGame(PlayerCharacter character) {
-
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
@@ -162,14 +209,12 @@ public class PreGameScreen implements Screen {
 	 */
 	@Override
 	public void render(float delta) {
-
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			game.getScreen().dispose();
+			this.game.getScreen().dispose();
 			this.game.setScreen(new MenuScreen());
 			return;
 		}
 
-		// Draw background color
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
