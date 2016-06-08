@@ -85,7 +85,7 @@ public class ChatManager {
 			throw new IllegalArgumentException("Message can neither be null nor an empty string (excluding spaces).");
 		}
 		
-		this.chatLabels.add(new Label(String.format("%s: %s", message), skin));
+		this.chatLabels.add(new Label(message, skin));
 	
 		if (this.chatLabels.size() > 10) {
 			this.chatLabels.remove(0);

@@ -62,7 +62,7 @@ public class ChatSender {
         }
 
         if (this.out != null) {
-            this.out.println(textMessage.toString() + "\n");
+            this.out.println(textMessage.toString());
         } else {
             System.out.println("There is no connection with the server");
         }

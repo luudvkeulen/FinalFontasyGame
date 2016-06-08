@@ -14,9 +14,7 @@ import java.net.*;
  * @author Guido
  */
 public class ChatSender {
-    
-    private final static int SENDPORT = 1335;
-    
+
     private final ChatServer chatServer;
     
     public ChatSender(ChatServer chatServer) {
@@ -26,11 +24,9 @@ public class ChatSender {
     public void sendMessage(String message) throws IOException {
         for (Socket s : chatServer.getAllSockets()) {
             try {
-                System.out.println("CHAT: trying to send msg back");
                 DataOutputStream out = new DataOutputStream(s.getOutputStream());
-                System.out.println("CHAT: Got out");
-                out.writeBytes(message);
-                System.out.println("CHAT: Have written");
+                out.writeBytes(message + "\n");
+                System.out.println("CHAT: Have written to " + s.toString());
             }
             
             catch (Exception ex) {

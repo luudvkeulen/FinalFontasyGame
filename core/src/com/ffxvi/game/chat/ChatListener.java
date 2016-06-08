@@ -77,10 +77,10 @@ public class ChatListener implements Runnable {
     public void run() {
         while (listening) {
             try {
-				while (!this.in.ready()) {} //wait for message
+				while (!this.in.ready()) { } //Wait for message 
                 String receivedMessage = this.in.readLine();
+				System.out.println("Received message: " + receivedMessage);
                 chatManager.receiveMessage(receivedMessage);
-                System.out.println("Received message: " + receivedMessage);
             } catch (IOException ex) {
                 Logger.getLogger(ChatListener.class.getName()).log(Level.SEVERE, null, "Got error while retrieving message:" + ex.getMessage());
             }
