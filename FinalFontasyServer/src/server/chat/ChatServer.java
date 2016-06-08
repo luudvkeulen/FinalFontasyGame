@@ -17,13 +17,12 @@ import server.Server;
  */
 public class ChatServer implements Runnable{
     
-    private static int port;
+    private final static int PORT = 1336;
     private boolean listening = true;
     private Server gameServer;
     private ChatSender chatSender;
 
-    public ChatServer(Server gameServer, int port) {
-        this.port = port;
+    public ChatServer(Server gameServer) {
         this.gameServer = gameServer;
         this.chatSender = new ChatSender(this);
     }
@@ -31,12 +30,13 @@ public class ChatServer implements Runnable{
     @Override
     public void run() {
         try {
-            ServerSocket welcomeSocket = new ServerSocket(port);
+            ServerSocket welcomeSocket = new ServerSocket(PORT);
+            System.out.println("CHAT: Server is now waiting at port: " + PORT);
             while (listening) {
                 ChatListenerThread clt = new ChatListenerThread(welcomeSocket.accept(), chatSender);
                 Thread t = new Thread(clt);
                 t.start();
-                System.out.println("Server: Made new connection!");
+                System.out.println("CHAT: Server Made new connection!");
             }
         } catch (IOException ex) {
             Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);

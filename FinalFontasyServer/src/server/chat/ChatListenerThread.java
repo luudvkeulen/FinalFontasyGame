@@ -37,9 +37,10 @@ public class ChatListenerThread implements Runnable {
         }
         while (listening) {
             try {
+                System.out.println("CHAT: WAITING FOR MESSAGE");
                 while(!in.ready()) {} //Wait for message to come in.
                 String message = in.readLine();
-                System.out.println("RECEIVED MESSAGE: " + message);
+                System.out.println("CHAT: RECEIVED MESSAGE: " + message);
                 chatSender.sendMessage(message);
                 
             } catch (IOException ex) {

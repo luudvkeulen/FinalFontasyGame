@@ -71,7 +71,7 @@ public final class Client {
         listenerThread.start();
 		
 		try {
-			ChatListener chat = new ChatListener(hostIP, hostPort, screen.chatManager);
+			ChatListener chat = new ChatListener(hostIP, screen.chatManager);
 			this.chatListener = chat;
 			Thread t = new Thread(chat);
 			t.start();

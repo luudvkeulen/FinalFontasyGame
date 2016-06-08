@@ -22,6 +22,8 @@ import java.util.logging.Logger;
  * A runnable which checks if chat messages have come in.
  */
 public class ChatListener implements Runnable {
+	private final static int PORT = 1336;
+	
     /**
      * The listener's socket.
      */
@@ -54,8 +56,8 @@ public class ChatListener implements Runnable {
      * @throws IOException throws exception when the listener couldn't
      * initialize itself.
      */
-    public ChatListener(String hostIP, int hostPort, ChatManager manager) throws IOException {
-		this.socket = new Socket(hostIP, hostPort);
+    public ChatListener(String hostIP, ChatManager manager) throws IOException {
+		this.socket = new Socket(hostIP, PORT);
 		this.chatSender = new ChatSender(socket);
 		this.chatManager = manager;
         this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
