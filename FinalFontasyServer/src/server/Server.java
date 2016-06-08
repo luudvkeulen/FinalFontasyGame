@@ -32,10 +32,13 @@ import java.util.logging.Logger;
 public class Server {
 
 	private InetSocketAddress[] players;
+	private List<InetSocketAddress> spectators;
 	private HashMap<InetSocketAddress, SimplePlayer> playerData;
 	private ServerListener serverListener;
 	private Timer updateTimer;
-	private int serverSize;
+	
+	private int playerLimit;
+	private int spectatorLimit;
 	private byte[] sendData;
 
 	/**
@@ -71,19 +74,44 @@ public class Server {
 	public int getListeningPort() {
 		return serverListener.getPort();
 	}
+	
+	/**
+	 * Adds the given InetAddres (IP) to the list of spectators
+	 * @param ip the IP that's to be added to the list of spectators
+	 */
+	public void addSpectator(InetAddress ip) {
+		if (spectators.size() < spectatorLimit) {
+			spectators.add(new InetSocketAddress(ip, 1337));
+		}
+	}
+	
+	/**
+	 * Remove the given InetAddress (IP) from the list of spectators
+	 * @param ip the IP that's to be removed from the list of spectators
+	 */
+	public void removeSpectator(InetAddress ip) {
+		List<InetSocketAddress> localSpectators = spectators;
+		for (InetSocketAddress socket : localSpectators) {
+			if (socket.getAddress().equals(ip.getAddress())) {
+				spectators.remove(socket);
+			}
+		}
+	}
 
 	/**
-	 * Initialize the server. The server is listening in a thread, this is
+	 * initialise the server. The server is listening in a thread, this is
 	 * because the listening code keeps waiting until a packet is received
 	 *
 	 * @param listenerPort the port that the server will be listening on
 	 */
 	public Server(int listenerPort) {
-		serverSize = 16;
+		playerLimit = 16;
 		// Initialize the players array
-		players = new InetSocketAddress[serverSize];
+		players = new InetSocketAddress[playerLimit];
 		// Initialize the playerData HashMap
-		playerData = new HashMap(serverSize);
+		playerData = new HashMap(playerLimit);
+		spectatorLimit = 1000;
+		spectators = new ArrayList();
 		// Set the port to receive data on
 		serverListener = new ServerListener(this, listenerPort);
 		Thread listenerThread = new Thread(serverListener);
@@ -102,8 +130,9 @@ public class Server {
 		TimerTask tt = new TimerTask() {
 			@Override
 			public void run() {
+				InetSocketAddress[] localPlayers = players;
 				// Send each connected player the data of all other players
-				for (InetSocketAddress address : players) {
+				for (InetSocketAddress address : localPlayers) {
 					if (address != null) {
 						if (playerData.get(address) != null) {
 							HashMap<InetSocketAddress, SimplePlayer> dataMapWithoutSender = new HashMap(playerData);
@@ -126,6 +155,11 @@ public class Server {
 							sendSingle(dataListWithoutSender, address);
 						}
 					}
+				}
+				List<InetSocketAddress> localSpectators = spectators;
+				Collection<SimplePlayer> localPlayerData = playerData.values();
+				for (InetSocketAddress socket : localSpectators) {
+					sendSingle(localPlayerData, socket);
 				}
 			}
 		};

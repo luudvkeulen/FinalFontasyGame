@@ -58,6 +58,7 @@ public final class Client {
         // Set the host to send data to
         this.hostAddress = new InetSocketAddress(hostIP, hostPort);
         this.send("CONNECTING");
+		//this.send("SPECTATING");
         // Set the port to receive data on
         this.clientListener = new ClientListener(listenerPort, screen);
         Thread listenerThread = new Thread(this.clientListener);
@@ -106,6 +107,7 @@ public final class Client {
      */
     public void stop() {
         this.send("DISCONNECTING");
+		//this.send("STOPSPECTATING");
         this.clientListener.stopListening();
     }
 
