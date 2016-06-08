@@ -31,9 +31,9 @@ public class ServerSubscriberTask extends TimerTask {
 	public void run() {
 		try {
 			if(name.equals("")){
-				serverList.addServer(server.getPlayerInfo().size(), address, port);
+				serverList.addServer(server.getPlayerCount(), address, port);
 			} else {
-				serverList.addServer(server.getPlayerInfo().size(), address, port, name);
+				serverList.addServer(server.getPlayerCount(), address, port, name);
 			}
 		} catch (RemoteException ex) {
 			System.out.println(ex.getMessage());
