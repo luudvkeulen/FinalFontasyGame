@@ -18,17 +18,17 @@ public class ClearServers extends TimerTask {
 	
 	@Override
 	public void run() {
-		for(IServer server : serverList.servers) {
+		/*for(IServer server : serverList.servers) {
 			try {
 				System.out.println(server.getFullAddress());
 			} catch (RemoteException ex) {
 				Logger.getLogger(ClearServers.class.getName()).log(Level.SEVERE, null, ex);
 			}
-		}
+		}*/
 		serverList.clearServers();
 		try {
 			registry.rebind("serverList", serverList);
-			System.out.println("Succesfully rebinded server list");
+			//System.out.println("Succesfully rebinded server list");
 		} catch (RemoteException re) {
 			System.out.println("queryServer: RemoteException: " + re.getMessage());
 		}

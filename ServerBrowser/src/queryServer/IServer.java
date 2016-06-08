@@ -8,5 +8,9 @@ public interface IServer extends Remote {
 	
 	int getPort() throws RemoteException;
 	
+	String getName() throws RemoteException;
+	
 	String getFullAddress() throws RemoteException;
+	
+	int getPlayers() throws RemoteException;
 }

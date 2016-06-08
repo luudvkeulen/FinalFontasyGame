@@ -39,8 +39,6 @@ public class SkinManager {
         private float animationSpeed;
         private String skinDirectoryPath;
         
-        private Animation idle;
-        
         private int walkSheetCols = 9;
         private int walkSheetRows = 4;
         private Animation walkUp;
@@ -87,8 +85,6 @@ public class SkinManager {
         public Animation getAnimation(PlayerAnimation animation, Direction direction) {
             Animation ret = null;
             switch(animation) {
-                case IDLE:
-                    ret = this.idle; break;
                 case WALKING:
                     switch(direction) {
                         case UP: ret = this.walkUp; break;
@@ -114,7 +110,6 @@ public class SkinManager {
                     }
                     break;
             }
-            this.idle = new Animation(0, ret.getKeyFrame(0));
             return ret;
         }
         
@@ -122,7 +117,6 @@ public class SkinManager {
             setWalkingAnimations();
             setSlashingAnimations();
             setShootingAnimations();
-            this.idle = new Animation(0, walkDown.getKeyFrame(0));
         }
         
         private void setWalkingAnimations() {

@@ -15,7 +15,7 @@ import org.junit.*;
  * @author Acer
  */
 public class ServerTest {
-    
+    /*
     Server server;
     
     @Before
@@ -50,5 +50,5 @@ public class ServerTest {
             System.out.println("ERROR: " + ex);
         }
     }
-    
+    */
 }

@@ -13,29 +13,44 @@ public class ServerSubscriber {
 	
 	private Registry registry;
 	private IServerList serverList;
+	private String address;
+	private int port;
+	private Timer timer;
+	private final Server server;
 	
 	private static final int PORT = 420;
 	private static final String IP = "128.199.32.134";
 	static final String BINDINGNAME = "serverList";
 	
-	public ServerSubscriber() throws IOException {		
+	public ServerSubscriber(Server server) throws IOException {		
 		connectToRegistry();
 		
-		serverList.addServer(Inet4Address.getLocalHost().getHostAddress(), 1338);
-		System.out.println(Inet4Address.getLocalHost().getHostAddress());
+		serverList.addServer(0, Inet4Address.getLocalHost().getHostAddress(), 1338);
+		System.out.println("Added server");
+		this.address = Inet4Address.getLocalHost().getHostAddress();
+		this.port = 0;
+		this.server = server;
 		
-		startTimer("", 0);
+		startTimer(Inet4Address.getLocalHost().getHostAddress(), 1338);
 	}
 	
-	public ServerSubscriber(String address) throws RemoteException, UnknownHostException {
+	public ServerSubscriber(Server server, String address) throws RemoteException, UnknownHostException {
 		connectToRegistry();
-		serverList.addServer(address, 1338);
-		startTimer(address, 0);
+		this.address = address;
+		this.port = 0;
+		this.server = server;
+		
+		serverList.addServer(0, address, 1338);
+		startTimer(address, 1338);
 	}
 	
-	public ServerSubscriber(String address, int port) throws RemoteException, UnknownHostException {
+	public ServerSubscriber(Server server, String address, int port) throws RemoteException, UnknownHostException {
 		connectToRegistry();
-		serverList.addServer(address, port);
+		this.address = address;
+		this.port = port;
+		this.server = server;
+		
+		serverList.addServer(0, address, port);
 		startTimer(address, port);
 	}
 	
@@ -52,6 +67,7 @@ public class ServerSubscriber {
 		if(registry != null) {
 			try {
 				serverList = (IServerList) registry.lookup(BINDINGNAME);
+				System.out.println("ServerList binded");
 			} catch (RemoteException re) {
 				System.out.println("GameServer: RemoteException: " + re.getMessage());
 				serverList = null;
@@ -63,19 +79,31 @@ public class ServerSubscriber {
 	}
 	
 	private void startTimer(String address, int port) throws UnknownHostException {
-		Timer timer = new Timer();
-		if(address.equals("") && port == 0) {
-			timer.schedule(new ServerSubscriberTask(serverList, Inet4Address.getLocalHost().getHostAddress(), 1338), 0, 500);
-		} else if(!address.equals("") && port == 0) {
-			timer.schedule(new ServerSubscriberTask(serverList, address, 1338), 0, 500);
-		} else {
-			timer.schedule(new ServerSubscriberTask(serverList, address, port), 0, 500);
-		}
+		timer = new Timer();
+		timer.schedule(new ServerSubscriberTask(server, serverList, address, port), 0, 500);
+	}
+	
+	private void startTimer(String address, int port, String name) throws UnknownHostException {
+		timer = new Timer();
+		timer.schedule(new ServerSubscriberTask(server, serverList, address, port, name), 0, 500);
 	}
 	
 	public void removeServer(String address) throws RemoteException {		
 		if(serverList != null) {
 			serverList.removeServer(address);
+		}
+	}
+	
+	public void renameServer(String name) throws RemoteException, UnknownHostException {
+		if(name.equals("")) return;
+		timer.cancel();
+		serverList.removeServer(this.address + ":" + this.port);
+		if(port != 0) {
+			serverList.addServer(0, address, port, name);
+			startTimer(address, port, name);
+		} else {
+			serverList.addServer(0, address, 1338, name);
+			startTimer(address, 1338, name);
 		}
 	}
 }

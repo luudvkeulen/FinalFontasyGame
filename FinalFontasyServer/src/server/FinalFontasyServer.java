@@ -39,25 +39,22 @@ public class FinalFontasyServer {
 		Scanner lineSc;
 		String line = "";
 		String input = "";
-
-		FinalFontasyServer f = new FinalFontasyServer();
 		switch (args.length) {
 			case 0:
-				f.startAndSubscribe("", 0);
+				startAndSubscribe("", 0);
 				System.out.println("0 args");
 				break;
 			case 1:
-				f.startAndSubscribe(args[0], 0);
+				startAndSubscribe(args[0], 0);
 				System.out.println("1 args:" + args[0]);
 				break;
 			case 2:
-				f.startAndSubscribe(args[0], Integer.getInteger(args[1]));
+				startAndSubscribe(args[0], Integer.getInteger(args[1]));
 				System.out.println("2 args");
 				break;
 			default:
 				break;
-		}
-		
+		}		
 		
 
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
@@ -86,12 +83,17 @@ public class FinalFontasyServer {
 				// Display the currently connected clients in the form of IP Addresses
 				case "players":
 					System.out.println("Current players:");
-					for (InetSocketAddress player : server.getPlayerAddresses()) {
-						if (player != null) {
-							System.out.println(player.toString());
-						}
+					for (String s : server.getPlayerInfo()) {
+						System.out.println(s);
 					}
 					System.out.println("----------------");
+					break;
+				case "name":
+					String name;
+					Scanner in = new Scanner(System.in);
+					name = in.nextLine();
+					serverSubscriber.renameServer(name);
+					System.out.println("renamed to: " + name);
 					break;
 				// Display all available commands
 				case "help":
@@ -100,6 +102,7 @@ public class FinalFontasyServer {
 							+ "stop - Stops the server.\n"
 							+ "port - Shows the port that the server is listening on.\n"
 							+ "players - Shows the addresses of all the connected players.\n"
+							+ "name - sets the name of the server.\n"
 							+ "----------------");
 					break;
 			}
@@ -108,14 +111,19 @@ public class FinalFontasyServer {
 		sc.close();
 	}
 	
-	private void startAndSubscribe(String address, int port) throws RemoteException {
+	private static void startAndSubscribe(String address, int port) throws RemoteException {
 		if(address.equals("") && port == 0) {
 			server = new Server(1338);
+			try {
+				serverSubscriber = new ServerSubscriber(server);
+			} catch (IOException ex) {
+				System.out.println(ex.getMessage());
+			}
 			startChatServer(port);
 		} else if (port == 0 && !address.equals("")) {
 			server = new Server(1338);
 			try {
-				serverSubscriber = new ServerSubscriber(address);
+				serverSubscriber = new ServerSubscriber(server, address);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -123,17 +131,32 @@ public class FinalFontasyServer {
 		} else {
 			server = new Server(port);
 			try {
-				serverSubscriber = new ServerSubscriber(address, port);
+				serverSubscriber = new ServerSubscriber(server, address, port);
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
 			startChatServer(port);
 		}
 	}
-	
-	private void startChatServer(int port) {
+        
+	private static void startChatServer(int port) {
             ChatServer chat = new ChatServer(FinalFontasyServer.server, port);
             Thread t = new Thread(chat);
             t.start();
-	}
+        }
+        
+//	private static void startChatServer(int port) {
+//		chatListener = null;
+//		try {
+//			//Start the chatserver
+//			if(port == 0) {
+//				chatListener = new ChatListener(server, 1338);
+//			} else {
+//				chatListener = new ChatListener(server, port);
+//			}
+//			new Thread(chatListener).start();
+//		} catch (IOException ex) {
+//			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
+//		}
+//	}
 }

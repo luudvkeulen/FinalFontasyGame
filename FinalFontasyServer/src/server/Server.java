@@ -19,6 +19,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -44,6 +45,26 @@ public class Server {
 	 */
 	public InetSocketAddress[] getPlayerAddresses() {
 		return players;
+	}
+	
+	public int getPlayerCount() {
+		return playerData.size();
+	}
+	
+	/**
+	 * Return the addresses + names of the connected Players
+	 * @return a List of the connected Player's info
+	 */
+	public List<String> getPlayerInfo() {
+		List<String> ret = new ArrayList();
+		for (InetSocketAddress player : players) {
+			if (player != null) {
+				String address = player.toString();
+				String name = playerData.get(player).getName();
+				ret.add(address + " " + name);
+			}
+		}
+		return ret;
 	}
 
 	/**
