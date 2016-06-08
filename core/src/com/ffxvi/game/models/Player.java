@@ -109,6 +109,7 @@ public class Player extends SimplePlayer {
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
 
+		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		this.screen = screen;
 	}
 

@@ -213,7 +213,7 @@ public class GameScreen implements Screen, Observer {
 		this.fontred.setColor(Color.RED);
 
 		if (!game.selectedIp.equals("")) {
-			String fulltext = game.selectedIp.replaceAll("\\s+","");
+			String fulltext = game.selectedIp.replaceAll("\\s+", "");
 			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
 			System.out.println(fullip);
 			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this);
@@ -326,7 +326,7 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		Player mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this.gameManager, map.getId(), this);
+		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId());
 		mainPlayer.setPosition(64, 64);
 		gameManager.setMainPlayer(mainPlayer);
 
@@ -344,9 +344,9 @@ public class GameScreen implements Screen, Observer {
 	}
 
 	public Map getRandomMap() {
-		int idx  = new Random().nextInt(this.maps.size());
+		int idx = new Random().nextInt(this.maps.size());
 		while (idx == 1) {
-			idx  = new Random().nextInt(this.maps.size());
+			idx = new Random().nextInt(this.maps.size());
 		}
 		return maps.get(idx);
 	}
@@ -416,14 +416,9 @@ public class GameScreen implements Screen, Observer {
 		if (oldMap == map) {
 			return;
 		}
-<<<<<<< HEAD
 
-		for (RectangleMapObject rmo : map.getDoors().getByType(RectangleMapObject.class)) {
-=======
-		
 		boolean founddoor = false;
 		for (RectangleMapObject rmo : this.map.getDoors().getByType(RectangleMapObject.class)) {
->>>>>>> refs/remotes/origin/master
 			if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
 				founddoor = true;
 				switch (direction) {
@@ -444,9 +439,9 @@ public class GameScreen implements Screen, Observer {
 				break;
 			}
 		}
-		
-		if(!founddoor) {
-			this.mainPlayer.setPosition(this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().x + 64, this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().y);
+
+		if (!founddoor) {
+			this.gameManager.getMainPlayer().setPosition(this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().x + 64, this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().y);
 		}
 
 		this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
@@ -592,20 +587,18 @@ public class GameScreen implements Screen, Observer {
 			// for removed projectiles
 			for (int i = 0; i < gameManager.getProjectiles().size(); i++) {
 				try {
-					LibProjectile p = (LibProjectile) gameManager.getProjectiles().get(i);
+					LibProjectile p = new LibProjectile(gameManager.getProjectiles().get(i), this);
 
-					if (p != null) {
-						if (!p.shouldRemove()) {
-							// Update and render projectile only if the room IDs match
-							// This should always be the case when projectiles are send
-							// through multiplayer
-							if (p.getRoomID() == gameManager.getMainPlayer().getRoomId()) {
-								p.update();
-								p.render(this.shape, this.game.camera);
-							}
-						} else {
-							projectilesToBeRemoved.add(p);
+					if (!p.shouldRemove()) {
+						// Update and render projectile only if the room IDs match
+						// This should always be the case when projectiles are send
+						// through multiplayer
+						if (p.getRoomID() == gameManager.getMainPlayer().getRoomId()) {
+							p.update();
+							p.render(this.shape, this.game.camera);
 						}
+					} else {
+						projectilesToBeRemoved.add(p);
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);

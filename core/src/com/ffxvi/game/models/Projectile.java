@@ -83,6 +83,8 @@ public class Projectile extends SimpleProjectile {
 		this.canCollide = true;
 		this.despawnDelay = 10;
 		this.startTime = System.nanoTime();
+		
+		this.gameManager = gameManager;
 	}
 
 	protected boolean checkPlayerCollision(Rectangle rec, Player mainPlayer) {
@@ -130,6 +132,7 @@ public class Projectile extends SimpleProjectile {
 
 		// Check collision with player if the player's name is not equal
 		// to the owner's name of the projectile
+		System.out.printf("GameManager = %s.\n", gameManager);
 		if (!this.playerName.equals(gameManager.getMainPlayer().getName())) {
 			boolean collisionPlayer = checkPlayerCollision(playerCollision, gameManager.getMainPlayer());
 
