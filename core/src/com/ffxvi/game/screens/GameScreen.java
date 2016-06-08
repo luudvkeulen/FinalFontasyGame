@@ -38,6 +38,7 @@ import com.ffxvi.game.models.SimpleProjectile;
 import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.entities.Map;
+import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.MapType;
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Vector;
@@ -61,27 +62,16 @@ public class GameScreen implements Screen, Observer {
 	 * The main class for the game.
 	 */
 	private final MainClass game;
+	
+	/**
+	 * The GameManager
+	 */
+	private GameManager gameManager;
 
 	/**
 	 * The manager for all player textures (skins)
 	 */
 	private static final SkinManager skinManager = new SkinManager();
-
-	/**
-	 * The main player of the game.
-	 */
-	private Player mainPlayer;
-
-	//Multiplayer
-	/**
-	 * The players which are in the room.
-	 */
-	private List<SimplePlayer> multiplayers;
-
-	/**
-	 * The received player's data that is currently being rendered.
-	 */
-	private Player multiplayer;
 
 	/**
 	 * The code for this client.
@@ -130,10 +120,7 @@ public class GameScreen implements Screen, Observer {
 	 */
 	private final SpriteBatch batch;
 
-	/**
-	 * An ArrayList containing all projectiles which are in the room.
-	 */
-	protected static List<Projectile> projectiles;
+
 
 	/**
 	 * The stage.
@@ -201,6 +188,9 @@ public class GameScreen implements Screen, Observer {
 	 * Initializes a new GameScreen.
 	 */
 	public GameScreen() {
+		
+		gameManager = new GameManager();
+		
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
@@ -232,9 +222,8 @@ public class GameScreen implements Screen, Observer {
 		this.shape = new ShapeRenderer();
 		this.batch = new SpriteBatch();
 
-		GameScreen.projectiles = new ArrayList();
-		this.multiplayers = new ArrayList();
-		this.multiplayer = new Player(this);
+		gameManager.setMainPlayer(new Player(this));
+	
 
 		this.textfield = new TextField("", skin);
 		this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
@@ -320,18 +309,18 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, map.getId());
+		gameManager.setMainPlayer(new Player(character, playerName, new Vector(64f, 64f), this, map.getId()));
+	    gameManager.getMainPlayer().setPosition(64, 64);
 
-		this.mainPlayer.setPosition(64, 64);
-		this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
+		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 
 		this.playerLabelName.setText(playerName);
 		this.playerLabelNameHUD.setText(playerName);
 
-		this.inputManager = new InputManager(this.mainPlayer);
+		this.inputManager = new InputManager(gameManager.getMainPlayer());
 		this.inputManager.addObserver(this);
 
-		this.sendChatMessage("[SERVER]", this.mainPlayer.getName() + " HAS CONNECTED");
+		this.sendChatMessage("[SERVER]", gameManager.getMainPlayer().getName() + " HAS CONNECTED");
 	}
 
 	public Map getRandomMap() {
@@ -340,7 +329,7 @@ public class GameScreen implements Screen, Observer {
 	}
 
 	public void Respawn(String killer) {
-		Collection<SimplePlayer> localMultiplayers = this.getMultiplayers();
+		Collection<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 		for (SimplePlayer splayer : localMultiplayers) {
 			if (splayer.getName().equals(killer)) {
 				splayer.increaseScore();
@@ -349,54 +338,17 @@ public class GameScreen implements Screen, Observer {
 			}
 		}
 
-		updatePlayerHealthLabels(mainPlayer.getHitPoints());
+		updatePlayerHealthLabels(gameManager.getMainPlayer().getHitPoints());
 
 		int mapid = getRandomMap().getId();
-		mainPlayer.setRoomId(mapid);
+		gameManager.getMainPlayer().setRoomId(mapid);
 
 		setLevel(mapid, Direction.UPLEFT);
-		this.mainPlayer.setPosition(64, 64);
+		gameManager.getMainPlayer().setPosition(64, 64);
 
-		this.client.sendPlayer(new SimplePlayer(mainPlayer));
+		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 	}
 
-	/**
-	 * Adds a list of other players to this game.
-	 *
-	 * @param multiplayers A list of the other players. An empty list is
-	 * allowed.
-	 */
-	public void addMultiPlayers(Collection<SimplePlayer> multiplayers) {
-
-		if (multiplayers == null) {
-			throw new IllegalArgumentException("The multiplayers can not be null.");
-		}
-
-		if (this.multiplayers == null) {
-			this.multiplayers = new ArrayList();
-		}
-
-		this.multiplayers.clear();
-		this.multiplayers = (List<SimplePlayer>) multiplayers;
-	}
-
-	/**
-	 * Gets a list with the currently connected players.
-	 *
-	 * @return The currently connected players.
-	 */
-	public Player getMainPlayer() {
-		return this.mainPlayer;
-	}
-
-	/**
-	 * Get all the players in the game.
-	 *
-	 * @return all the players in the game.
-	 */
-	public Collection<SimplePlayer> getMultiplayers() {
-		return this.multiplayers;
-	}
 
 	public void setDialogMessage(String message) {
 		this.messageDialog.text(message);
@@ -482,7 +434,7 @@ public class GameScreen implements Screen, Observer {
 			throw new IllegalArgumentException("Projectile can not be null.");
 		}
 
-		projectiles.add(projectile);
+		gameManager.addProjectile(projectile);
 
 		// Check if this projectile has not been received from the server,
 		// to prevent an infinite loop
@@ -503,7 +455,7 @@ public class GameScreen implements Screen, Observer {
 			throw new IllegalArgumentException("Projectile can not be null.");
 		}
 
-		projectiles.remove(projectile);
+		gameManager.removeProjectile(projectile);
 	}
 
 	/**
@@ -525,50 +477,50 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		if (this.mainPlayer != null) {
+		if (gameManager.getMainPlayer() != null) {
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
-			this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
+			this.game.camera.position.set(gameManager.getMainPlayer().getX(), gameManager.getMainPlayer().getY(), 0);
 			this.game.camera.update();
 
 			this.renderer.setView(this.game.camera);
 			this.renderer.render();
 
 			// Set the playerLabel position to the position of the player
-			Vector3 playerPos = new Vector3(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
+			Vector3 playerPos = new Vector3(gameManager.getMainPlayer().getX(), gameManager.getMainPlayer().getY(), 0);
 			this.game.camera.project(playerPos);
 
 			float playerLabelWidth = this.playerLabelName.getWidth();
 			this.playerLabelName.setAlignment((int) playerLabelWidth / 2);
-			this.playerLabelName.setPosition(playerPos.x + 32, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
+			this.playerLabelName.setPosition(playerPos.x + 32, playerPos.y + gameManager.getMainPlayer().getCurrentAnimation().getKeyFrame(0).getRegionHeight() + 12);
 
 			float playerHealthLabelWidth = this.playerHealthLabel.getWidth();
 			this.playerHealthLabel.setAlignment((int) (playerHealthLabelWidth / 2));
-			this.playerHealthLabel.setPosition(playerPos.x + 16, playerPos.y + this.mainPlayer.getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
+			this.playerHealthLabel.setPosition(playerPos.x + 16, playerPos.y + gameManager.getMainPlayer().getCurrentAnimation().getKeyFrame(0).getRegionHeight() - 18);
 
 			this.playerHealthLabelHUD.setPosition(0, this.playerHealthLabelHUD.getHeight());
-			this.playerHealthLabelHUD.setText(String.valueOf(mainPlayer.getHitPoints()));
+			this.playerHealthLabelHUD.setText(String.valueOf(gameManager.getMainPlayer().getHitPoints()));
 
 			this.playerLabelNameHUD.setAlignment((int) this.playerLabelNameHUD.getWidth() / 2);
 			this.playerLabelNameHUD.setPosition(Gdx.graphics.getWidth() / 2, this.playerLabelNameHUD.getHeight());
 
-			this.scoreLabel.setText(String.valueOf(mainPlayer.getScore()));
+			this.scoreLabel.setText(String.valueOf(gameManager.getMainPlayer().getScore()));
 			this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
 			//Render other players
-			if (this.multiplayers == null) {
-				this.multiplayers = new ArrayList();
+			if (gameManager.getMultiplayers() == null) {
+				gameManager.setMultiplayers(new ArrayList());
 			}
-			if (this.multiplayer == null) {
-				this.multiplayer = new Player(this);
+			if (gameManager.getMultiplayer() == null) {
+				gameManager.setMultiplayer(new Player(this)); 
 			}
-			List<SimplePlayer> localMultiplayers = new ArrayList(this.multiplayers);
+			List<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 			batch.begin();
 			batch.setProjectionMatrix(game.camera.combined);
 			try {
 				for (SimplePlayer splayer : localMultiplayers) {
-					if (splayer.getRoomId() == mainPlayer.getRoomId()) {
-						multiplayer.setData(splayer);
-						multiplayer.render(batch);
+					if (splayer.getRoomId() == gameManager.getMainPlayer().getRoomId()) {
+						gameManager.getMultiplayer().setData(splayer);
+						gameManager.getMultiplayer().render(batch);
 						this.fontwhite.draw(batch, splayer.getName(), splayer.getX(), splayer.getY() + 76);
 						this.fontred.draw(batch, Integer.toString(splayer.getHitPoints()), splayer.getX() + 12, splayer.getY() + 64);
 					}
@@ -576,7 +528,7 @@ public class GameScreen implements Screen, Observer {
 			} catch (ConcurrentModificationException cme) {
 				Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, cme);
 			}
-			this.mainPlayer.render(this.batch);
+			gameManager.getMainPlayer().render(this.batch);
 			this.inputManager.checkInput();
 			this.batch.end();
 
@@ -605,16 +557,16 @@ public class GameScreen implements Screen, Observer {
 
 			// Loop through all projectiles to render projectiles and check
 			// for removed projectiles
-			for (int i = 0; i < GameScreen.projectiles.size(); i++) {
+			for (int i = 0; i < gameManager.getProjectiles().size(); i++) {
 				try {
-					Projectile p = GameScreen.projectiles.get(i);
+					Projectile p = gameManager.getProjectiles().get(i);
 
 					if (p != null) {
 						if (!p.shouldRemove()) {
 							// Update and render projectile only if the room IDs match
 							// This should always be the case when projectiles are send
 							// through multiplayer
-							if (p.getRoomID() == this.mainPlayer.getRoomId()) {
+							if (p.getRoomID() == gameManager.getMainPlayer().getRoomId()) {
 								p.update();
 								p.render(this.shape, this.game.camera);
 							}
@@ -628,7 +580,7 @@ public class GameScreen implements Screen, Observer {
 			}
 
 			// Remove all expired projectiles
-			projectiles.removeAll(projectilesToBeRemoved);
+			gameManager.getProjectiles().removeAll(projectilesToBeRemoved);
 
 			//Update the player
 			this.mainPlayer.update();
