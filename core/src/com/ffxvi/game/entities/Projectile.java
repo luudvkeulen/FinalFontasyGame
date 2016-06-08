@@ -153,7 +153,7 @@ public class Projectile extends SimpleProjectile {
     public void render(ShapeRenderer shape, OrthographicCamera camera) {
         shape.setProjectionMatrix(camera.combined);
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setColor(Color.WHITE);
+        shape.setColor(Color.BROWN);
         float length = 20;
         float loc1x = this.position.getX();
         float loc1y = this.position.getY();

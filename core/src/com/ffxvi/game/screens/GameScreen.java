@@ -341,7 +341,10 @@ public class GameScreen implements Screen, Observer {
 	}
 
 	public Map getRandomMap() {
-		int idx = new Random().nextInt(this.maps.size());
+		int idx  = new Random().nextInt(this.maps.size());
+		while (idx == 1) {
+			idx  = new Random().nextInt(this.maps.size());
+		}
 		return maps.get(idx);
 	}
 
