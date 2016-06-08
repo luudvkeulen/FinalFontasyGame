@@ -19,6 +19,7 @@ public class ChatListenerThread implements Runnable {
     private ChatSender chatSender;
     private boolean listening = true;
     
+    
     public ChatListenerThread(Socket socket, ChatSender chatSender) {
         this.clientSocket = socket;
         this.chatSender = chatSender;
