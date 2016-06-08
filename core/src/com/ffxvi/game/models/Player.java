@@ -60,11 +60,6 @@ public class Player extends SimplePlayer {
 	private long shootStart;
 
 	/**
-	 * The game screen.
-	 */
-	private final GameScreen screen;
-
-	/**
 	 * The grid size of the player in width.
 	 */
 	private final int modifiedGridSizeX;
@@ -73,6 +68,8 @@ public class Player extends SimplePlayer {
 	 * The grid size of the player in height.
 	 */
 	private final int modifiedGridSizeY;
+	
+	private GameManager gameManager;
 
 	/**
 	 * Default constructor for Player.
@@ -83,7 +80,7 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param roomId The id of the room where the player is in.
 	 */
-	public Player(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId) {
+	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
 
 		if (character == null) {
@@ -95,11 +92,8 @@ public class Player extends SimplePlayer {
 					"Character can neither be null nor an empty String.");
 		}
 
-		if (gameScreen == null) {
-			throw new IllegalArgumentException("Screen can not be null.");
-		}
+		this.gameManager = gameManager;
 
-		this.screen = gameScreen;
 		this.speed = Player.WALK_SPEED;
 
 		this.aimDirection = 0f;
@@ -116,10 +110,10 @@ public class Player extends SimplePlayer {
 	 * @param screen the GameScreen that this Player is in. Used to create
 	 * projectiles
 	 */
-	public Player(GameScreen screen) {
+	public Player(GameManager gameManager) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
 
-		this.screen = screen;
+		this.gameManager = gameManager;
 
 		this.aimDirection = 0f;
 
@@ -387,9 +381,9 @@ public class Player extends SimplePlayer {
 			this.shootStart = System.nanoTime();
 
 			// Create a bullet inside the player with the direction and speed
-			screen.addProjectile(new Projectile(new Vector(this.x
+			gameManager.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
-					30, this.aimDirection, this.roomId, this.playerName, this.screen), false);
+					30, this.aimDirection, this.roomId, this.playerName, this.gameManager));
 		}
 	}
 
@@ -458,7 +452,7 @@ public class Player extends SimplePlayer {
 
 	private void checkSlashing() {
 		//Check if player gets slashed
-		Collection<SimplePlayer> localMultiplayers = new ArrayList(this.screen.getMultiplayers());
+		Collection<SimplePlayer> localMultiplayers = new ArrayList(gameManager.getMultiplayers());
 		if (localMultiplayers.isEmpty()) {
 			return;
 		}
@@ -466,8 +460,8 @@ public class Player extends SimplePlayer {
 			if (p.animation == PlayerAnimation.SLASHING
 					&& !p.getName().equals(this.playerName)) {
 
-				LibPlayer player = new LibPlayer(this.screen);
-				player.setData(p);
+//				LibPlayer player = new LibPlayer(this.screen);
+//				player.setData(p);
 
 				Circle cEnemy = new Circle();
 				cEnemy.x = p.getX();

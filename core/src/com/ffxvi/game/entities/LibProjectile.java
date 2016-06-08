@@ -8,9 +8,7 @@ package com.ffxvi.game.entities;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Rectangle;
+import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
@@ -25,8 +23,9 @@ public class LibProjectile extends Projectile{
 	private GameScreen screen;
 	
 	
-	public LibProjectile(Vector position, float speed, float rotation, int roomID, String playerName, GameScreen screen) {
-		super(position, speed, rotation, roomID, playerName);
+	public LibProjectile(Vector position, float speed, float rotation, int roomID, String playerName, GameScreen screen, GameManager gameManager) {
+		super(position, speed, rotation, roomID, playerName,gameManager);
+		this.screen = screen;
 	}
 	
 	/**

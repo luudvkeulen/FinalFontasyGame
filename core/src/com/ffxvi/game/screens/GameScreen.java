@@ -68,6 +68,14 @@ public class GameScreen implements Screen, Observer {
 	 */
 	private GameManager gameManager;
 
+	public GameManager getGameManager() {
+		return gameManager;
+	}
+
+	public void setGameManager(GameManager gameManager) {
+		this.gameManager = gameManager;
+	}
+
 	/**
 	 * The manager for all player textures (skins)
 	 */
@@ -222,7 +230,7 @@ public class GameScreen implements Screen, Observer {
 		this.shape = new ShapeRenderer();
 		this.batch = new SpriteBatch();
 
-		gameManager.setMainPlayer(new Player(this));
+		gameManager.setMultiplayer(player);
 	
 
 		this.textfield = new TextField("", skin);

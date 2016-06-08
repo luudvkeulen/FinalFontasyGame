@@ -36,6 +36,8 @@ public class LibPlayer extends Player {
 	 * The animation that this player is currently in
 	 */
 	private Animation currentAnimation;
+	
+	private GameScreen screen;
 
 	/**
 	 * The speed at which the animation runs.
@@ -43,15 +45,16 @@ public class LibPlayer extends Player {
 	private final float animationSpeed;
 
 	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId) {
-		super(character, playerName, position, gameScreen, roomId);
-
+		super(character, playerName, position, gameScreen.getGameManager(), roomId);
+		this.screen = gameScreen;
 		this.animationSpeed = 0.05f;
 		this.changeSkin();
 		this.changeAnimation();
 	}
 
 	public LibPlayer(GameScreen screen) {
-		super(screen);
+		super(screen.getGameManager());
+		this.screen = screen;
 
 		this.animationSpeed = 0.05f;
 	}

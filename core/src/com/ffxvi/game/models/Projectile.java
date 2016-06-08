@@ -45,6 +45,7 @@ public class Projectile extends SimpleProjectile {
 	 */
 	protected boolean canCollide;
 
+	private GameManager gameManager;
 	/**
 	 * A GameScreen object.
 	 */
@@ -63,7 +64,7 @@ public class Projectile extends SimpleProjectile {
 	 * @param screen The screen of the player which fired the bullet. When null,
 	 * throw an IllegalArgumentException.
 	 */
-	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName) {
+	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameManager gameManager) {
 		super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
 
 		if (rotation < 0 || rotation >= 360) {
@@ -131,17 +132,17 @@ public class Projectile extends SimpleProjectile {
 
 		// Check collision with player if the player's name is not equal
 		// to the owner's name of the projectile
-		if (!this.playerName.equals(screen.getMainPlayer().getName())) {
-			boolean collisionPlayer = super.checkPlayerCollision(playerCollision, screen.getMainPlayer());
+		if (!this.playerName.equals(gameManager.getMainPlayer().getName())) {
+			boolean collisionPlayer = checkPlayerCollision(playerCollision, gameManager.getMainPlayer());
 
 			if (collisionPlayer) {
-				super.collideWithPlayer();
+				collideWithPlayer();
 
-				screen.getMainPlayer().receiveDamage(10, this.playerName);
+				gameManager.getMainPlayer().receiveDamage(10, this.playerName);
 
 				// Return, as the bullet should be removed and should no
 				// longer be checked for collision with walls
-				return;
+				return true;
 			}
 		}
 		Rectangle wallCollision = new Rectangle(this.position.getX(), this.position.getY(), 1, 1);
@@ -153,7 +154,9 @@ public class Projectile extends SimpleProjectile {
 			this.position.setY(this.position.getY() - (this.speed * (float) Math.sin(this.rotation * Math.PI / 180)));
 			this.canCollide = false;
 			this.speed = 0;
+			return true;
 		}
+		return false;
 	}
 	
 	/**
