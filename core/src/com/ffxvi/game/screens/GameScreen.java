@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -41,6 +42,7 @@ import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.models.Map;
 import com.ffxvi.game.models.MapType;
+import com.ffxvi.game.support.Shake;
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Vector;
 import java.util.ArrayList;
@@ -203,6 +205,11 @@ public class GameScreen implements Screen, Observer {
 	 * Boolean indicating whether to render the scoreboard.
 	 */
 	private boolean renderScoreboard;
+	
+	/**
+	 * Shake used for shaking the camera when the player is hit.
+	 */
+	private Shake shake;
 
 	/**
 	 * Initializes a new GameScreen.
@@ -211,6 +218,8 @@ public class GameScreen implements Screen, Observer {
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
 		this.chatManager = new ChatManager();
+		
+		this.shake = new Shake();
 
 		this.fontwhite = new BitmapFont();
 		this.fontred = new BitmapFont();
@@ -530,6 +539,7 @@ public class GameScreen implements Screen, Observer {
 	 * @param health The player's health.
 	 */
 	public void updatePlayerHealthLabels(int health) {
+		this.shake.shake(0.5f);
 		this.playerHealthLabel.setText(Integer.toString(health));
 		this.playerHealthLabelHUD.setText(Integer.toString(health));
 	}
@@ -548,6 +558,8 @@ public class GameScreen implements Screen, Observer {
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 			this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
 			this.game.camera.update();
+			
+			shake.update(delta, this.game.camera, new Vector2(this.mainPlayer.getX(), this.mainPlayer.getY()));
 
 			this.renderer.setView(this.game.camera);
 			this.renderer.render();
@@ -654,25 +666,41 @@ public class GameScreen implements Screen, Observer {
 		}
 				
 		// Render scoreboard overlay
-		if (this.renderScoreboard || true) {
+		if (this.renderScoreboard) {
+			// Tweak these variables
 			int padding = 100;
-			float opacity = 0.6f;
+			int labelOffsetX = 20;
+			int labelOffsetY = 50;
+			int labelHeight = 40;
+			int headerHeight = 50;
+			Color labelColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			Color backGroundColor = new Color(0.3f, 0.3f, 0.3f, 0.8f);
 			
+			// Create a new stage for rendering labels,
+			// and a new shaperenderer for the background
 			Stage labelStage = new Stage();
-			ShapeRenderer scoreBoardShapeRenderer = new ShapeRenderer();
+			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();
 			
 			// render background
 			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-			scoreBoardShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-			scoreBoardShapeRenderer.setColor(new Color(1, 1, 1, opacity));
-			scoreBoardShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding*2), Gdx.graphics.getHeight() - (padding*2));
-			scoreBoardShapeRenderer.end();
+			backgroundShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+			backgroundShapeRenderer.setColor(backGroundColor);
+			backgroundShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding*2), Gdx.graphics.getHeight() - (padding*2));
+			backgroundShapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
-						
+			
+			// Render header
+			Label headerLabel = new Label("HighScores", this.skin);
+			headerLabel.setFontScale(2);
+			headerLabel.setColor(labelColor);
+			headerLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY);
+			labelStage.addActor(headerLabel);
+			
 			// Render mainplayer score
 			Label mainPlayerScoreLabel = new Label(this.mainPlayer.getName() + " - " + this.mainPlayer.getScore(), this.skin);
-			mainPlayerScoreLabel.setPosition(padding, Gdx.graphics.getHeight() - padding);
+			mainPlayerScoreLabel.setColor(labelColor);
+			mainPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight);
 			labelStage.addActor(mainPlayerScoreLabel);
 			
 			// Get multiplayers
@@ -680,11 +708,14 @@ public class GameScreen implements Screen, Observer {
 				SimplePlayer sp = this.multiplayers.get(i);
 				
 				Label multiPlayerScoreLabel = new Label(sp.getName() + " - " + sp.getScore(), this.skin);
-				multiPlayerScoreLabel.setPosition(padding, Gdx.graphics.getHeight() - padding - ((i+1)*50));
+				multiPlayerScoreLabel.setColor(labelColor);
+				multiPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight - ((i+1)*labelHeight));
 				labelStage.addActor(multiPlayerScoreLabel);
 			}
 			
 			labelStage.draw();
+			labelStage.clear();
+			labelStage.dispose();
 		}
 	}
 
