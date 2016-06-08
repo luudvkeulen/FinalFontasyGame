@@ -10,7 +10,7 @@
  </layer>
  <layer name="Overlay" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFQw1kMELwYAPY3DQY3InuBm1GhgZCagYCDNbwQweDNf2NAvoDALoqBMc=
+   eJxjYBgFQw1kMELwYAPY3DQY3InuBu0h4k5cYgMNBmv6GwX0BwAVmwRH
   </data>
  </layer>
  <objectgroup name="WallObjects">

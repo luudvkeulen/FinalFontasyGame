@@ -122,7 +122,7 @@ public class GameScreen implements Screen, Observer {
 	/**
 	 * The controller class for chat related issues.
 	 */
-	private final ChatManager chatManager;
+	public final ChatManager chatManager;
 
 	/**
 	 * The shape renderer.
@@ -217,9 +217,9 @@ public class GameScreen implements Screen, Observer {
 	public GameScreen() {
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
-		this.chatManager = new ChatManager();
-		
 		this.shake = new Shake();
+		
+		this.chatManager = new ChatManager(this);
 
 		this.fontwhite = new BitmapFont();
 		this.fontred = new BitmapFont();
@@ -227,10 +227,10 @@ public class GameScreen implements Screen, Observer {
 
 		if (!game.selectedIp.equals("")) {
 			String fulltext = game.selectedIp.replaceAll("\\s+","");
-			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
-			System.out.println(fullip);
-			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this);
-			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
+ 			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
+ 			System.out.println(fullip);
+  			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this);
+  			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
 		} else {
 			this.client = null;
 			System.out.println("Error no ip selected");
@@ -363,7 +363,10 @@ public class GameScreen implements Screen, Observer {
 	}
 
 	public Map getRandomMap() {
-		int idx = new Random().nextInt(this.maps.size());
+		int idx  = new Random().nextInt(this.maps.size());
+		while (idx == 1) {
+			idx  = new Random().nextInt(this.maps.size());
+		}
 		return maps.get(idx);
 	}
 
@@ -750,7 +753,7 @@ public class GameScreen implements Screen, Observer {
 			if (!sender.isEmpty() && !message.isEmpty()) {
 				this.stage.setKeyboardFocus(this.scoreLabel);
 				inputManager.isChatting = false;
-				this.chatManager.addMessage(sender, message);
+				this.chatManager.sendMessage(sender, message);
 				this.textfield.setText("");
 			} else {
 				this.stage.setKeyboardFocus(this.textfield);
