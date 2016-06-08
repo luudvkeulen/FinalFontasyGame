@@ -1,0 +1,9 @@
+Client data IN:			1337
+Client data OUT:		Random
+Client chat IN:			1335
+Client chat OUT:		1335
+---------------------------------
+Server data IN:			1338
+Server data OUT:		Random
+Server chat IN:			1336
+Server chat OUT:		1336
