@@ -543,6 +543,7 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+		
 		if (this.mainPlayer != null) {
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 			this.game.camera.position.set(this.mainPlayer.getX(), this.mainPlayer.getY(), 0);
@@ -651,23 +652,39 @@ public class GameScreen implements Screen, Observer {
 			//Update the player
 			this.mainPlayer.update();
 		}
-		
+				
 		// Render scoreboard overlay
-		if (this.renderScoreboard) {
-			int padding = 200;
-			float opacity = 0.3f;
+		if (this.renderScoreboard || true) {
+			int padding = 100;
+			float opacity = 0.6f;
+			
+			Stage labelStage = new Stage();
+			ShapeRenderer scoreBoardShapeRenderer = new ShapeRenderer();
 			
 			// render background
 			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-			this.shape.begin(ShapeRenderer.ShapeType.Filled);
-			
-			this.shape.setColor(new Color(1, 1, 1, opacity));
-			
-			this.shape.rect(padding, padding, Gdx.graphics.getWidth() - padding, Gdx.graphics.getHeight() - padding);
-			
-			this.shape.end();
+			scoreBoardShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+			scoreBoardShapeRenderer.setColor(new Color(1, 1, 1, opacity));
+			scoreBoardShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding*2), Gdx.graphics.getHeight() - (padding*2));
+			scoreBoardShapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
+						
+			// Render mainplayer score
+			Label mainPlayerScoreLabel = new Label(this.mainPlayer.getName() + " - " + this.mainPlayer.getScore(), this.skin);
+			mainPlayerScoreLabel.setPosition(padding, Gdx.graphics.getHeight() - padding);
+			labelStage.addActor(mainPlayerScoreLabel);
+			
+			// Get multiplayers
+			for (int i = 0; i < this.multiplayers.size(); i++) {
+				SimplePlayer sp = this.multiplayers.get(i);
+				
+				Label multiPlayerScoreLabel = new Label(sp.getName() + " - " + sp.getScore(), this.skin);
+				multiPlayerScoreLabel.setPosition(padding, Gdx.graphics.getHeight() - padding - ((i+1)*50));
+				labelStage.addActor(multiPlayerScoreLabel);
+			}
+			
+			labelStage.draw();
 		}
 	}
 
