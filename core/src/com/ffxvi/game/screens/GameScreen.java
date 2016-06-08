@@ -119,7 +119,7 @@ public class GameScreen implements Screen, Observer {
 	/**
 	 * The controller class for chat related issues.
 	 */
-	private final ChatManager chatManager;
+	public final ChatManager chatManager;
 
 	/**
 	 * The shape renderer.
@@ -204,14 +204,14 @@ public class GameScreen implements Screen, Observer {
 	public GameScreen() {
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
-		this.chatManager = new ChatManager();
+		this.chatManager = new ChatManager(this);
 
 		this.fontwhite = new BitmapFont();
 		this.fontred = new BitmapFont();
 		this.fontred.setColor(Color.RED);
 
 		if (!game.selectedIp.equals("")) {
-			this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":")), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);
+			this.client = new Client(game.selectedIp.substring(0, game.selectedIp.indexOf(":")), Integer.parseInt(game.selectedIp.substring(game.selectedIp.indexOf(":") + 1)), 1337, this);	
 		} else {
 			this.client = null;
 			System.out.println("Error no ip selected");

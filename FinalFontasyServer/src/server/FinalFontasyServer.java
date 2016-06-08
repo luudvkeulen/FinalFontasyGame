@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.chat.ChatListener;
+import server.chat.ChatServer;
 
 /**
  *
@@ -23,7 +23,7 @@ public class FinalFontasyServer {
 
 	private static ServerSubscriber serverSubscriber;
 	private static Server server;
-	private static ChatListener chatListener;
+	private static ChatServer chatServer;
 	/**
 	 * @param args the command line arguments
 	 * @throws java.rmi.RemoteException
@@ -76,7 +76,7 @@ public class FinalFontasyServer {
 					stop = true;
 					server.stop();
 					serverSubscriber.removeServer(Inet4Address.getLocalHost().getHostAddress() + ":" + 1338);
-					chatListener.stopListener();
+					chatServer.stopChat();
 					System.out.println("---Shutting down the Final Fontasy XVI server---");
 					break;
 				// Display the port that the server is listening on
@@ -132,17 +132,8 @@ public class FinalFontasyServer {
 	}
 	
 	private void startChatServer(int port) {
-		chatListener = null;
-		try {
-			//Start the chatserver
-			if(port == 0) {
-				chatListener = new ChatListener(server, 1338);
-			} else {
-				chatListener = new ChatListener(server, port);
-			}
-			new Thread(chatListener).start();
-		} catch (IOException ex) {
-			Logger.getLogger(FinalFontasyServer.class.getName()).log(Level.SEVERE, null, ex);
-		}
+            ChatServer chat = new ChatServer(FinalFontasyServer.server, port);
+            Thread t = new Thread(chat);
+            t.start();
 	}
 }
