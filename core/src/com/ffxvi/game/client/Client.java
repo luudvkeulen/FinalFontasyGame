@@ -60,12 +60,17 @@ public final class Client {
      * @param listenerPort the port that the client will be listening on
      * @param screen the GameScreen that uses this client
      */
-    public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen) {
+    public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen, boolean isSpectating) {
 
         // Set the host to send data to
         this.hostAddress = new InetSocketAddress(hostIP, hostPort);
-        this.send("CONNECTING");
-		//this.send("SPECTATING");
+		
+		if (isSpectating) {
+			this.send("SPECTATING");
+		} else {
+			this.send("CONNECTING");
+		}
+		
         // Set the port to receive data on
         this.clientListener = new ClientListener(listenerPort, screen);
         Thread listenerThread = new Thread(this.clientListener);
@@ -121,9 +126,13 @@ public final class Client {
      * Stop listening for new data and stop sending data to the host, use this
      * for disconnecting or stopping the application
      */
-    public void stop() {
-        this.send("DISCONNECTING");
-		//this.send("STOPSPECTATING");
+    public void stop(boolean isSpectating) {
+		if (isSpectating) {
+			this.send("STOPSPECTATING");
+		} else {
+			this.send("DISCONNECTING");
+		}
+		
         this.clientListener.stopListening();
     }
 

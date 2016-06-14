@@ -213,7 +213,7 @@ public class PreGameScreen implements Screen {
 		}
 
 		this.game.getScreen().dispose();
-		GameScreen gameScreen = new GameScreen();
+		GameScreen gameScreen = new GameScreen(false);
 		gameScreen.addPlayer(this.txtUsername.getText(), character);
 		this.game.setScreen(gameScreen);
 	}
@@ -222,7 +222,10 @@ public class PreGameScreen implements Screen {
 	 * Makes the user enter the game as a spectator.
 	 */
 	public void enterAsSpectator() {
-		System.out.println("Enter as spectator!");
+		this.game.getScreen().dispose();
+		GameScreen gameScreen = new GameScreen(true);
+		gameScreen.addPlayer(this.txtUsername.getText(), PlayerCharacter.SKELETON_DAGGER);
+		this.game.setScreen(gameScreen);
 	}
 
 	/**

@@ -210,14 +210,20 @@ public class GameScreen implements Screen, Observer {
 	 * Shake used for shaking the camera when the player is hit.
 	 */
 	private Shake shake;
+	
+	/**
+	 * A boolean indicating if the player is spectating.
+	 */
+	private boolean isSpectating;
 
 	/**
 	 * Initializes a new GameScreen.
 	 */
-	public GameScreen() {
+	public GameScreen(boolean isSpectating) {
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
 		this.shake = new Shake();
+		this.isSpectating = isSpectating;
 		
 		this.chatManager = new ChatManager(this);
 
@@ -229,7 +235,7 @@ public class GameScreen implements Screen, Observer {
 			String fulltext = game.selectedIp.replaceAll("\\s+","");
  			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
  			System.out.println(fullip);
-  			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this);
+  			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this, this.isSpectating);
   			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
 		} else {
 			this.client = null;
@@ -786,6 +792,6 @@ public class GameScreen implements Screen, Observer {
 
 	@Override
 	public void dispose() {
-		client.stop();
+		client.stop(this.isSpectating);
 	}
 }
