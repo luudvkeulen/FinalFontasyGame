@@ -7,6 +7,7 @@ package com.ffxvi.game.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,27 +40,26 @@ public class GameManager {
 	public GameManager() {
 		projectiles = new ArrayList<Projectile>();
 		multiplayers = new ArrayList<SimplePlayer>();
-		
+
 	}
-	
-	public List<Projectile> getProjectiles(){
+
+	public List<Projectile> getProjectiles() {
 		return projectiles;
 	}
-	
-	public void addProjectile(Projectile projectile){
+
+	public void addProjectile(Projectile projectile) {
 		projectiles.add(projectile);
 	}
-	
-	public List<SimplePlayer> getMultiplayers(){
-		return multiplayers;
-	}
-	
 
-	
-	public void addToMultiplayers(SimplePlayer multiplayer){
+	public List<SimplePlayer> getMultiplayers() {
+		return Collections.unmodifiableList(multiplayers);
+	}
+
+	public void addToMultiplayers(SimplePlayer multiplayer) {
 		multiplayers.add(multiplayer);
 	}
-	public void setMultiplayer(Player player){
+
+	public void setMultiplayer(Player player) {
 		multiplayer = player;
 	}
 
@@ -70,7 +70,7 @@ public class GameManager {
 	public void setMainPlayer(Player mainPlayer) {
 		this.mainPlayer = mainPlayer;
 	}
-	
+
 	/**
 	 * Adds a list of other players to this game.
 	 *
@@ -83,22 +83,20 @@ public class GameManager {
 			throw new IllegalArgumentException("The multiplayers can not be null.");
 		}
 
-		
-
 		this.multiplayers.clear();
 		this.multiplayers = (List<SimplePlayer>) multiplayers;
 	}
-	public Player getMultiplayer(){
+
+	public Player getMultiplayer() {
 		return multiplayer;
 	}
-	public void removeProjectile(Projectile projectile){
+
+	public void removeProjectile(Projectile projectile) {
 		projectiles.remove(projectile);
 	}
 
 	public void setMultiplayers(ArrayList arrayList) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
-	
 
 }

@@ -458,6 +458,7 @@ public class GameScreen implements Screen, Observer {
 	 */
 	public void addProjectile(Projectile projectile, boolean receivedFromServer) {
 
+		System.out.println("ADDING PROJECTILE");
 		if (projectile == null) {
 			throw new IllegalArgumentException("Projectile can not be null.");
 		}
@@ -467,6 +468,7 @@ public class GameScreen implements Screen, Observer {
 		// Check if this projectile has not been received from the server,
 		// to prevent an infinite loop
 		if (!receivedFromServer) {
+			System.out.println("SENDING PROJECTILE TO SERVER.");
 			// Send projectile to other players
 			client.sendProjectile(new SimpleProjectile(projectile));
 		}
