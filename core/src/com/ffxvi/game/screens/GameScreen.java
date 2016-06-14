@@ -689,7 +689,6 @@ public class GameScreen implements Screen, Observer {
 			String propertyName = evt.getPropertyName();
 
 			if (propertyName.equals(PropertyListenerNames.PLAYER_HEALTH)) {
-				GameScreen.this.updatePlayerHealthLabels((Integer) evt.getNewValue());
 			}
 		}
 	}

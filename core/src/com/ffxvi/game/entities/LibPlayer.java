@@ -36,7 +36,7 @@ public class LibPlayer extends Player {
 	 * The animation that this player is currently in
 	 */
 	private Animation currentAnimation;
-	
+
 	private GameScreen screen;
 
 	/**
@@ -109,6 +109,8 @@ public class LibPlayer extends Player {
 		super.stateTime += Gdx.graphics.getDeltaTime();
 		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
 		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
+
+		super.checkSlashing();
 	}
 
 	/**

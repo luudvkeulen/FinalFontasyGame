@@ -337,16 +337,12 @@ public class Player extends SimplePlayer {
 		this.hitPoints -= amount;
 
 		if (this.hitPoints <= 0) {
-			// Set the amount of hitPoints to 0 to prevent negative values
-			// being shown
+			// Set the health to 0
 			this.hitPoints = 0;
 
 			this.die(attacker);
 			this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
 		}
-
-		// Update the health labels
-		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, this.hitPoints);
 	}
 
 	/**
@@ -454,12 +450,10 @@ public class Player extends SimplePlayer {
 	 * Update method
 	 */
 	public void update() {
-		this.checkSlashing();
-
 		screen.client.sendPlayer(new SimplePlayer(this));
 	}
 
-	private void checkSlashing() {
+	protected void checkSlashing() {
 		//Check if player gets slashed
 		Collection<SimplePlayer> localMultiplayers = new ArrayList(gameManager.getMultiplayers());
 		if (localMultiplayers.isEmpty()) {
