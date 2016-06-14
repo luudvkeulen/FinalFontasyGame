@@ -14,6 +14,7 @@ package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -204,6 +205,7 @@ public class GameScreen implements Screen, Observer {
 	/**
 	 * Boolean indicating whether to render the scoreboard.
 	 */
+
 	private boolean renderScoreboard;
 
 	/**
@@ -421,6 +423,8 @@ public class GameScreen implements Screen, Observer {
 		this.renderer.setView(this.game.camera);
 
 		this.stage.setKeyboardFocus(null);
+		
+		game.backgroundmusic.play(0.2f);
 	}
 
 	/**
@@ -765,7 +769,7 @@ public class GameScreen implements Screen, Observer {
 
 	@Override
 	public void hide() {
-
+		game.backgroundmusic.stop();
 	}
 
 	@Override

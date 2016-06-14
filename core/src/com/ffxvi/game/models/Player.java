@@ -1,4 +1,4 @@
-/*
+﻿/*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
  * 
@@ -62,6 +62,8 @@ public class Player extends SimplePlayer {
 	 */
 	private long shootStart;
 
+	private float animationSpeed;
+
 	/**
 	 * The grid size of the player in width.
 	 */
@@ -76,7 +78,24 @@ public class Player extends SimplePlayer {
 
 	private PropertyChangeSupport propertyChangeSupport;
 
-	private GameScreen screen;
+	/**
+	 * The game screen.
+	 */
+	private final GameScreen screen;
+	
+	/**
+	 * Shooting sound
+	 */
+	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
+	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
+
+	/**
+	 * The time before a next shot can be fired.
+	 */
+	private long shootStart;
+	
+	private long lastSlash = 0;
+	private long slashAnimCount = 0;
 
 	/**
 	 * Default constructor for Player.
@@ -89,7 +108,7 @@ public class Player extends SimplePlayer {
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId, GameScreen screen) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
-
+	
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
@@ -392,6 +411,46 @@ public class Player extends SimplePlayer {
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
 					30, this.aimDirection, this.roomId, this.playerName, this.gameManager), false);
 		}
+	}
+
+	/**
+	 * Sets the player's animation to idle.
+	 */
+	public void setIdle() {
+		super.animation = IDLE;
+		this.changeAnimation();
+	}
+
+	/**
+	 * Slashes in the given direction, given the player can slash.
+	 */
+	public void slash() {
+		if(lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+			this.animationSpeed = 0.01f;
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+			slash.play();
+			slashAnimCount = 1;
+			lastSlash = System.currentTimeMillis();
+		}
+	}
+
+	/**
+	 * Sets the direction to the given direction.
+	 *
+	 * @param direction The new direction.
+	 */
+	public void setDirection(Direction direction) {
+		super.animation = WALKING;
+		super.direction = direction;
+		this.changeAnimation();
+
+		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+			this.move();
+		}
+
+		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
 	}
 
 	/**

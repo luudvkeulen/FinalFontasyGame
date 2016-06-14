@@ -81,6 +81,8 @@ public class MenuScreen implements Screen {
 	 * The sprite.
 	 */
 	private final Sprite sprite;
+	
+	private final Sprite backgroundsprite;
 
 	/**
 	 * A label to draw the version
@@ -106,24 +108,33 @@ public class MenuScreen implements Screen {
 
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+		//Background
+		Texture background = new Texture(Gdx.files.internal("background.png"));
+		this.backgroundsprite = new Sprite(background);
+		//this.sprite.scale(-0.3f);
+		//this.sprite.setPosition((stage.getWidth() / 2) - (texture.getWidth() / 2),
+		//this.stage.getHeight() - texture.getHeight() + 10);
+		
 		// Store the default libgdx font under the name "default".
 		BitmapFont bfont = new BitmapFont();
-		//bfont.scale(1);
 		this.skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
+		Color blacktransparent = new Color(Color.rgba8888(0.1f, 0.1f, 0.1f, 0.8f));
+		Color blacktransparenthover = new Color(Color.rgba8888(0.1f, 0.1f, 0.1f, 0.9f));
+		
 		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
 		TextButtonStyle textButtonStyle = new TextButtonStyle();
-		textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
-		textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+		textButtonStyle.up = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.down = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.over = buttonSkin.newDrawable("white", blacktransparenthover);
 
 		textButtonStyle.font = buttonSkin.getFont("default");
 
 		buttonSkin.add("default", textButtonStyle);
 
 		// Create the logo
-		Texture texture = new Texture(Gdx.files.internal("Logo.png"));
+		Texture texture = new Texture(Gdx.files.internal("Logo2.png"));
 		this.sprite = new Sprite(texture);
 		this.sprite.scale(-0.3f);
 		this.sprite.setPosition((stage.getWidth() / 2) - (texture.getWidth() / 2),
@@ -134,6 +145,8 @@ public class MenuScreen implements Screen {
 		
 		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
 		final TextButton playButton = new TextButton("PLAY", textButtonStyle);
+		playButton.setWidth(300);
+		playButton.setHeight(100);
 		playButton.setPosition((stage.getWidth() / 2) - (playButton.getWidth() / 2), (stage.getHeight() / 2) - (playButton.getHeight() / 2));
 		playButton.addListener(new ClickListener() {
 			@Override
@@ -147,6 +160,8 @@ public class MenuScreen implements Screen {
 
 		// Create 'Options' button
 		final TextButton optionsButton = new TextButton("OPTIONS", textButtonStyle);
+		optionsButton.setWidth(300);
+		optionsButton.setHeight(100);
 		optionsButton.setPosition((stage.getWidth() / 2) - (playButton.getWidth() / 2), playButton.getY() - optionsButton.getHeight() - BUTTON_OFFSET);
 		optionsButton.addListener(new ClickListener() {
 			@Override
@@ -160,6 +175,8 @@ public class MenuScreen implements Screen {
 
 		// Create 'Quit' button
 		final TextButton quitButton = new TextButton("QUIT", textButtonStyle);
+		quitButton.setWidth(300);
+		quitButton.setHeight(100);
 		quitButton.setPosition((this.stage.getWidth() / 2) - (optionsButton.getWidth() / 2), optionsButton.getY() - quitButton.getHeight() - BUTTON_OFFSET);
 		quitButton.addListener(new ClickListener() {
 			@Override
@@ -192,6 +209,7 @@ public class MenuScreen implements Screen {
 
 		// Render background image
 		this.batch.begin();
+		this.backgroundsprite.draw(this.batch);
 		this.sprite.draw(this.batch);
 		this.batch.end();
 
@@ -229,7 +247,5 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-
 	}
-
 }
