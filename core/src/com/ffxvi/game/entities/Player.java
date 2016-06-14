@@ -75,7 +75,7 @@ public class Player extends SimplePlayer implements Observable {
 	/**
 	 * The speed at which the animation runs.
 	 */
-	private final float animationSpeed;
+	private float animationSpeed;
 
 	/**
 	 * The grid size of the player in width.
@@ -96,11 +96,15 @@ public class Player extends SimplePlayer implements Observable {
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
+	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
 	/**
 	 * The time before a next shot can be fired.
 	 */
 	private long shootStart;
+	
+	private long lastSlash = 0;
+	private long slashAnimCount = 0;
 
 	/**
 	 * Default constructor for Player.
@@ -115,7 +119,7 @@ public class Player extends SimplePlayer implements Observable {
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
-
+	
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
@@ -557,9 +561,15 @@ public class Player extends SimplePlayer implements Observable {
 	 * Slashes in the given direction, given the player can slash.
 	 */
 	public void slash() {
-		super.animation = SLASHING;
-		this.animation = SLASHING;
-		this.changeAnimation();
+		if(lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+			this.animationSpeed = 0.01f;
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+			slash.play();
+			slashAnimCount = 1;
+			lastSlash = System.currentTimeMillis();
+		}
 	}
 
 	/**
