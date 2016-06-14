@@ -32,7 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.entities.PlayerCharacter;
+import com.ffxvi.game.models.PlayerCharacter;
 
 /**
  * The screen which is shown before the game.
@@ -164,7 +164,7 @@ public class PreGameScreen implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
-				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
 		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
@@ -178,7 +178,7 @@ public class PreGameScreen implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
-				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
 		enterAsSkeletonHoodedBowButton2.setTouchable(Touchable.disabled);
@@ -192,10 +192,21 @@ public class PreGameScreen implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
-				enterGame(PlayerCharacter.SKELETON_HOODED_DAGGER);
+				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
 		this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
+		
+		TextButton enterAsSpectatorButton = new TextButton("Spectate", textButtonStyle);
+		enterAsSpectatorButton.setSize(200, 60);
+		enterAsSpectatorButton.setPosition((this.stage.getWidth() / 2) - (enterAsSpectatorButton.getWidth() / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight() - enterAsSpectatorButton.getHeight() - BUTTON_OFFSET);
+		enterAsSpectatorButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				enterAsSpectator();
+			}
+		});
+		this.stage.addActor(enterAsSpectatorButton);
 	}
 
 	/**
@@ -209,8 +220,18 @@ public class PreGameScreen implements Screen {
 		}
 
 		this.game.getScreen().dispose();
-		GameScreen gameScreen = new GameScreen();
+		GameScreen gameScreen = new GameScreen(false);
 		gameScreen.addPlayer(this.txtUsername.getText(), character);
+		this.game.setScreen(gameScreen);
+	}
+	
+	/**
+	 * Makes the user enter the game as a spectator.
+	 */
+	public void enterAsSpectator() {
+		this.game.getScreen().dispose();
+		GameScreen gameScreen = new GameScreen(true);
+		gameScreen.addPlayer(this.txtUsername.getText(), PlayerCharacter.SKELETON_DAGGER);
 		this.game.setScreen(gameScreen);
 	}
 

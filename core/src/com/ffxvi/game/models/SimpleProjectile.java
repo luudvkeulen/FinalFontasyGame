@@ -10,7 +10,7 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
 import java.io.Serializable;
 
@@ -81,7 +81,7 @@ public class SimpleProjectile implements Serializable {
         }
 
         if (y < 0) {
-            throw new IllegalArgumentException("Y can not be negative.");
+			throw new IllegalArgumentException("Y can not be negative.");
         }
 
         if (playerName == null || playerName.trim().isEmpty()) {

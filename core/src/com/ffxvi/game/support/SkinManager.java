@@ -9,7 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.ffxvi.game.entities.Direction;
+import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.entities.PlayerAnimation;
 
 /**
@@ -30,8 +30,8 @@ public class SkinManager {
     }
     
     public SkinManager() {
-        normalSkeleton = new PlayerSkin(0.05f, "Units/Normal_Skeleton");
-        hoodedSkeleton = new PlayerSkin(0.05f, "Units/Hooded_Skeleton");
+        normalSkeleton = new PlayerSkin(0.05f, "Units/Skeleton_Normal");
+        hoodedSkeleton = new PlayerSkin(0.05f, "Units/Skeleton_Hooded");
     }
     
     public class PlayerSkin {

@@ -5,6 +5,7 @@
  */
 package com.ffxvi.game.entities;
 
+import com.ffxvi.game.models.SimpleProjectile;
 import org.junit.*;
 
 /**

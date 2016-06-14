@@ -17,12 +17,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.chat.ChatTextMessage;
-import com.ffxvi.game.entities.Direction;
-import com.ffxvi.game.entities.Ending;
-import com.ffxvi.game.entities.Player;
-import com.ffxvi.game.screens.EndScreen;
-import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.entities.LibPlayer;
+import com.ffxvi.game.models.Direction;
+
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.util.Observable;
@@ -67,7 +64,7 @@ public class InputManager extends Observable {
 	/**
 	 * The player thats is controlled by this instance of the game
 	 */
-	private final Player mainPlayer;
+	private final LibPlayer mainPlayer;
 
 	/**
 	 * Boolean to check if the player is chatting so we can disable input
@@ -80,7 +77,7 @@ public class InputManager extends Observable {
 	 * @param mainPlayer The player which needs to be moved by this
 	 * inputManager.
 	 */
-	public InputManager(Player mainPlayer) {
+	public InputManager(LibPlayer mainPlayer) {
 
 		if (mainPlayer == null) {
 			throw new IllegalArgumentException("MainPlayer can not be null.");

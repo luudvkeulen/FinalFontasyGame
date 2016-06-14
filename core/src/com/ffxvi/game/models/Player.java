@@ -10,36 +10,38 @@
  *   Guido Thomasse
  *   Joel Verbeek
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
-import static com.ffxvi.game.entities.PlayerAnimation.*;
+import com.ffxvi.game.entities.PlayerAnimation;
+import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
+import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
+import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
 import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.SkinManager.PlayerSkin;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 
 /**
  * Entity which represents a player.
  */
-public class Player extends SimplePlayer implements Observable {
+public class Player extends SimplePlayer {
 
 	/**
 	 * The amount of coordinates a player moves per tick while walking.
@@ -73,8 +75,10 @@ public class Player extends SimplePlayer implements Observable {
 	private float aimDirection;
 
 	/**
-	 * The speed at which the animation runs.
+	 * The time before a next shot can be fired.
 	 */
+	private long shootStart;
+
 	private float animationSpeed;
 
 	/**
@@ -87,22 +91,21 @@ public class Player extends SimplePlayer implements Observable {
 	 */
 	private final int modifiedGridSizeY;
 
+	private GameManager gameManager;
+
+	private PropertyChangeSupport propertyChangeSupport;
+
 	/**
 	 * The game screen.
 	 */
 	private final GameScreen screen;
-	
+
 	/**
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
 	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
-	/**
-	 * The time before a next shot can be fired.
-	 */
-	private long shootStart;
-	
 	private long lastSlash = 0;
 	private long slashAnimCount = 0;
 
@@ -114,12 +117,10 @@ public class Player extends SimplePlayer implements Observable {
 	 * String (excluding spaces).
 	 * @param position The position of this player.
 	 * @param roomId The id of the room where the player is in.
-	 * @param screen the GameScreen that this Player is in. Used to create
-	 * projectiles
 	 */
-	public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
+	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId, GameScreen screen) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
-	
+
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
@@ -129,42 +130,36 @@ public class Player extends SimplePlayer implements Observable {
 					"Character can neither be null nor an empty String.");
 		}
 
-		if (screen == null) {
-			throw new IllegalArgumentException("Screen can not be null.");
-		}
-
-		this.screen = screen;
+		this.gameManager = gameManager;
 
 		this.speed = Player.WALK_SPEED;
 
 		this.aimDirection = 0f;
-		this.animationSpeed = 0.05f;
-		this.changeSkin();
-		this.changeAnimation();
 
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
+
+		this.propertyChangeSupport = new PropertyChangeSupport(this);
+		this.screen = screen;
 	}
 
 	/**
 	 * Special constructor for Player, only use this for player data received
 	 * from the server.
-	 *
-	 * @param screen the GameScreen that this Player is in. Used to create
-	 * projectiles
 	 */
-	public Player(GameScreen screen) {
+	public Player(GameManager gameManager, GameScreen screen) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
 
-		this.screen = screen;
+		this.gameManager = gameManager;
 
 		this.aimDirection = 0f;
-		this.animationSpeed = 0.05f;
 
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
+
+		this.screen = screen;
 	}
 
 	/**
@@ -175,7 +170,7 @@ public class Player extends SimplePlayer implements Observable {
 	 * @param player the SimplePlayer's data that is to replace this Player's
 	 * data
 	 */
-	public void setData(SimplePlayer player) {
+	protected void setDataInner(SimplePlayer player) {
 		super.playerName = player.playerName;
 		super.hitPoints = player.hitPoints;
 		super.score = player.score;
@@ -187,9 +182,6 @@ public class Player extends SimplePlayer implements Observable {
 		super.skin = player.skin;
 		super.animation = player.animation;
 		super.stateTime = player.stateTime;
-
-		this.changeSkin();
-		this.changeAnimation();
 	}
 
 	/**
@@ -210,15 +202,6 @@ public class Player extends SimplePlayer implements Observable {
 	@Override
 	public float getY() {
 		return this.y;
-	}
-
-	/**
-	 * Gets the current animation of this player.
-	 *
-	 * @return The animation of the player.
-	 */
-	public Animation getCurrentAnimation() {
-		return this.currentAnimation;
 	}
 
 	/**
@@ -283,13 +266,6 @@ public class Player extends SimplePlayer implements Observable {
 	}
 
 	/**
-	 * Toggles the boolean in GameScreen to render the scoreboard.
-	 */
-	public void toggleShowScoreboard() {
-		this.screen.toggleShowScoreboard();
-	}
-
-	/**
 	 * Sets the aim direction of this player by the given coördinates of the
 	 * mouse.
 	 *
@@ -309,11 +285,9 @@ public class Player extends SimplePlayer implements Observable {
 
 		// Calculate the direction of the bullet using arctan
 		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
-				- playerPosition.y - (this.currentAnimation.getKeyFrame(stateTime)
-				.getRegionHeight()) - (Utils.GRIDSIZE / 3),
+				- playerPosition.y - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
 				mousePosition.getX() - playerPosition.x
-				- (this.currentAnimation.getKeyFrame(stateTime)
-				.getRegionWidth() / 2)));
+				- (this.modifiedGridSizeX / 2)));
 
 		if (dir < 0) {
 			dir += 360;
@@ -394,29 +368,19 @@ public class Player extends SimplePlayer implements Observable {
 		this.hitPoints -= amount;
 
 		if (this.hitPoints <= 0) {
-			// Set the amount of hitPoints to 0 to prevent negative values
-			// being shown
+			// Set the health to 0
 			this.hitPoints = 0;
 
 			this.die(attacker);
 			this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
 		}
 
-		// Update the health labels
-		this.screen.updatePlayerHealthLabels(this.hitPoints);
-	}
-
-	/**
-	 * Gets the collision rectangle of this player.
-	 *
-	 * @return The collision rectangle of this player.
-	 */
-	public Rectangle getRectangle() {
-		return new Rectangle(this.x, this.y, this.modifiedGridSizeX, this.modifiedGridSizeY);
+		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
 	}
 
 	/**
 	 * Lets the player die.
+	 * @param killer
 	 */
 	public void die(String killer) {
 		hitPoints = 100;
@@ -449,38 +413,157 @@ public class Player extends SimplePlayer implements Observable {
 
 	private void changeAnimation() {
 		if (super.animation != IDLE) {
-			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+			 this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
 			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
 		}
 	}
 
 	/**
-	 * Switches the textures (skin) of this player.
+	 * Fires a new projectile at the aim direction, given the player can fire.
 	 */
-	private void changeSkin() {
-		switch (super.skin) {
-			case SKELETON_DAGGER:
-				this.playerSkin = screen.getSkinManager().getNormalSkeleton();
-				break;
-			case SKELETON_HOODED_BOW:
-				this.playerSkin = screen.getSkinManager().getHoodedSkeleton();
-				break;
-			case SKELETON_HOODED_DAGGER:
-				this.playerSkin = screen.getSkinManager().getHoodedSkeleton();
-				break;
+	public void fire() {
+		if (this.canFire()) {
+			// Reset the shoot delay
+			this.shootStart = System.nanoTime();
+
+			this.bowsound.play();
+			
+			// Create a bullet inside the player with the direction and speed
+			this.screen.addProjectile(new Projectile(new Vector(this.x
+					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
+					30, this.aimDirection, this.roomId, this.playerName, this.gameManager), false);
 		}
 	}
 
 	/**
-	 * Method that is performed each tick and focuses on drawing.
-	 *
-	 * @param batch The Sprite Batch to use.
+	 * Sets the player's animation to idle.
 	 */
-	public void render(SpriteBatch batch) {
-		super.stateTime += Gdx.graphics.getDeltaTime();
-		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
-		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
+	public void setIdle() {
+		super.animation = IDLE;
+		this.changeAnimation();
+	}
+
+	/**
+	 * Slashes in the given direction, given the player can slash.
+	 */
+	public void slash() {
+		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+			this.animationSpeed = 0.01f;
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+			this.slash.play();
+			slashAnimCount = 1;
+			lastSlash = System.currentTimeMillis();
+		}
+	}
+
+	/**
+	 * Sets the direction to the given direction.
+	 *
+	 * @param direction The new direction.
+	 */
+	public void setDirection(Direction direction) {
+		super.animation = WALKING;
+		super.direction = direction;
+		this.changeAnimation();
+
+		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+			this.move();
+		}
+
+		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
+	}
+
+	/**
+	 * Moves in the current direction.
+	 */
+	protected void move() {
+		switch (this.direction) {
+			default:
+			case LEFT:
+				x -= this.speed;
+				break;
+			case RIGHT:
+				x += this.speed;
+				break;
+			case UP:
+				y += this.speed;
+				break;
+			case DOWN:
+				y -= this.speed;
+				break;
+		}
+
+		this.screen.client.sendPlayer(new SimplePlayer(this));
+	}
+
+	/**
+	 * Gets a collision box for the direction in which the player is moving.
+	 *
+	 * @return
+	 */
+	protected Rectangle getCollisionBox() {
+		Rectangle rec;
+
+		switch (this.direction) {
+			default:
+			case LEFT:
+				rec = new Rectangle(x + 16 - this.speed, y,
+						this.modifiedGridSizeX, this.modifiedGridSizeY);
+				break;
+			case RIGHT:
+				rec = new Rectangle(x + 16 + this.speed, y,
+						this.modifiedGridSizeX, this.modifiedGridSizeY);
+				break;
+			case UP:
+				rec = new Rectangle(x + 16, y + this.speed,
+						this.modifiedGridSizeX, this.modifiedGridSizeY);
+				break;
+			case DOWN:
+				rec = new Rectangle(x + 16, y - this.speed,
+						this.modifiedGridSizeX, this.modifiedGridSizeY);
+				break;
+		}
+
+		return rec;
+	}
+
+	/**
+	 * Update method
+	 */
+	public void update() {
+		screen.client.sendPlayer(new SimplePlayer(this));
+	}
+
+	protected void checkSlashing() {
+		//Check if player gets slashed
+		Collection<SimplePlayer> localMultiplayers = new ArrayList(gameManager.getMultiplayers());
+		if (localMultiplayers.isEmpty()) {
+			return;
+		}
+		for (SimplePlayer p : localMultiplayers) {
+			if (p.animation == PlayerAnimation.SLASHING
+					&& !p.getName().equals(this.playerName)) {
+
+//				LibPlayer player = new LibPlayer(this.screen);
+//				player.setData(p);
+				Circle cEnemy = new Circle();
+				cEnemy.x = p.getX();
+				cEnemy.y = p.getY();
+				cEnemy.radius = 50.0f;
+
+				Circle cThis = new Circle();
+				cThis.x = this.getX();
+				cThis.y = this.getY();
+				cThis.radius = 50.0f;
+
+				if (cEnemy.overlaps(cThis)) {
+					this.receiveDamage(1, p.playerName);
+				}
+			}
+		}
 	}
 
 	/**
@@ -532,56 +615,8 @@ public class Player extends SimplePlayer implements Observable {
 		}
 	}
 
-	/**
-	 * Fires a new projectile at the aim direction, given the player can fire.
-	 */
-	public void fire() {
-		if (this.canFire()) {
-			// Reset the shoot delay
-			this.shootStart = System.nanoTime();
-
-			bowsound.play();
-			
-			// Create a bullet inside the player with the direction and speed
-			screen.addProjectile(new Projectile(new Vector(this.x
-					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
-					30, this.aimDirection, this.roomId, this.playerName, this.screen), false);
-		}
-	}
-
-	/**
-	 * Sets the player's animation to idle.
-	 */
-	public void setIdle() {
-		super.animation = IDLE;
-		this.changeAnimation();
-	}
-
-	/**
-	 * Slashes in the given direction, given the player can slash.
-	 */
-	public void slash() {
-		if(lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-			this.animationSpeed = 0.01f;
-			super.animation = SLASHING;
-			this.animation = SLASHING;
-			this.changeAnimation();
-			slash.play();
-			slashAnimCount = 1;
-			lastSlash = System.currentTimeMillis();
-		}
-	}
-
-	/**
-	 * Sets the direction to the given direction.
-	 *
-	 * @param direction The new direction.
-	 */
-	public void setDirection(Direction direction) {
-		super.animation = WALKING;
-		super.direction = direction;
-		this.changeAnimation();
-
+	protected void setDirectionInner(Direction direction) {
+		this.direction = direction;
 		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
 			this.move();
 		}
@@ -590,108 +625,23 @@ public class Player extends SimplePlayer implements Observable {
 	}
 
 	/**
-	 * Moves in the current direction.
-	 */
-	private void move() {
-		switch (this.direction) {
-			default:
-			case LEFT:
-				x -= this.speed;
-				break;
-			case RIGHT:
-				x += this.speed;
-				break;
-			case UP:
-				y += this.speed;
-				break;
-			case DOWN:
-				y -= this.speed;
-				break;
-		}
-
-		screen.client.sendPlayer(new SimplePlayer(this));
-	}
-
-	/**
-	 * Gets a collision box for the direction in which the player is moving.
+	 * Gets the collision rectangle of this player.
 	 *
-	 * @return
+	 * @return The collision rectangle of this player.
 	 */
-	private Rectangle getCollisionBox() {
-		Rectangle rec = null;
-
-		switch (this.direction) {
-			default:
-			case LEFT:
-				rec = new Rectangle(x + 16 - this.speed, y,
-						this.modifiedGridSizeX, this.modifiedGridSizeY);
-				break;
-			case RIGHT:
-				rec = new Rectangle(x + 16 + this.speed, y,
-						this.modifiedGridSizeX, this.modifiedGridSizeY);
-				break;
-			case UP:
-				rec = new Rectangle(x + 16, y + this.speed,
-						this.modifiedGridSizeX, this.modifiedGridSizeY);
-				break;
-			case DOWN:
-				rec = new Rectangle(x + 16, y - this.speed,
-						this.modifiedGridSizeX, this.modifiedGridSizeY);
-				break;
-		}
-
-		return rec;
+	public Rectangle getRectangle() {
+		return new Rectangle(this.x, this.y, this.modifiedGridSizeX, this.modifiedGridSizeY);
 	}
 
-	/**
-	 * Update method
-	 */
-	public void update() {
-		//Check if player gets slashed
-		Collection<SimplePlayer> localMultiplayers = new ArrayList(this.screen.getMultiplayers());
-		if (localMultiplayers.size() == 0) {
-			return;
-		}
-		for (SimplePlayer p : localMultiplayers) {
-			if (p.animation == PlayerAnimation.SLASHING
-					&& !p.getName().equals(this.playerName)) {
-
-				Player player = new Player(this.screen);
-				player.setData(p);
-
-				Circle cEnemy = new Circle();
-				cEnemy.x = p.getX();
-				cEnemy.y = p.getY();
-				cEnemy.radius = 50.0f;
-
-				Circle cThis = new Circle();
-				cThis.x = this.getX();
-				cThis.y = this.getY();
-				cThis.radius = 50.0f;
-
-				if (cEnemy.overlaps(cThis)) {
-					this.receiveDamage(1, p.playerName);
-				}
-			}
-		}
-
-		screen.client.sendPlayer(new SimplePlayer(this));
+	public void subscribe(PropertyChangeListener listener, String property) {
+		this.propertyChangeSupport.addPropertyChangeListener(property, listener);
 	}
 
-	/**
-	 * Destroy this instance.
-	 */
-	public void destroy() {
-		this.currentAnimation = null;
+	public void unsubsribe(PropertyChangeListener listener) {
+		this.propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
-	@Override
-	public void addListener(InvalidationListener listener) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public void removeListener(InvalidationListener listener) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	private void firePropertyChangeEvent(String property, Object newValue) {
+		this.propertyChangeSupport.firePropertyChange(new PropertyChangeEvent(this, property, null, newValue));
 	}
 }

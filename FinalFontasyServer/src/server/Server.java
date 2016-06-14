@@ -5,9 +5,8 @@
  */
 package server;
 
-import com.ffxvi.game.entities.PlayerCharacter;
-import com.ffxvi.game.entities.SimplePlayer;
-import com.ffxvi.game.entities.SimpleProjectile;
+import com.ffxvi.game.models.SimplePlayer;
+import com.ffxvi.game.models.SimpleProjectile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -161,7 +160,7 @@ public class Server {
 					}
 				}
 				List<InetSocketAddress> localSpectators = spectators;
-				Collection<SimplePlayer> localPlayerData = playerData.values();
+				Collection<SimplePlayer> localPlayerData = new ArrayList(playerData.values());
 				for (InetSocketAddress socket : localSpectators) {
 					sendSingle(localPlayerData, socket);
 				}
@@ -374,6 +373,11 @@ public class Server {
 				}
 			}
 		}
+                for (InetSocketAddress spectator : spectators) {
+                    if (spectator != null) {
+                        sendSingle(simpleProjectile, spectator);
+                    }
+                }
 //		sendAll(simpleProjectile, validSender.getAddress());
 	}
 }

@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/*
 package queryServer;
 
 import java.rmi.RemoteException;
@@ -13,6 +14,7 @@ import org.junit.*;
  *
  * @author Acer
  */
+/*
 public class ServerTest {
     /*
     Server server;
@@ -49,5 +51,8 @@ public class ServerTest {
             System.out.println("ERROR: " + ex);
         }
     }
- */
+
+
+
 }
+*/
