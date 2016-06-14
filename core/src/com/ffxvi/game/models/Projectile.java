@@ -99,10 +99,6 @@ public class Projectile extends SimpleProjectile {
 			throw new IllegalArgumentException("GameManager can not be null.");
 		}
 
-		if (startTime <= 0) {
-			throw new IllegalArgumentException("Starttime must be a positive value.");
-		}
-
 		this.position = projectile.position;
 		this.rotation = projectile.rotation;
 		this.speed = projectile.speed;
