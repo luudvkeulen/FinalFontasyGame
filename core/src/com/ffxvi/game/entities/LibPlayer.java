@@ -28,6 +28,10 @@ import com.ffxvi.game.support.Vector;
 public class LibPlayer extends Player {
 
 	/**
+	 * A boolean indicating whether the player is spectating.
+	 */
+	private boolean isSpectating;
+	/**
 	 * The textures (skin) that this player is using
 	 */
 	private SkinManager.PlayerSkin playerSkin;
@@ -44,12 +48,13 @@ public class LibPlayer extends Player {
 	 */
 	private final float animationSpeed;
 
-	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId) {
+	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId, boolean isSpectating) {
 		super(character, playerName, position, gameScreen.getGameManager(), roomId, gameScreen);
 		this.screen = gameScreen;
 		this.animationSpeed = 0.05f;
 		this.changeSkin();
 		this.changeAnimation();
+		this.isSpectating = isSpectating;
 	}
 
 	public LibPlayer(GameScreen screen) {
@@ -91,12 +96,10 @@ public class LibPlayer extends Player {
 			case SKELETON_DAGGER:
 				this.playerSkin = GameScreen.getSkinManager().getNormalSkeleton();
 				break;
-			case SKELETON_HOODED_BOW:
+			case SKELETON_HOODED:
 				this.playerSkin = GameScreen.getSkinManager().getHoodedSkeleton();
 				break;
-			case SKELETON_HOODED_DAGGER:
-				this.playerSkin = GameScreen.getSkinManager().getHoodedSkeleton();
-				break;
+
 		}
 	}
 
@@ -112,6 +115,8 @@ public class LibPlayer extends Player {
 
 		super.checkSlashing();
 	}
+	
+	
 
 	/**
 	 * Sets the player's animation to idle.
@@ -146,5 +151,12 @@ public class LibPlayer extends Player {
 	 */
 	public void destroy() {
 		this.currentAnimation = null;
+	}
+
+	/**
+	 * Toggles the boolean in GameScreen to render the scoreboard.
+	 */
+	public void toggleShowScoreboard() {
+		this.screen.toggleShowScoreboard();
 	}
 }

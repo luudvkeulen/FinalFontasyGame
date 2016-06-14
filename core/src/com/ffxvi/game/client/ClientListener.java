@@ -158,7 +158,10 @@ public class ClientListener implements Runnable {
 	private Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
 		ByteArrayInputStream b = new ByteArrayInputStream(bytes);
 		ObjectInputStream o = new ObjectInputStream(b);
-		return o.readObject();
+		Object obj = o.readObject();
+		o.close();
+		b.close();
+		return obj;
 	}
 
 	/**

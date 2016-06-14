@@ -23,7 +23,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = 1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED_DAGGER;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED;
         
         simplePlayer = new SimplePlayer(name, posX, posY, roomID, pc);
     }
@@ -60,7 +60,7 @@ public class SimplePlayerTest {
     
     @Test
     public void getSkin() {
-        Assert.assertTrue(simplePlayer.getSkin() == PlayerCharacter.SKELETON_HOODED_DAGGER);
+        Assert.assertTrue(simplePlayer.getSkin() == PlayerCharacter.SKELETON_HOODED);
     }
     
     @Test
@@ -111,7 +111,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = 1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED_BOW;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }
@@ -155,7 +155,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = -1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED_BOW;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }

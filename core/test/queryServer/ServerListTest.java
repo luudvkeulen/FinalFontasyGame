@@ -15,12 +15,12 @@ import org.junit.*;
 public class ServerListTest {
 	/*
     ServerList serverList;
-    
+    /*
     @Before
     public void init() throws RemoteException {
         serverList = new ServerList();
     }
-    
+    /*
     @Test
     public void addServer() throws RemoteException {
         Server server1 = new Server("127.0.0.1", 420);
@@ -53,5 +53,7 @@ public class ServerListTest {
     public void getServers() {
         Assert.assertNotNull(serverList.getServers());
     }
+
 	 */
+
 }

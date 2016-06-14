@@ -19,7 +19,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.models.Direction;
-import com.ffxvi.game.models.Player;
+
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.util.Observable;
@@ -197,6 +197,11 @@ public class InputManager extends Observable {
 			if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
 				mainPlayer.slash();
 				returnValue = true;
+			}
+			
+			if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+				mainPlayer.toggleShowScoreboard();
+				return true;
 			}
 		}
 

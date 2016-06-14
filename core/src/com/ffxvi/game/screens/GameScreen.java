@@ -15,12 +15,14 @@ package com.ffxvi.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -42,7 +44,11 @@ import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.entities.Map;
 import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.MapType;
+
 import com.ffxvi.game.support.PropertyListenerNames;
+
+import com.ffxvi.game.support.Shake;
+
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeEvent;
@@ -121,7 +127,7 @@ public class GameScreen implements Screen, Observer {
 	/**
 	 * The controller class for chat related issues.
 	 */
-	private final ChatManager chatManager;
+	public final ChatManager chatManager;
 
 	/**
 	 * The shape renderer.
@@ -194,30 +200,47 @@ public class GameScreen implements Screen, Observer {
 	 * Dialog to show messages.
 	 */
 	private Dialog messageDialog;
+	
+	/**
+	 * Boolean indicating whether to render the scoreboard.
+	 */
+	private boolean renderScoreboard;
+	
+	/**
+	 * Shake used for shaking the camera when the player is hit.
+	 */
+	private Shake shake;
+	
+	/**
+	 * A boolean indicating if the player is spectating.
+	 */
+	private boolean isSpectating;
 
 	private PlayerListener playerListener;
 
 	/**
 	 * Initializes a new GameScreen.
 	 */
-	public GameScreen() {
 
-		gameManager = new GameManager();
-
+	public GameScreen(boolean isSpectating) {
 		this.game = MainClass.getInstance();
 		this.stage = new Stage();
-		this.chatManager = new ChatManager();
+		this.shake = new Shake();
+		this.isSpectating = isSpectating;
+		
+		this.chatManager = new ChatManager(this);
 
 		this.fontwhite = new BitmapFont();
 		this.fontred = new BitmapFont();
 		this.fontred.setColor(Color.RED);
 
 		if (!game.selectedIp.equals("")) {
-			String fulltext = game.selectedIp.replaceAll("\\s+", "");
-			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
-			System.out.println(fullip);
-			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this);
-			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
+
+			String fulltext = game.selectedIp.replaceAll("\\s+","");
+ 			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
+ 			System.out.println(fullip);
+  			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this, this.isSpectating);
+  			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
 		} else {
 			this.client = null;
 			System.out.println("Error no ip selected");
@@ -271,17 +294,27 @@ public class GameScreen implements Screen, Observer {
 		this.scoreLabel.setHeight(20);
 		this.playerHealthLabelHUD.setHeight(20);
 		////Add labels to stage
-		this.stage.addActor(this.playerHealthLabel);
-		this.stage.addActor(this.playerHealthLabelHUD);
+		if (!isSpectating) {
+			this.stage.addActor(this.playerHealthLabel);
+			this.stage.addActor(this.playerHealthLabelHUD);
+			this.stage.addActor(this.scoreLabel);
+		}
+		
 		this.stage.addActor(this.playerLabelName);
 		this.stage.addActor(this.playerLabelNameHUD);
-		this.stage.addActor(this.scoreLabel);
 
 		this.oldchatlabels = new ArrayList();
 	}
 
 	public static SkinManager getSkinManager() {
 		return skinManager;
+	}
+	
+	/**
+	 * Toggles the boolean to render the scoreboard.
+	 */
+	public void toggleShowScoreboard() {
+		this.renderScoreboard = !this.renderScoreboard;
 	}
 
 	/**
@@ -326,11 +359,13 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId());
+
+		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId(),false);
 		mainPlayer.setPosition(64, 64);
 		gameManager.setMainPlayer(mainPlayer);
 
 		mainPlayer.subscribe(this.playerListener, PropertyListenerNames.PLAYER_HEALTH);
+
 
 		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 
@@ -494,6 +529,7 @@ public class GameScreen implements Screen, Observer {
 	 * @param health The player's health.
 	 */
 	public void updatePlayerHealthLabels(int health) {
+		this.shake.shake(0.5f);
 		this.playerHealthLabel.setText(Integer.toString(health));
 		this.playerHealthLabelHUD.setText(Integer.toString(health));
 	}
@@ -507,10 +543,14 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
 		if (gameManager.getMainPlayer() != null) {
+
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 			this.game.camera.position.set(gameManager.getMainPlayer().getX(), gameManager.getMainPlayer().getY(), 0);
 			this.game.camera.update();
+			
+			shake.update(delta, this.game.camera, new Vector2(this.gameManager.getMainPlayer().getX(), this.gameManager.getMainPlayer().getY()));
 
 			this.renderer.setView(this.game.camera);
 			this.renderer.render();
@@ -615,6 +655,59 @@ public class GameScreen implements Screen, Observer {
 			
 			this.updatePlayerHealthLabels(this.gameManager.getMainPlayer().getHitPoints());
 		}
+				
+		// Render scoreboard overlay
+		if (this.renderScoreboard) {
+			// Tweak these variables
+			int padding = 100;
+			int labelOffsetX = 20;
+			int labelOffsetY = 50;
+			int labelHeight = 40;
+			int headerHeight = 50;
+			Color labelColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			Color backGroundColor = new Color(0.3f, 0.3f, 0.3f, 0.8f);
+			
+			// Create a new stage for rendering labels,
+			// and a new shaperenderer for the background
+			Stage labelStage = new Stage();
+			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();
+			
+			// render background
+			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			backgroundShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+			backgroundShapeRenderer.setColor(backGroundColor);
+			backgroundShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding*2), Gdx.graphics.getHeight() - (padding*2));
+			backgroundShapeRenderer.end();
+			Gdx.gl.glDisable(GL20.GL_BLEND);
+			
+			// Render header
+			Label headerLabel = new Label("HighScores", this.skin);
+			headerLabel.setFontScale(2);
+			headerLabel.setColor(labelColor);
+			headerLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY);
+			labelStage.addActor(headerLabel);
+			
+			// Render mainplayer score
+			Label mainPlayerScoreLabel = new Label(this.gameManager.getMainPlayer().getName() + " - " + this.gameManager.getMainPlayer().getScore(), this.skin);
+			mainPlayerScoreLabel.setColor(labelColor);
+			mainPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight);
+			labelStage.addActor(mainPlayerScoreLabel);
+			
+			// Get multiplayers
+			for (int i = 0; i < this.gameManager.getMultiplayers().size(); i++) {
+				SimplePlayer sp = this.gameManager.getMultiplayers().get(i);
+				
+				Label multiPlayerScoreLabel = new Label(sp.getName() + " - " + sp.getScore(), this.skin);
+				multiPlayerScoreLabel.setColor(labelColor);
+				multiPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight - ((i+1)*labelHeight));
+				labelStage.addActor(multiPlayerScoreLabel);
+			}
+			
+			labelStage.draw();
+			labelStage.clear();
+			labelStage.dispose();
+		}
 	}
 
 	/**
@@ -641,7 +734,7 @@ public class GameScreen implements Screen, Observer {
 			if (!sender.isEmpty() && !message.isEmpty()) {
 				this.stage.setKeyboardFocus(this.scoreLabel);
 				inputManager.isChatting = false;
-				this.chatManager.addMessage(sender, message);
+				this.chatManager.sendMessage(sender, message);
 				this.textfield.setText("");
 			} else {
 				this.stage.setKeyboardFocus(this.textfield);
@@ -674,7 +767,7 @@ public class GameScreen implements Screen, Observer {
 
 	@Override
 	public void dispose() {
-		client.stop();
+		client.stop(this.isSpectating);
 	}
 
 	private class PlayerListener implements PropertyChangeListener {

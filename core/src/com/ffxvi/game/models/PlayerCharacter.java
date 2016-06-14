@@ -22,11 +22,7 @@ public enum PlayerCharacter {
 	 */
 	SKELETON_DAGGER,
 	/**
-	 * A character representing a hooded skeleton with a bow.
-	 */
-	SKELETON_HOODED_BOW,
-	/**
 	 * A character representing a hooded skeleton with a dagger.
 	 */
-	SKELETON_HOODED_DAGGER
+	SKELETON_HOODED
 }

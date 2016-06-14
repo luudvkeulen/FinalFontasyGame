@@ -12,17 +12,22 @@
  */
 package com.ffxvi.game.client;
 
-import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.ChatListener;
+import com.ffxvi.game.chat.ChatTextMessage;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
-import com.ffxvi.game.screens.ServerBrowserScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
 
 /**
  * A class responsible for the client side of the system.
@@ -43,7 +48,12 @@ public final class Client {
      * A bytearray with the data which is sent.
      */
     private byte[] sendData;
-
+	
+	/**
+	 * The chatlistener of the client.
+	 */
+	private ChatListener chatListener;
+	
     /**
      * Initialize the client. The client is listening in a thread, this is
      * because the listening code keeps waiting until a packet is received
@@ -53,15 +63,30 @@ public final class Client {
      * @param listenerPort the port that the client will be listening on
      * @param screen the GameScreen that uses this client
      */
-    public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen) {
+    public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen, boolean isSpectating) {
 
         // Set the host to send data to
         this.hostAddress = new InetSocketAddress(hostIP, hostPort);
-        this.send("CONNECTING");
+		
+		if (isSpectating) {
+			this.send("SPECTATING");
+		} else {
+			this.send("CONNECTING");
+		}
+		
         // Set the port to receive data on
         this.clientListener = new ClientListener(listenerPort, screen);
         Thread listenerThread = new Thread(this.clientListener);
         listenerThread.start();
+		
+		try {
+			ChatListener chat = new ChatListener(hostIP, screen.chatManager);
+			this.chatListener = chat;
+			Thread t = new Thread(chat);
+			t.start();
+		} catch (IOException ex) {
+			Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+		}
     }
 
     /**
@@ -104,8 +129,13 @@ public final class Client {
      * Stop listening for new data and stop sending data to the host, use this
      * for disconnecting or stopping the application
      */
-    public void stop() {
-        this.send("DISCONNECTING");
+    public void stop(boolean isSpectating) {
+		if (isSpectating) {
+			this.send("STOPSPECTATING");
+		} else {
+			this.send("DISCONNECTING");
+		}
+		
         this.clientListener.stopListening();
     }
 
@@ -174,6 +204,14 @@ public final class Client {
             sendingSocket.close();
         }
     }
+	
+	/**
+	 * Send a text message to everyone in the server.
+	 * @param ctm The textmessage which you want to send.
+	 */
+	public void sendMessage(ChatTextMessage ctm) {
+		chatListener.getChatSender().sendTextMessage(ctm);
+	}
 
     /**
      * Turns the given Object into a byte array

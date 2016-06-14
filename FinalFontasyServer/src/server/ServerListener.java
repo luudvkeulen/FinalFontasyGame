@@ -141,6 +141,10 @@ public class ServerListener implements Runnable {
 			if (server.disconnectPlayer(playerAddress)) {
 				server.sendSingle("DISCONNECTED", playerAddress);
 			}
+		} else if (message.equals("SPECTATING")) {
+			server.addSpectator(packet.getAddress());
+		} else if (message.equals("STOPSPECTATING")) {
+			server.removeSpectator(packet.getAddress());
 		} else {
 			// Reply the capitalized received String
 			server.sendAll(message.toUpperCase(), packet.getAddress());
