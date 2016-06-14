@@ -37,20 +37,12 @@ public class ChatSender {
      * The constructor of this class. Initializes all the variables which are
      * located in this class.
      *
-     * @param serverIP The IP of the server, this may not be null or empty.
-     *
-     * @param serverPort The server's port which this class can connect to. It
-     * may not be null.
-     *
+	 * @param socket The socket where to send the message to.
      * @throws IOException Throws IOException when this method couldn't connect
      * to the server.
      */
-    public ChatSender(String serverIP, int serverPort) throws IOException {
-        if (serverIP == null || serverIP.trim().isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        this.socket = new Socket(serverIP, serverPort);
+    public ChatSender(Socket socket) throws IOException {
+        this.socket = socket;
         this.out = new PrintWriter(this.socket.getOutputStream(), true);
     }
 

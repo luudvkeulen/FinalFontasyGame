@@ -15,6 +15,8 @@ package com.ffxvi.game.logics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.ffxvi.game.chat.ChatTextMessage;
+import com.ffxvi.game.screens.GameScreen;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +35,18 @@ public class ChatManager {
 	 * the Skin that needs to display the chat messages
 	 */
 	private final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+	
+	/**
+	 * The gamescreen of the current session.
+	 */
+	private final GameScreen gameScreen;
 
 	/**
 	 * Initializes a new chat manager.
 	 */
-	public ChatManager() {
+	public ChatManager(GameScreen gameScreen) {
 		this.chatLabels = new ArrayList();
+		this.gameScreen = gameScreen;
 	}
 
 	/**
@@ -50,7 +58,7 @@ public class ChatManager {
 	 * @param message The content of the message. When an empty String
 	 * (excluding spaces), throw an IllegalArgumentException.
 	 */
-	public void addMessage(String playerName, String message) {
+	public void sendMessage(String playerName, String message) {
 
 		if (playerName == null || playerName.trim().isEmpty()) {
 			throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");
@@ -59,14 +67,23 @@ public class ChatManager {
 		if (message == null || message.trim().isEmpty()) {
 			throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");
 		}
+		
+		ChatTextMessage ctm = new ChatTextMessage(playerName, message);
+		gameScreen.client.sendMessage(ctm);
+	}
 
-		this.chatLabels.add(new Label(String.format("%s: %s", playerName, message), skin));
+	public void receiveMessage(String message) {
 
+		if (message == null || message.trim().isEmpty()) {
+			throw new IllegalArgumentException("Message can neither be null nor an empty string (excluding spaces).");
+		}
+		
+		this.chatLabels.add(new Label(message, skin));
+	
 		if (this.chatLabels.size() > 10) {
 			this.chatLabels.remove(0);
 		}
 	}
-
 	/**
 	 * getter for the list of messages
 	 *

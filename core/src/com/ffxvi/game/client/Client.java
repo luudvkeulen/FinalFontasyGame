@@ -13,6 +13,8 @@
 package com.ffxvi.game.client;
 
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.ChatListener;
+import com.ffxvi.game.chat.ChatTextMessage;
 import com.ffxvi.game.entities.SimplePlayer;
 import com.ffxvi.game.entities.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
@@ -43,7 +45,12 @@ public final class Client {
      * A bytearray with the data which is sent.
      */
     private byte[] sendData;
-
+	
+	/**
+	 * The chatlistener of the client.
+	 */
+	private ChatListener chatListener;
+	
     /**
      * Initialize the client. The client is listening in a thread, this is
      * because the listening code keeps waiting until a packet is received
@@ -58,10 +65,20 @@ public final class Client {
         // Set the host to send data to
         this.hostAddress = new InetSocketAddress(hostIP, hostPort);
         this.send("CONNECTING");
+		//this.send("SPECTATING");
         // Set the port to receive data on
         this.clientListener = new ClientListener(listenerPort, screen);
         Thread listenerThread = new Thread(this.clientListener);
         listenerThread.start();
+		
+		try {
+			ChatListener chat = new ChatListener(hostIP, screen.chatManager);
+			this.chatListener = chat;
+			Thread t = new Thread(chat);
+			t.start();
+		} catch (IOException ex) {
+			Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+		}
     }
 
     /**
@@ -106,6 +123,7 @@ public final class Client {
      */
     public void stop() {
         this.send("DISCONNECTING");
+		//this.send("STOPSPECTATING");
         this.clientListener.stopListening();
     }
 
@@ -174,6 +192,14 @@ public final class Client {
             sendingSocket.close();
         }
     }
+	
+	/**
+	 * Send a text message to everyone in the server.
+	 * @param ctm The textmessage which you want to send.
+	 */
+	public void sendMessage(ChatTextMessage ctm) {
+		chatListener.getChatSender().sendTextMessage(ctm);
+	}
 
     /**
      * Turns the given Object into a byte array

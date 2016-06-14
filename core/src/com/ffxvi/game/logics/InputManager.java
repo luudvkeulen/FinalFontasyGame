@@ -17,6 +17,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.ChatTextMessage;
 import com.ffxvi.game.entities.Direction;
 import com.ffxvi.game.entities.Ending;
 import com.ffxvi.game.entities.Player;
