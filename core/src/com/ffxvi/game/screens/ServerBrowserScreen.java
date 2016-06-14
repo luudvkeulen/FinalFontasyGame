@@ -15,6 +15,7 @@ package com.ffxvi.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -48,19 +49,19 @@ import queryServer.IServer;
 public class ServerBrowserScreen implements Screen {
 
 	/**
-     * The width of buttons.
-     */
-    private static final int BUTTON_WIDTH = 200;
+	 * The width of buttons.
+	 */
+	private static final int BUTTON_WIDTH = 200;
 
-    /**
-     * The height of buttons.
-     */
-    private static final int BUTTON_HEIGHT = 60;
+	/**
+	 * The height of buttons.
+	 */
+	private static final int BUTTON_HEIGHT = 60;
 
-    /**
-     * The offset of buttons.
-     */
-    private static final int BUTTON_OFFSET = 30;
+	/**
+	 * The offset of buttons.
+	 */
+	private static final int BUTTON_OFFSET = 30;
 
 	/**
 	 * The stage.
@@ -92,12 +93,12 @@ public class ServerBrowserScreen implements Screen {
 	 * The ServerRetriever for getting the server list.
 	 */
 	private ServerRetriever serverRetriever;
-	
+
 	/**
 	 * The layout.
 	 */
 	private final GlyphLayout layout;
-	
+
 	/**
 	 * A label for rendering the header text.
 	 */
@@ -107,40 +108,42 @@ public class ServerBrowserScreen implements Screen {
 	 * Initializes a new ServerBrowserScreen.
 	 */
 	public ServerBrowserScreen() {
-        this.game = MainClass.getInstance();
+		this.game = MainClass.getInstance();
 		this.stage = new Stage();
 		this.layout = new GlyphLayout();
 		Gdx.input.setInputProcessor(this.stage);
-		
+
 		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 		Skin buttonSkin = new Skin();
-		
-        Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.fill();
-		
+
+		Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Format.RGBA8888);
+		pixmap.setColor(Color.WHITE);
+		pixmap.fill();
+
 		buttonSkin.add("white", new Texture(pixmap));
-		
+
 		BitmapFont bfont = new BitmapFont();
 		skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
-        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
-        textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
-        textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+		TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
+		textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
+		textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
 
-        textButtonStyle.font = buttonSkin.getFont("default");
+		textButtonStyle.font = buttonSkin.getFont("default");
 
-        buttonSkin.add("default", textButtonStyle);
-		
+		buttonSkin.add("default", textButtonStyle);
+
 		// Create header text
 		this.headerLabel = new Label("SERVER BROWSER", skin);
 		this.headerLabel.setFontScale(2);
 		this.headerLabel.setPosition((this.stage.getWidth() / 2) - (this.layout.width / 2) - this.headerLabel.getWidth(), this.stage.getHeight() - 50);
 
 		this.stage.addActor(this.headerLabel);
+
+		final Sound click = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
 		
 		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
 		TextButton playButton = new TextButton("PLAY", textButtonStyle);
@@ -148,6 +151,7 @@ public class ServerBrowserScreen implements Screen {
 		playButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				click.play();
 				game.selectedIp = servers.getSelected();
 				game.getScreen().dispose();
 				game.setScreen(new PreGameScreen());
@@ -187,7 +191,8 @@ public class ServerBrowserScreen implements Screen {
 	 * Shows the screen.
 	 */
 	@Override
-	public void show() {}
+	public void show() {
+	}
 
 	/**
 	 * Refreshes the server list.
