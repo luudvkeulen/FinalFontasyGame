@@ -494,6 +494,7 @@ public class GameScreen implements Screen, Observer {
 	 * @param health The player's health.
 	 */
 	public void updatePlayerHealthLabels(int health) {
+		System.out.println("Updating Healkth");
 		this.playerHealthLabel.setText(Integer.toString(health));
 		this.playerHealthLabelHUD.setText(Integer.toString(health));
 	}
@@ -612,6 +613,8 @@ public class GameScreen implements Screen, Observer {
 
 			//Update the player
 			this.gameManager.getMainPlayer().update();
+			
+			this.updatePlayerHealthLabels(this.gameManager.getMainPlayer().getHitPoints());
 		}
 	}
 
