@@ -15,6 +15,7 @@ package com.ffxvi.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -37,21 +38,21 @@ import com.ffxvi.game.models.PlayerCharacter;
  * The screen which is shown before the game.
  */
 public class PreGameScreen implements Screen {
-	
-    /**
-     * The width of buttons.
-     */
-    private static final int BUTTON_WIDTH = 200;
 
-    /**
-     * The height of buttons.
-     */
-    private static final int BUTTON_HEIGHT = 60;
+	/**
+	 * The width of buttons.
+	 */
+	private static final int BUTTON_WIDTH = 200;
 
-    /**
-     * The offset of buttons.
-     */
-    private static final int BUTTON_OFFSET = 30;
+	/**
+	 * The height of buttons.
+	 */
+	private static final int BUTTON_HEIGHT = 60;
+
+	/**
+	 * The offset of buttons.
+	 */
+	private static final int BUTTON_OFFSET = 30;
 
 	/**
 	 * The game controller.
@@ -72,7 +73,7 @@ public class PreGameScreen implements Screen {
 	 * A label for the username.
 	 */
 	private final Label usernameLabel;
-	
+
 	/**
 	 * A label for rendering the header text.
 	 */
@@ -93,14 +94,14 @@ public class PreGameScreen implements Screen {
 		Gdx.input.setInputProcessor(this.stage);
 
 		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-		
+
 		Skin buttonSkin = new Skin();
 
-        Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.fill();
+		Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.WHITE);
+		pixmap.fill();
 
-        buttonSkin.add("white", new Texture(pixmap));
+		buttonSkin.add("white", new Texture(pixmap));
 
 		// Store the default libgdx font under the name "default".
 		BitmapFont bfont = new BitmapFont();
@@ -108,16 +109,16 @@ public class PreGameScreen implements Screen {
 		skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
-        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
-        textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
-        textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
+		textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
+		textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
 
-        textButtonStyle.font = buttonSkin.getFont("default");
+		textButtonStyle.font = buttonSkin.getFont("default");
 
-        buttonSkin.add("default", textButtonStyle);
-		
+		buttonSkin.add("default", textButtonStyle);
+
 		// Create header text
 		this.headerLabel = new Label("CHARACTER SELECT", skin);
 		this.headerLabel.setFontScale(2);
@@ -132,7 +133,7 @@ public class PreGameScreen implements Screen {
 
 		// Add the textfield to the stage
 		this.stage.addActor(this.txtUsername);
-		
+
 		// Create username text
 		this.usernameLabel = new Label("Voer een naam in:", skin);
 		this.layout.setText(skin.getFont("default"), this.usernameLabel.getText());
@@ -140,6 +141,8 @@ public class PreGameScreen implements Screen {
 
 		// Add the label to the stage
 		this.stage.addActor(this.usernameLabel);
+
+		final Sound click = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
 		
 		// Create imageButtons
 		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
@@ -148,43 +151,47 @@ public class PreGameScreen implements Screen {
 		enterAsSkeletonDaggerButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				click.play();
 				enterGame(PlayerCharacter.SKELETON_DAGGER);
 			}
 		});
 		this.stage.addActor(enterAsSkeletonDaggerButton);
-		
+
 		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", textButtonStyle);
 		enterAsSkeletonHoodedBowButton.setSize(200, 200);
-		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - enterAsSkeletonHoodedBowButton.getWidth() - (BUTTON_OFFSET/2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
+		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - enterAsSkeletonHoodedBowButton.getWidth() - (BUTTON_OFFSET / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
 		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				click.play();
 				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
 		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
 		enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
 		this.stage.addActor(enterAsSkeletonHoodedBowButton);
-		
+
 		TextButton enterAsSkeletonHoodedBowButton2 = new TextButton("Skeleton Hooded Bow 2", textButtonStyle);
 		enterAsSkeletonHoodedBowButton2.setSize(200, 200);
-		enterAsSkeletonHoodedBowButton2.setPosition((this.stage.getWidth() / 2) + (BUTTON_OFFSET/2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
+		enterAsSkeletonHoodedBowButton2.setPosition((this.stage.getWidth() / 2) + (BUTTON_OFFSET / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
 		enterAsSkeletonHoodedBowButton2.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				click.play();
 				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
 		enterAsSkeletonHoodedBowButton2.setTouchable(Touchable.disabled);
 		enterAsSkeletonHoodedBowButton2.setColor(Color.GRAY);
 		this.stage.addActor(enterAsSkeletonHoodedBowButton2);
-		
+
 		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
 		enterAsSkeletonHoodedDaggerButton.setSize(200, 200);
-		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) + enterAsSkeletonHoodedDaggerButton.getWidth() + (BUTTON_OFFSET*1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
+		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) + enterAsSkeletonHoodedDaggerButton.getWidth() + (BUTTON_OFFSET * 1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
 		enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				click.play();
 				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
