@@ -108,7 +108,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = 1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED_BOW;
+        PlayerCharacter pc = PlayerCharacter.HOODED_SKELETON;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }
@@ -152,7 +152,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = -1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED_BOW;
+        PlayerCharacter pc = PlayerCharacter.HOODED_SKELETON;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }

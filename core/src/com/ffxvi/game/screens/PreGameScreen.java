@@ -159,7 +159,7 @@ public class PreGameScreen implements Screen {
 		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+				enterGame(PlayerCharacter.HOODED_SKELETON);
 			}
 		});
 		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
@@ -172,7 +172,7 @@ public class PreGameScreen implements Screen {
 		enterAsSkeletonHoodedBowButton2.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				enterGame(PlayerCharacter.SKELETON_HOODED_BOW);
+				enterGame(PlayerCharacter.HOODED_SKELETON);
 			}
 		});
 		enterAsSkeletonHoodedBowButton2.setTouchable(Touchable.disabled);

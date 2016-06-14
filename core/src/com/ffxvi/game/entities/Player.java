@@ -459,7 +459,7 @@ public class Player extends SimplePlayer implements Observable {
             case SKELETON_DAGGER:
                 this.playerSkin = screen.getSkinManager().getNormalSkeleton();
                 break;
-            case SKELETON_HOODED_BOW:
+            case HOODED_SKELETON:
                 this.playerSkin = screen.getSkinManager().getHoodedSkeleton();
                 break;
             case SKELETON_HOODED_DAGGER:

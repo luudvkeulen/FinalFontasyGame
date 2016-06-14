@@ -18,6 +18,6 @@ package com.ffxvi.game.entities;
  */
 public enum PlayerCharacter {
     SKELETON_DAGGER,
-    SKELETON_HOODED_BOW,
+    HOODED_SKELETON,
     SKELETON_HOODED_DAGGER
 }
