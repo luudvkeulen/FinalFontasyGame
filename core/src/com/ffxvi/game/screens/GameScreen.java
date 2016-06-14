@@ -200,17 +200,17 @@ public class GameScreen implements Screen, Observer {
 	 * Dialog to show messages.
 	 */
 	private Dialog messageDialog;
-	
+
 	/**
 	 * Boolean indicating whether to render the scoreboard.
 	 */
 	private boolean renderScoreboard;
-	
+
 	/**
 	 * Shake used for shaking the camera when the player is hit.
 	 */
 	private Shake shake;
-	
+
 	/**
 	 * A boolean indicating if the player is spectating.
 	 */
@@ -221,13 +221,15 @@ public class GameScreen implements Screen, Observer {
 	/**
 	 * Initializes a new GameScreen.
 	 */
-
 	public GameScreen(boolean isSpectating) {
 		this.game = MainClass.getInstance();
+
+		this.gameManager = new GameManager();
+
 		this.stage = new Stage();
 		this.shake = new Shake();
 		this.isSpectating = isSpectating;
-		
+
 		this.chatManager = new ChatManager(this);
 
 		this.fontwhite = new BitmapFont();
@@ -236,11 +238,11 @@ public class GameScreen implements Screen, Observer {
 
 		if (!game.selectedIp.equals("")) {
 
-			String fulltext = game.selectedIp.replaceAll("\\s+","");
- 			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
- 			System.out.println(fullip);
-  			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this, this.isSpectating);
-  			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
+			String fulltext = game.selectedIp.replaceAll("\\s+", "");
+			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
+			System.out.println(fullip);
+			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this, this.isSpectating);
+			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
 		} else {
 			this.client = null;
 			System.out.println("Error no ip selected");
@@ -299,7 +301,7 @@ public class GameScreen implements Screen, Observer {
 			this.stage.addActor(this.playerHealthLabelHUD);
 			this.stage.addActor(this.scoreLabel);
 		}
-		
+
 		this.stage.addActor(this.playerLabelName);
 		this.stage.addActor(this.playerLabelNameHUD);
 
@@ -309,7 +311,7 @@ public class GameScreen implements Screen, Observer {
 	public static SkinManager getSkinManager() {
 		return skinManager;
 	}
-	
+
 	/**
 	 * Toggles the boolean to render the scoreboard.
 	 */
@@ -359,13 +361,11 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-
-		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId(),false);
+		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId(), false);
 		mainPlayer.setPosition(64, 64);
 		gameManager.setMainPlayer(mainPlayer);
 
 		mainPlayer.subscribe(this.playerListener, PropertyListenerNames.PLAYER_HEALTH);
-
 
 		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 
@@ -529,9 +529,12 @@ public class GameScreen implements Screen, Observer {
 	 * @param health The player's health.
 	 */
 	public void updatePlayerHealthLabels(int health) {
-		this.shake.shake(0.5f);
 		this.playerHealthLabel.setText(Integer.toString(health));
 		this.playerHealthLabelHUD.setText(Integer.toString(health));
+	}
+
+	public void shakeScreen() {
+		this.shake.shake(0.5f);
 	}
 
 	/**
@@ -549,7 +552,7 @@ public class GameScreen implements Screen, Observer {
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
 			this.game.camera.position.set(gameManager.getMainPlayer().getX(), gameManager.getMainPlayer().getY(), 0);
 			this.game.camera.update();
-			
+
 			shake.update(delta, this.game.camera, new Vector2(this.gameManager.getMainPlayer().getX(), this.gameManager.getMainPlayer().getY()));
 
 			this.renderer.setView(this.game.camera);
@@ -652,10 +655,10 @@ public class GameScreen implements Screen, Observer {
 
 			//Update the player
 			this.gameManager.getMainPlayer().update();
-			
+
 			this.updatePlayerHealthLabels(this.gameManager.getMainPlayer().getHitPoints());
 		}
-				
+
 		// Render scoreboard overlay
 		if (this.renderScoreboard) {
 			// Tweak these variables
@@ -666,44 +669,44 @@ public class GameScreen implements Screen, Observer {
 			int headerHeight = 50;
 			Color labelColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 			Color backGroundColor = new Color(0.3f, 0.3f, 0.3f, 0.8f);
-			
+
 			// Create a new stage for rendering labels,
 			// and a new shaperenderer for the background
 			Stage labelStage = new Stage();
 			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();
-			
+
 			// render background
 			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			backgroundShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 			backgroundShapeRenderer.setColor(backGroundColor);
-			backgroundShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding*2), Gdx.graphics.getHeight() - (padding*2));
+			backgroundShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding * 2), Gdx.graphics.getHeight() - (padding * 2));
 			backgroundShapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
-			
+
 			// Render header
 			Label headerLabel = new Label("HighScores", this.skin);
 			headerLabel.setFontScale(2);
 			headerLabel.setColor(labelColor);
 			headerLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY);
 			labelStage.addActor(headerLabel);
-			
+
 			// Render mainplayer score
 			Label mainPlayerScoreLabel = new Label(this.gameManager.getMainPlayer().getName() + " - " + this.gameManager.getMainPlayer().getScore(), this.skin);
 			mainPlayerScoreLabel.setColor(labelColor);
 			mainPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight);
 			labelStage.addActor(mainPlayerScoreLabel);
-			
+
 			// Get multiplayers
 			for (int i = 0; i < this.gameManager.getMultiplayers().size(); i++) {
 				SimplePlayer sp = this.gameManager.getMultiplayers().get(i);
-				
+
 				Label multiPlayerScoreLabel = new Label(sp.getName() + " - " + sp.getScore(), this.skin);
 				multiPlayerScoreLabel.setColor(labelColor);
-				multiPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight - ((i+1)*labelHeight));
+				multiPlayerScoreLabel.setPosition(padding + labelOffsetX, Gdx.graphics.getHeight() - padding - labelOffsetY - headerHeight - ((i + 1) * labelHeight));
 				labelStage.addActor(multiPlayerScoreLabel);
 			}
-			
+
 			labelStage.draw();
 			labelStage.clear();
 			labelStage.dispose();
@@ -781,6 +784,7 @@ public class GameScreen implements Screen, Observer {
 			String propertyName = evt.getPropertyName();
 
 			if (propertyName.equals(PropertyListenerNames.PLAYER_HEALTH)) {
+				GameScreen.this.shakeScreen();
 			}
 		}
 	}

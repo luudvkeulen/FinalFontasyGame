@@ -343,6 +343,8 @@ public class Player extends SimplePlayer {
 			this.die(attacker);
 			this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
 		}
+		
+		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
 	}
 
 	/**
