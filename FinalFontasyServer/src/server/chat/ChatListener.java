@@ -20,7 +20,7 @@ public class ChatListener implements Runnable {
 	private boolean listening;
 	private int listenerPort;
 	ServerSocket serverSocket;
-	private Server server;
+	private ChatServer server;
 
 	/**
 	 * Initiate this runnable
@@ -31,7 +31,7 @@ public class ChatListener implements Runnable {
 	 * @throws java.io.IOException throws exception when serverSocket cannot be
 	 * initialized.
 	 */
-	public ChatListener(Server server, int listenOnPort) throws IOException {
+	public ChatListener(ChatServer server, int listenOnPort) throws IOException {
 		this.server = server;
 		this.listening = true;
 		this.listenerPort = listenOnPort;
@@ -52,7 +52,7 @@ public class ChatListener implements Runnable {
 				Socket connectionSocket = serverSocket.accept();
 				BufferedReader inFromClient
 						= new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-				sender.sendTextMessage(inFromClient.readLine());
+				sender.sendMessage(inFromClient.readLine());
 			}
 		} catch (IOException ex) {
 			Logger.getLogger(ChatListener.class.getName()).log(Level.SEVERE, null, ex);
