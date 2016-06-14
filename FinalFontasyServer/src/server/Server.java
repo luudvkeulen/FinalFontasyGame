@@ -161,7 +161,7 @@ public class Server {
 					}
 				}
 				List<InetSocketAddress> localSpectators = spectators;
-				Collection<SimplePlayer> localPlayerData = playerData.values();
+				Collection<SimplePlayer> localPlayerData = new ArrayList(playerData.values());
 				for (InetSocketAddress socket : localSpectators) {
 					sendSingle(localPlayerData, socket);
 				}
@@ -374,6 +374,11 @@ public class Server {
 				}
 			}
 		}
+                for (InetSocketAddress spectator : spectators) {
+                    if (spectator != null) {
+                        sendSingle(simpleProjectile, spectator);
+                    }
+                }
 //		sendAll(simpleProjectile, validSender.getAddress());
 	}
 }
