@@ -17,7 +17,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.Vector;
-import java.util.Objects;
 
 /**
  * This class contains all the properties for the Projectile. It contains the

@@ -13,8 +13,6 @@
 package com.ffxvi.game.models;
 
 import com.ffxvi.game.entities.PlayerAnimation;
-import com.ffxvi.game.models.Player;
-import com.ffxvi.game.models.Direction;
 import static com.ffxvi.game.models.Direction.*;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
 import java.io.Serializable;

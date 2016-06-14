@@ -1,4 +1,4 @@
-﻿/*
+/*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
  * 
@@ -12,6 +12,9 @@
  */
 package com.ffxvi.game.models;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Circle;
@@ -19,8 +22,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerAnimation;
+import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
+import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
+import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.PropertyListenerNames;
+import com.ffxvi.game.support.SkinManager.PlayerSkin;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeEvent;
@@ -53,6 +60,16 @@ public class Player extends SimplePlayer {
 	private static final float SHOOTCOOLDOWN = 0.5f;
 
 	/**
+	 * The textures (skin) that this player is using
+	 */
+	private PlayerSkin playerSkin;
+
+	/**
+	 * The animation that this player is currently in
+	 */
+	private Animation currentAnimation;
+
+	/**
 	 * The direction where the player is aiming his/her weapon in degrees.
 	 */
 	private float aimDirection;
@@ -82,18 +99,13 @@ public class Player extends SimplePlayer {
 	 * The game screen.
 	 */
 	private final GameScreen screen;
-	
+
 	/**
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
 	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
-	/**
-	 * The time before a next shot can be fired.
-	 */
-	private long shootStart;
-	
 	private long lastSlash = 0;
 	private long slashAnimCount = 0;
 
@@ -108,7 +120,7 @@ public class Player extends SimplePlayer {
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId, GameScreen screen) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
-	
+
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
@@ -362,12 +374,13 @@ public class Player extends SimplePlayer {
 			this.die(attacker);
 			this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
 		}
-		
+
 		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
 	}
 
 	/**
 	 * Lets the player die.
+	 * @param killer
 	 */
 	public void die(String killer) {
 		hitPoints = 100;
@@ -398,6 +411,14 @@ public class Player extends SimplePlayer {
 		return System.nanoTime() - this.shootStart > SHOOTCOOLDOWN * 1000000000;
 	}
 
+	private void changeAnimation() {
+		if (super.animation != IDLE) {
+			 this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+		} else {
+			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
+		}
+	}
+
 	/**
 	 * Fires a new projectile at the aim direction, given the player can fire.
 	 */
@@ -406,6 +427,8 @@ public class Player extends SimplePlayer {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
 
+			this.bowsound.play();
+			
 			// Create a bullet inside the player with the direction and speed
 			this.screen.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
@@ -425,12 +448,12 @@ public class Player extends SimplePlayer {
 	 * Slashes in the given direction, given the player can slash.
 	 */
 	public void slash() {
-		if(lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
 			this.animationSpeed = 0.01f;
 			super.animation = SLASHING;
 			this.animation = SLASHING;
 			this.changeAnimation();
-			slash.play();
+			this.slash.play();
 			slashAnimCount = 1;
 			lastSlash = System.currentTimeMillis();
 		}

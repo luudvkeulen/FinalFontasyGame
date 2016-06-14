@@ -121,6 +121,7 @@ public class LibPlayer extends Player {
 	/**
 	 * Sets the player's animation to idle.
 	 */
+	@Override
 	public void setIdle() {
 		super.animation = IDLE;
 		this.changeAnimation();
@@ -129,6 +130,7 @@ public class LibPlayer extends Player {
 	/**
 	 * Slashes in the given direction, given the player can slash.
 	 */
+	@Override
 	public void slash() {
 		super.animation = SLASHING;
 		this.animation = SLASHING;
@@ -140,6 +142,7 @@ public class LibPlayer extends Player {
 	 *
 	 * @param direction The new direction.
 	 */
+	@Override
 	public void setDirection(Direction direction) {
 		this.setDirectionInner(direction);
 		super.animation = WALKING;

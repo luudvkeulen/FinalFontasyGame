@@ -30,8 +30,8 @@ public class SkinManager {
     }
     
     public SkinManager() {
-        normalSkeleton = new PlayerSkin(0.05f, "Units/Normal_Skeleton");
-        hoodedSkeleton = new PlayerSkin(0.05f, "Units/Hooded_Skeleton");
+        normalSkeleton = new PlayerSkin(0.05f, "Units/Skeleton_Normal");
+        hoodedSkeleton = new PlayerSkin(0.05f, "Units/Skeleton_Hooded");
     }
     
     public class PlayerSkin {
