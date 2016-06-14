@@ -46,6 +46,7 @@ public class Projectile extends SimpleProjectile {
 	protected boolean canCollide;
 
 	private GameManager gameManager;
+
 	/**
 	 * A GameScreen object.
 	 */
@@ -83,7 +84,32 @@ public class Projectile extends SimpleProjectile {
 		this.canCollide = true;
 		this.despawnDelay = 10;
 		this.startTime = System.nanoTime();
+
+		this.gameManager = gameManager;
+	}
+
+	protected Projectile(Projectile projectile, GameManager gameManager) {
+		super(projectile.rotation, projectile.speed, projectile.position.getX(), projectile.position.getY(), projectile.playerName, projectile.roomID);
 		
+		if (projectile == null) {
+			throw new IllegalArgumentException("Projectile can not be null.");
+		}
+		
+		if (gameManager == null) {
+			throw new IllegalArgumentException("GameManager can not be null.");
+		}
+
+		if (startTime <= 0) {
+			throw new IllegalArgumentException("Starttime must be a positive value.");
+		}
+
+		this.position = projectile.position;
+		this.rotation = projectile.rotation;
+		this.speed = projectile.speed;
+		this.canCollide = true;
+		this.despawnDelay = 10;
+		this.startTime = projectile.startTime;
+
 		this.gameManager = gameManager;
 	}
 
@@ -152,20 +178,21 @@ public class Projectile extends SimpleProjectile {
 		}
 		return false;
 	}
-	
+
 	/**
-     * Checks if the given rectangle collides with any of the given mapobjects.
-     * @param rec The rectangle to check.
-     * @param objects The objects to check for collision with.
-     * @return 
-     */
-    private boolean checkWallCollision(Rectangle rec, MapObjects objects) {
-        for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
-            Rectangle rectangleMapObject = mapObject.getRectangle();
-            if (rec.overlaps(rectangleMapObject)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	 * Checks if the given rectangle collides with any of the given mapobjects.
+	 *
+	 * @param rec The rectangle to check.
+	 * @param objects The objects to check for collision with.
+	 * @return
+	 */
+	private boolean checkWallCollision(Rectangle rec, MapObjects objects) {
+		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangleMapObject = mapObject.getRectangle();
+			if (rec.overlaps(rectangleMapObject)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

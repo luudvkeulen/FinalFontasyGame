@@ -27,7 +27,7 @@ public class LibProjectile extends Projectile {
 	}
 
 	public LibProjectile(Projectile projectile, GameScreen gameScreen) {
-		super(projectile.getPosition(), projectile.getSpeed(), projectile.getRotation(), projectile.getRoomID(), projectile.getPlayerName(), gameScreen.getGameManager());
+		super(projectile, gameScreen.getGameManager());
 
 		this.screen = gameScreen;
 	}
