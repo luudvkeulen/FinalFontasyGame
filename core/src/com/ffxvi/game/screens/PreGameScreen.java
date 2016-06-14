@@ -189,6 +189,17 @@ public class PreGameScreen implements Screen {
 			}
 		});
 		this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
+		
+		TextButton enterAsSpectatorButton = new TextButton("Spectate", textButtonStyle);
+		enterAsSpectatorButton.setSize(200, 60);
+		enterAsSpectatorButton.setPosition((this.stage.getWidth() / 2) - (enterAsSpectatorButton.getWidth() / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight() - enterAsSpectatorButton.getHeight() - BUTTON_OFFSET);
+		enterAsSpectatorButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				enterAsSpectator();
+			}
+		});
+		this.stage.addActor(enterAsSpectatorButton);
 	}
 
 	/**
@@ -205,6 +216,13 @@ public class PreGameScreen implements Screen {
 		GameScreen gameScreen = new GameScreen();
 		gameScreen.addPlayer(this.txtUsername.getText(), character);
 		this.game.setScreen(gameScreen);
+	}
+	
+	/**
+	 * Makes the user enter the game as a spectator.
+	 */
+	public void enterAsSpectator() {
+		System.out.println("Enter as spectator!");
 	}
 
 	/**
