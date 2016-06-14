@@ -127,7 +127,7 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
-		
+
 		this.screen = screen;
 	}
 
@@ -390,9 +390,9 @@ public class Player extends SimplePlayer {
 			this.shootStart = System.nanoTime();
 
 			// Create a bullet inside the player with the direction and speed
-			gameManager.addProjectile(new Projectile(new Vector(this.x
+			this.screen.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
-					30, this.aimDirection, this.roomId, this.playerName, this.gameManager));
+					30, this.aimDirection, this.roomId, this.playerName, this.gameManager), false);
 		}
 	}
 
@@ -416,7 +416,7 @@ public class Player extends SimplePlayer {
 				break;
 		}
 
-		screen.client.sendPlayer(new SimplePlayer(this));
+		this.screen.client.sendPlayer(new SimplePlayer(this));
 	}
 
 	/**
