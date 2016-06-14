@@ -95,6 +95,11 @@ public class Player extends SimplePlayer implements Observable {
      * The time before a next shot can be fired.
      */
     private long shootStart;
+	
+	/**
+	 * A boolean indicating whether the player is spectating.
+	 */
+	private boolean isSpectating;
 
     /**
      * Default constructor for Player.
@@ -106,7 +111,7 @@ public class Player extends SimplePlayer implements Observable {
      * @param roomId The id of the room where the player is in.
      * @param screen the GameScreen that this Player is in. Used to create projectiles
      */
-    public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId) {
+    public Player(PlayerCharacter character, String playerName, Vector position, GameScreen screen, int roomId, boolean isSpectating) {
         super(playerName, position.getX(), position.getY(), roomId, character);
 
         if (character == null) {
@@ -125,6 +130,8 @@ public class Player extends SimplePlayer implements Observable {
         this.screen = screen;
 
         this.speed = Player.WALK_SPEED;
+		
+		this.isSpectating = isSpectating;
 
         this.aimDirection = 0f;
         this.animationSpeed = 0.05f;
@@ -377,19 +384,21 @@ public class Player extends SimplePlayer implements Observable {
      * @param attacker The name of the player that caused the damage. 
      */
     public void receiveDamage(int amount, String attacker) {
-        this.hitPoints -= amount;
-        
-        if (this.hitPoints <= 0) {
-            // Set the amount of hitPoints to 0 to prevent negative values
-            // being shown
-            this.hitPoints = 0;
-            
-            this.die(attacker);
-            this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
-        }
-        
-        // Update the health labels
-        this.screen.updatePlayerHealthLabels(this.hitPoints);
+		if (!this.isSpectating) {
+			this.hitPoints -= amount;
+
+			if (this.hitPoints <= 0) {
+				// Set the amount of hitPoints to 0 to prevent negative values
+				// being shown
+				this.hitPoints = 0;
+
+				this.die(attacker);
+				this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
+			}
+
+			// Update the health labels
+			this.screen.updatePlayerHealthLabels(this.hitPoints);
+		}
     }
     
     
@@ -523,7 +532,7 @@ public class Player extends SimplePlayer implements Observable {
      * Fires a new projectile at the aim direction, given the player can fire.
      */
     public void fire() {
-        if (this.canFire()) {
+        if (this.canFire() && !this.isSpectating) {
             // Reset the shoot delay
             this.shootStart = System.nanoTime();
 
@@ -546,9 +555,11 @@ public class Player extends SimplePlayer implements Observable {
      * Slashes in the given direction, given the player can slash.
      */
     public void slash() {
-        super.animation = SLASHING;
-        this.animation = SLASHING;
-        this.changeAnimation();
+		if (!this.isSpectating) {
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+		}
     }
 
     /**
@@ -631,28 +642,31 @@ public class Player extends SimplePlayer implements Observable {
         if (localMultiplayers.size() == 0) {
             return;
         }
-        for (SimplePlayer p : localMultiplayers) { 
-            if(p.animation == PlayerAnimation.SLASHING &&
-                !p.getName().equals(this.playerName)) {
-                
-                Player player = new Player(this.screen);
-                player.setData(p);
-                
-                Circle cEnemy = new Circle();
-                cEnemy.x = p.getX();
-                cEnemy.y = p.getY();
-                cEnemy.radius = 50.0f;
+		
+		if (!this.isSpectating) {
+			for (SimplePlayer p : localMultiplayers) { 
+				if(p.animation == PlayerAnimation.SLASHING &&
+					!p.getName().equals(this.playerName)) {
 
-                Circle cThis = new Circle();
-                cThis.x = this.getX();
-                cThis.y = this.getY();
-                cThis.radius = 50.0f;
+					Player player = new Player(this.screen);
+					player.setData(p);
 
-                if (cEnemy.overlaps(cThis)) {
-                    this.receiveDamage(1, p.playerName);
-                }
-            }
-        }
+					Circle cEnemy = new Circle();
+					cEnemy.x = p.getX();
+					cEnemy.y = p.getY();
+					cEnemy.radius = 50.0f;
+
+					Circle cThis = new Circle();
+					cThis.x = this.getX();
+					cThis.y = this.getY();
+					cThis.radius = 50.0f;
+
+					if (cEnemy.overlaps(cThis)) {
+						this.receiveDamage(1, p.playerName);
+					}
+				}
+			}
+		}
         
         screen.client.sendPlayer(new SimplePlayer(this));
     }

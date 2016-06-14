@@ -292,11 +292,14 @@ public class GameScreen implements Screen, Observer {
 		this.scoreLabel.setHeight(20);
 		this.playerHealthLabelHUD.setHeight(20);
 		////Add labels to stage
-		this.stage.addActor(this.playerHealthLabel);
-		this.stage.addActor(this.playerHealthLabelHUD);
+		if (!isSpectating) {
+			this.stage.addActor(this.playerHealthLabel);
+			this.stage.addActor(this.playerHealthLabelHUD);
+			this.stage.addActor(this.scoreLabel);
+		}
+		
 		this.stage.addActor(this.playerLabelName);
 		this.stage.addActor(this.playerLabelNameHUD);
-		this.stage.addActor(this.scoreLabel);
 
 		this.oldchatlabels = new ArrayList();
 	}
@@ -354,7 +357,7 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, map.getId());
+		this.mainPlayer = new Player(character, playerName, new Vector(64f, 64f), this, map.getId(), this.isSpectating);
 
 		this.mainPlayer.setPosition(64, 64);
 		this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
