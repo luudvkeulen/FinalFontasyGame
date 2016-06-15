@@ -119,9 +119,6 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param gameManager The gamemanager object.
 	 * @param roomId The id of the room where the player is in.
-	 * @param screen The screen object.
-	 * @param isSpectating A boolean indicating whether the player is spectating
-	 * or not.
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
@@ -144,8 +141,6 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
-
-		this.isSpectating = isSpectating;
 
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 	}

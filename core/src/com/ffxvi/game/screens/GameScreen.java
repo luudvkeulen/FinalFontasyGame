@@ -18,7 +18,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -60,6 +59,7 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.management.jmxremote.ConnectorBootstrap.PropertyNames;
 
 /**
  * The screen for the game.
@@ -747,7 +747,7 @@ public class GameScreen implements Screen, Observer {
 	private class PlayerListener implements PropertyChangeListener {
 
 		public PlayerListener() {
-			GameScreen.this.gameManager.getMainPlayer().subscribe(this, "PlayerHealthUpdated");
+			GameScreen.this.gameManager.getMainPlayer().subscribe(this, PropertyListenerNames.PLAYER_HEALTH);
 		}
 
 		@Override
