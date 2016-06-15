@@ -31,11 +31,7 @@ import java.util.logging.Logger;
  * @author gebruiker-pc
  */
 public class LibPlayer extends Player {
-
-	/**
-	 * A boolean indicating whether the player is spectating.
-	 */
-	private boolean isSpectating;
+	
 	/**
 	 * The textures (skin) that this player is using
 	 */
@@ -55,6 +51,7 @@ public class LibPlayer extends Player {
 
 	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId, boolean isSpectating) {
 		super(character, playerName, position, gameScreen.getGameManager(), roomId);
+
 		this.screen = gameScreen;
 		this.animationSpeed = 0.05f;
 		this.changeSkin();
@@ -85,7 +82,7 @@ public class LibPlayer extends Player {
 		return this.currentAnimation;
 	}
 
-	private void changeAnimation() {
+	public void changeAnimation() {
 		if (super.animation != IDLE) {
 			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
@@ -122,6 +119,19 @@ public class LibPlayer extends Player {
 	}
 
 	/**
+	 * Makes the player die.
+	 * @param killerName 
+	 */
+	@Override
+	public void die(String killerName) {
+		super.die(killerName);
+
+		// Set animation to DEATH
+		super.animation = PlayerAnimation.DEATH;
+		this.changeAnimation();
+	}
+
+	/**
 	 * Sets the player's animation to idle.
 	 */
 	@Override
@@ -135,9 +145,11 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		super.animation = SLASHING;
-		this.animation = SLASHING;
-		this.changeAnimation();
+		if (!super.isSpectating) {
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+		}
 	}
 
 	/**

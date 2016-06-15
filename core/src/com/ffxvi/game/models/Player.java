@@ -1,4 +1,4 @@
-/*
+﻿/*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
  * 
@@ -18,6 +18,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerAnimation;
 import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
@@ -89,6 +91,16 @@ public class Player extends SimplePlayer {
 	private GameManager gameManager;
 
 	private PropertyChangeSupport propertyChangeSupport;
+	
+	/**
+	 * A boolean indicating if the player is dead.
+	 */
+	protected boolean isDead;
+	
+	/**
+	 * A boolean indicating if the player is spectating.
+	 */
+	protected boolean isSpectating;
 
 	/**
 	 * Shooting sound
@@ -106,7 +118,10 @@ public class Player extends SimplePlayer {
 	 * @param playerName The name of this player. This can not be an empty
 	 * String (excluding spaces).
 	 * @param position The position of this player.
+	 * @param gameManager The gamemanager object.
 	 * @param roomId The id of the room where the player is in.
+	 * @param screen The screen object.
+	 * @param isSpectating A boolean indicating whether the player is spectating or not.
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
@@ -129,6 +144,8 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
+		
+		this.isSpectating = isSpectating;
 
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 	}
@@ -136,6 +153,9 @@ public class Player extends SimplePlayer {
 	/**
 	 * Special constructor for Player, only use this for player data received
 	 * from the server.
+	 * 
+	 * @param gameManager The gamemanager object.
+	 * @param screen The screen object.
 	 */
 	public Player(GameManager gameManager) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
@@ -371,13 +391,33 @@ public class Player extends SimplePlayer {
 	 * @param killer
 	 */
 	public void die(String killer) {
-		hitPoints = 100;
-		// Set dialog message
-		screen.Respawn(killer);
-		// Wait for X time
+		if (!this.isDead && !this.isSpectating) {
+			final String killer_name = killer;
 
-		// Respawn player 
-		// Hide dialog
+			// Set isDead to true
+			this.isDead = true;
+
+			// Set animation to DEATH
+//			super.animation = PlayerAnimation.DEATH;
+
+			// Delay in seconds
+			float delay = 1;
+
+			// Wait for X time
+			Timer.schedule(new Task() {
+				@Override
+				public void run() {
+					// Set isDead to false
+					isDead = false;
+
+					// Reset hitpoints
+					hitPoints = 100;
+
+					// Respawn player
+					screen.Respawn(killer_name);
+				}
+			}, delay);
+		}
 	}
 
 	/**
@@ -396,7 +436,11 @@ public class Player extends SimplePlayer {
 	 * @return A boolean indicating whether the player can fire.
 	 */
 	private boolean canFire() {
-		return System.nanoTime() - this.shootStart > SHOOTCOOLDOWN * 1000000000;
+		if (!this.isSpectating && !this.isDead) {
+			return System.nanoTime() - this.shootStart > SHOOTCOOLDOWN * 1000000000;
+		}
+		
+		return false;
 	}
 
 	private void changeAnimation() {
@@ -436,14 +480,16 @@ public class Player extends SimplePlayer {
 	 * Slashes in the given direction, given the player can slash.
 	 */
 	public void slash() {
-		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-			this.animationSpeed = 0.01f;
-			super.animation = SLASHING;
-			this.animation = SLASHING;
-			this.changeAnimation();
-			this.slash.play();
-			slashAnimCount = 1;
-			lastSlash = System.currentTimeMillis();
+		if (!this.isDead && !this.isSpectating) {
+			if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+				this.animationSpeed = 0.01f;
+				super.animation = SLASHING;
+				this.animation = SLASHING;
+				this.changeAnimation();
+				this.slash.play();
+				slashAnimCount = 1;
+				lastSlash = System.currentTimeMillis();
+			}
 		}
 	}
 
@@ -451,21 +497,22 @@ public class Player extends SimplePlayer {
 	 * Moves in the current direction.
 	 */
 	protected void move() {
-		switch (this.direction) {
-			default:
-			case LEFT:
-				x -= this.speed;
-				break;
-			case RIGHT:
-				x += this.speed;
-				break;
-			case UP:
-				y += this.speed;
-				break;
-			case DOWN:
-				y -= this.speed;
-				break;
-		}
+		if (!this.isDead) {
+			switch (this.direction) {
+				default:
+				case LEFT:
+					x -= this.speed;
+					break;
+				case RIGHT:
+					x += this.speed;
+					break;
+				case UP:
+					y += this.speed;
+					break;
+				case DOWN:
+					y -= this.speed;
+					break;
+			}
 
 		this.gameManager.sendPlayer(new SimplePlayer(this));
 	}
@@ -509,29 +556,31 @@ public class Player extends SimplePlayer {
 	}
 
 	protected void checkSlashing() {
-		//Check if player gets slashed
-		Collection<SimplePlayer> localMultiplayers = new ArrayList(gameManager.getMultiplayers());
-		if (localMultiplayers.isEmpty()) {
-			return;
-		}
-		for (SimplePlayer p : localMultiplayers) {
-			if (p.animation == PlayerAnimation.SLASHING
-					&& !p.getName().equals(this.playerName)) {
+		if (!this.isSpectating) {
+			//Check if player gets slashed
+			Collection<SimplePlayer> localMultiplayers = new ArrayList(gameManager.getMultiplayers());
+			if (localMultiplayers.isEmpty()) {
+				return;
+			}
+			for (SimplePlayer p : localMultiplayers) {
+				if (p.animation == PlayerAnimation.SLASHING
+						&& !p.getName().equals(this.playerName)) {
 
-//				LibPlayer player = new LibPlayer(this.screen);
-//				player.setData(p);
-				Circle cEnemy = new Circle();
-				cEnemy.x = p.getX();
-				cEnemy.y = p.getY();
-				cEnemy.radius = 50.0f;
+	//				LibPlayer player = new LibPlayer(this.screen);
+	//				player.setData(p);
+					Circle cEnemy = new Circle();
+					cEnemy.x = p.getX();
+					cEnemy.y = p.getY();
+					cEnemy.radius = 50.0f;
 
-				Circle cThis = new Circle();
-				cThis.x = this.getX();
-				cThis.y = this.getY();
-				cThis.radius = 50.0f;
+					Circle cThis = new Circle();
+					cThis.x = this.getX();
+					cThis.y = this.getY();
+					cThis.radius = 50.0f;
 
-				if (cEnemy.overlaps(cThis)) {
-					this.receiveDamage(1, p.playerName);
+					if (cEnemy.overlaps(cThis)) {
+						this.receiveDamage(1, p.playerName);
+					}
 				}
 			}
 		}
