@@ -49,11 +49,6 @@ public class MainClass extends Game implements ApplicationListener {
 	 * The screen of the menu.
 	 */
 	private MenuScreen menuScreen;
-	
-	/**
-	 * Funky soundtrack
-	 */
-	public static Sound backgroundmusic;
 
 	/**
 	 * The selected ip from serverbrowser
@@ -87,7 +82,6 @@ public class MainClass extends Game implements ApplicationListener {
 	 */
 	@Override
 	public void create() {
-		backgroundmusic = Gdx.audio.newSound(Gdx.files.internal("backgroundmusic.mp3"));
 		WIDTH = Gdx.graphics.getWidth();
 		HEIGHT = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera(WIDTH, HEIGHT);
