@@ -53,6 +53,18 @@ public class Server {
 		return playerData.size();
 	}
 	
+	public int getPlayerLimit() {
+		return playerLimit;
+	}
+	
+	public int getSpectatorCount() {
+		return spectators.size();
+	}
+	
+	public int getSpectatorLimit() {
+		return spectatorLimit;
+	}
+	
 	/**
 	 * Return the addresses + names of the connected Players
 	 * @return a List of the connected Player's info
