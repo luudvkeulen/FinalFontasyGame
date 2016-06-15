@@ -45,7 +45,11 @@ public class LibProjectile extends Projectile {
 			// Only check collisions if the bullet is allowed to collide
 			if (this.canCollide) {
 
-				super.checkCollision();
+				if (super.checkCollision()) {
+					this.despawnDelay = 0;
+					this.canCollide = false;
+					this.speed = 0;
+				}
 			}
 		}
 	}
