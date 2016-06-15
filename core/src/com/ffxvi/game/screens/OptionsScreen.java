@@ -192,7 +192,9 @@ public class OptionsScreen implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// Reset to fullscreen
-				cbFullscreen.setChecked(true);
+				Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+
+				reloadScreen();
 			}
 		});
 
