@@ -129,7 +129,7 @@ public class ServerBrowserScreen implements Screen {
 		
 		this.backgroundsprite = new Sprite(game.background);
 		
-		float rgbcolor = 0.1f;
+		float rgbcolor = 0.05f;
 		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
 		Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
 

@@ -22,6 +22,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -83,6 +85,12 @@ public class PreGameScreen implements Screen {
 	 * The layout.
 	 */
 	private final GlyphLayout layout;
+	
+	/**
+	 * background related
+	 */
+	private final Sprite backgroundsprite;
+	private final SpriteBatch backSpriteBatch;
 
 	/**
 	 * Initializes a new PreGamScreen.
@@ -93,6 +101,9 @@ public class PreGameScreen implements Screen {
 		this.layout = new GlyphLayout();
 		Gdx.input.setInputProcessor(this.stage);
 
+		this.backgroundsprite = new Sprite(game.background);
+		this.backSpriteBatch = new SpriteBatch();
+		
 		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		Skin buttonSkin = new Skin();
@@ -109,11 +120,17 @@ public class PreGameScreen implements Screen {
 		skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
+		float rgbcolor = 0.05f;
+		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
+		Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
+		Color reddisabled = new Color(Color.rgba8888(0.2f, rgbcolor, rgbcolor, 0.6f));
+		
 		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
-		textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+		textButtonStyle.up = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.down = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.over = buttonSkin.newDrawable("white", blacktransparenthover);
+		textButtonStyle.disabled = buttonSkin.newDrawable("white", reddisabled);
 
 		textButtonStyle.font = buttonSkin.getFont("default");
 
@@ -130,6 +147,7 @@ public class PreGameScreen implements Screen {
 		this.txtUsername = new TextField("Papyrus", skin);
 		this.txtUsername.setSize(200, 40);
 		this.txtUsername.setPosition((this.stage.getWidth() / 2) - (this.txtUsername.getWidth() / 2), (this.stage.getHeight() / 2) + 100);
+		this.txtUsername.setColor(blacktransparent);
 
 		// Add the textfield to the stage
 		this.stage.addActor(this.txtUsername);
@@ -168,6 +186,7 @@ public class PreGameScreen implements Screen {
 			}
 		});
 		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
+		enterAsSkeletonHoodedBowButton.setDisabled(true);
 		enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
 		this.stage.addActor(enterAsSkeletonHoodedBowButton);
 
@@ -182,6 +201,7 @@ public class PreGameScreen implements Screen {
 			}
 		});
 		enterAsSkeletonHoodedBowButton2.setTouchable(Touchable.disabled);
+		enterAsSkeletonHoodedBowButton2.setDisabled(true);
 		enterAsSkeletonHoodedBowButton2.setColor(Color.GRAY);
 		this.stage.addActor(enterAsSkeletonHoodedBowButton2);
 
@@ -249,8 +269,9 @@ public class PreGameScreen implements Screen {
 			return;
 		}
 
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+		backSpriteBatch.begin();
+		this.backgroundsprite.draw(backSpriteBatch);
+		backSpriteBatch.end();
 
 		this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		this.stage.draw();
