@@ -1,4 +1,4 @@
-﻿/*
+/*
  * (C) Copyright 2016 - S33A
  * Final Fontasy XVI, Version 1.0.
  * 
@@ -91,12 +91,12 @@ public class Player extends SimplePlayer {
 	private GameManager gameManager;
 
 	private PropertyChangeSupport propertyChangeSupport;
-	
+
 	/**
 	 * A boolean indicating if the player is dead.
 	 */
 	protected boolean isDead;
-	
+
 	/**
 	 * A boolean indicating if the player is spectating.
 	 */
@@ -121,7 +121,8 @@ public class Player extends SimplePlayer {
 	 * @param gameManager The gamemanager object.
 	 * @param roomId The id of the room where the player is in.
 	 * @param screen The screen object.
-	 * @param isSpectating A boolean indicating whether the player is spectating or not.
+	 * @param isSpectating A boolean indicating whether the player is spectating
+	 * or not.
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
@@ -144,7 +145,7 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
-		
+
 		this.isSpectating = isSpectating;
 
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
@@ -153,7 +154,7 @@ public class Player extends SimplePlayer {
 	/**
 	 * Special constructor for Player, only use this for player data received
 	 * from the server.
-	 * 
+	 *
 	 * @param gameManager The gamemanager object.
 	 * @param screen The screen object.
 	 */
@@ -390,34 +391,19 @@ public class Player extends SimplePlayer {
 	 *
 	 * @param killer
 	 */
-	public void die(String killer) {
+	public void die(final String killer) {
 		if (!this.isDead && !this.isSpectating) {
-			final String killer_name = killer;
 
 			// Set isDead to true
 			this.isDead = true;
-
-			// Set animation to DEATH
-//			super.animation = PlayerAnimation.DEATH;
-
-			// Delay in seconds
-			float delay = 1;
-
-			// Wait for X time
-			Timer.schedule(new Task() {
-				@Override
-				public void run() {
-					// Set isDead to false
-					isDead = false;
-
-					// Reset hitpoints
-					hitPoints = 100;
-
-					// Respawn player
-					screen.Respawn(killer_name);
-				}
-			}, delay);
 		}
+	}
+
+	public void respawn() {
+		isDead = false;
+
+		// Reset hitpoints
+		hitPoints = 100;
 	}
 
 	/**
@@ -439,7 +425,7 @@ public class Player extends SimplePlayer {
 		if (!this.isSpectating && !this.isDead) {
 			return System.nanoTime() - this.shootStart > SHOOTCOOLDOWN * 1000000000;
 		}
-		
+
 		return false;
 	}
 
@@ -514,7 +500,8 @@ public class Player extends SimplePlayer {
 					break;
 			}
 
-		this.gameManager.sendPlayer(new SimplePlayer(this));
+			this.gameManager.sendPlayer(new SimplePlayer(this));
+		}
 	}
 
 	/**
@@ -566,8 +553,8 @@ public class Player extends SimplePlayer {
 				if (p.animation == PlayerAnimation.SLASHING
 						&& !p.getName().equals(this.playerName)) {
 
-	//				LibPlayer player = new LibPlayer(this.screen);
-	//				player.setData(p);
+					//				LibPlayer player = new LibPlayer(this.screen);
+					//				player.setData(p);
 					Circle cEnemy = new Circle();
 					cEnemy.x = p.getX();
 					cEnemy.y = p.getY();
@@ -583,14 +570,6 @@ public class Player extends SimplePlayer {
 					}
 				}
 			}
-		}
-	}
-
-	protected void setDirectionInner(Direction direction, boolean shouldMove) {
-		this.direction = direction;
-		
-		if (shouldMove) {
-			this.move();
 		}
 	}
 

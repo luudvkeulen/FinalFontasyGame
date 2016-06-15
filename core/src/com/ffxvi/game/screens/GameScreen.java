@@ -89,7 +89,7 @@ public class GameScreen implements Screen, Observer {
 		this.gameManager = gameManager;
 	}
 
-	private final PlayerListener playerListener;
+	private PlayerListener playerListener;
 
 	//Map related
 	/**
@@ -281,8 +281,6 @@ public class GameScreen implements Screen, Observer {
 		this.stage.addActor(this.playerLabelNameHUD);
 
 		this.oldchatlabels = new ArrayList();
-
-		this.playerListener = new PlayerListener();
 	}
 
 	public static SkinManager getSkinManager() {
@@ -343,6 +341,8 @@ public class GameScreen implements Screen, Observer {
 		this.gameManager.setMainPlayer(mainPlayer);
 
 		mainPlayer.subscribe(this.playerListener, PropertyListenerNames.PLAYER_HEALTH);
+
+		this.playerListener = new PlayerListener();
 
 		this.playerLabelName.setText(playerName);
 		this.playerLabelNameHUD.setText(playerName);

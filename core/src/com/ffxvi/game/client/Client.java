@@ -13,11 +13,9 @@
 package com.ffxvi.game.client;
 
 import com.ffxvi.game.chat.ChatListener;
-import com.ffxvi.game.chat.ChatTextMessage;
 import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
-import com.ffxvi.game.screens.GameScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
