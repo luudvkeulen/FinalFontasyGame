@@ -18,20 +18,32 @@ import com.ffxvi.game.entities.PlayerAnimation;
  */
 public class SkinManager {
 
-	private PlayerSkin normalSkeleton;
-	private PlayerSkin hoodedSkeleton;
+	private PlayerSkin skeletonNormal;
+	private PlayerSkin skeletonHooded;
+	private PlayerSkin humanSoldier;
+	private PlayerSkin humanPirate;
 
-	public PlayerSkin getNormalSkeleton() {
-		return normalSkeleton;
+	public PlayerSkin getSkeletonNormal() {
+		return skeletonNormal;
 	}
 
-	public PlayerSkin getHoodedSkeleton() {
-		return hoodedSkeleton;
+	public PlayerSkin getSkeletonHooded() {
+		return skeletonHooded;
+	}
+	
+	public PlayerSkin getHumanSoldier() {
+		return humanSoldier;
+	}
+	
+	public PlayerSkin getHumanPirate() {
+		return humanPirate;
 	}
 
 	public SkinManager() {
-		normalSkeleton = new PlayerSkin(0.05f, "Units/Skeleton_Normal");
-		hoodedSkeleton = new PlayerSkin(0.05f, "Units/Skeleton_Hooded");
+		skeletonNormal = new PlayerSkin(0.05f, "Units/Skeleton_Normal");
+		skeletonHooded = new PlayerSkin(0.05f, "Units/Skeleton_Hooded");
+		humanSoldier = new PlayerSkin(0.05f, "Units/Human_Soldier");
+		humanPirate = new PlayerSkin(0.05f, "Units/Human_Pirate");
 	}
 
 	public class PlayerSkin {
@@ -39,26 +51,30 @@ public class SkinManager {
 		private float animationSpeed;
 		private String skinDirectoryPath;
 
-		private int walkSheetCols = 9;
-		private int walkSheetRows = 4;
+		private final int walkSheetCols = 9;
+		private final int walkSheetRows = 4;
 		private Animation walkUp;
 		private Animation walkLeft;
 		private Animation walkDown;
 		private Animation walkRight;
 
-		private int slashSheetCols = 6;
-		private int slashSheetRows = 4;
+		private final int slashSheetCols = 6;
+		private final int slashSheetRows = 4;
 		private Animation slashUp;
 		private Animation slashLeft;
 		private Animation slashDown;
 		private Animation slashRight;
 
-		private int shootSheetCols = 13;
-		private int shootSheetRows = 4;
+		private final int shootSheetCols = 13;
+		private final int shootSheetRows = 4;
 		private Animation shootUp;
 		private Animation shootLeft;
 		private Animation shootDown;
 		private Animation shootRight;
+		
+		private final int deathSheetCols = 5;
+		private final int deathSheetRows = 1;
+		private Animation death;
 
 		/**
 		 * The default constructor for PlayerSkin
@@ -134,6 +150,9 @@ public class SkinManager {
 							break;
 					}
 					break;
+				case DYING:
+					ret = this.death;
+					break;
 			}
 			return ret;
 		}
@@ -142,6 +161,7 @@ public class SkinManager {
 			setWalkingAnimations();
 			setSlashingAnimations();
 			setShootingAnimations();
+			setDeathAnimations();
 		}
 
 		private void setWalkingAnimations() {
@@ -184,6 +204,17 @@ public class SkinManager {
 			this.shootLeft = new Animation(shootSpeed, anims[1]);
 			this.shootDown = new Animation(shootSpeed, anims[2]);
 			this.shootRight = new Animation(shootSpeed, anims[3]);
+		}
+		
+		private void setDeathAnimations() {
+			float deathSpeed = this.animationSpeed * 1f;
+			
+			String path = skinDirectoryPath + "/Death.png";
+			Texture deathSheet = new Texture(Gdx.files.internal(path));
+			TextureRegion[][] anims = TextureRegion.split(deathSheet, deathSheet.getWidth()
+					/ deathSheetCols, deathSheet.getHeight() / deathSheetRows);
+
+			this.death = new Animation(deathSpeed, anims[0]);
 		}
 	}
 }

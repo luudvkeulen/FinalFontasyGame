@@ -97,10 +97,10 @@ public class LibPlayer extends Player {
 	private void changeSkin() {
 		switch (super.skin) {
 			case SKELETON_DAGGER:
-				this.playerSkin = GameScreen.getSkinManager().getNormalSkeleton();
+				this.playerSkin = GameScreen.getSkinManager().getSkeletonNormal();
 				break;
 			case SKELETON_HOODED:
-				this.playerSkin = GameScreen.getSkinManager().getHoodedSkeleton();
+				this.playerSkin = GameScreen.getSkinManager().getSkeletonHooded();
 				break;
 
 		}
