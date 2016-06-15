@@ -120,8 +120,9 @@ public class MenuScreen implements Screen {
 		this.skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
-		Color blacktransparent = new Color(Color.rgba8888(0.1f, 0.1f, 0.1f, 0.8f));
-		Color blacktransparenthover = new Color(Color.rgba8888(0.1f, 0.1f, 0.1f, 0.9f));
+		float rgbcolor = 0.1f;
+		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
+		Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
 		
 		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
 		TextButtonStyle textButtonStyle = new TextButtonStyle();
