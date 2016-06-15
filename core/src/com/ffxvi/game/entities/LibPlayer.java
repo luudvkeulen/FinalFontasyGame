@@ -209,9 +209,11 @@ public class LibPlayer extends Player {
 	 * @param direction The new direction.
 	 */
 	public void setDirection(Direction direction) {
+		this.direction = direction;
+
+		//If slashing, don't move
 		if (!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
 
-			this.direction = direction;
 			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
 				this.move();
 				this.animation = PlayerAnimation.WALKING;
@@ -220,9 +222,12 @@ public class LibPlayer extends Player {
 		} else {
 			counter2++;
 		}
-		if (counter2++ > 25) {
+		if (counter2++ > 30) {
 			counter2 = 0;
 		}
+
+		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
+
 	}
 
 	/**

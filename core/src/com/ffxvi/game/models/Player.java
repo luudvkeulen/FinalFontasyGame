@@ -155,7 +155,6 @@ public class Player extends SimplePlayer {
 	 * from the server.
 	 *
 	 * @param gameManager The gamemanager object.
-	 * @param screen The screen object.
 	 */
 	public Player(GameManager gameManager) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_NORMAL);
