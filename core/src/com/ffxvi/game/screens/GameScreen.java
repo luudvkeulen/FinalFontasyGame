@@ -14,7 +14,6 @@ package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -31,7 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.entities.LibProjectile;
 import com.ffxvi.game.models.Direction;
@@ -39,8 +37,6 @@ import com.ffxvi.game.models.Player;
 import com.ffxvi.game.models.PlayerCharacter;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.models.SimplePlayer;
-import com.ffxvi.game.models.SimpleProjectile;
-import com.ffxvi.game.logics.ChatManager;
 import com.ffxvi.game.logics.InputManager;
 import com.ffxvi.game.entities.Map;
 import com.ffxvi.game.models.GameManager;
@@ -71,6 +67,11 @@ import java.util.logging.Logger;
 public class GameScreen implements Screen, Observer {
 
 	/**
+	 * The manager for all player textures (skins)
+	 */
+	private static final SkinManager SKINMANAGER = new SkinManager();
+
+	/**
 	 * The main class for the game.
 	 */
 	private final MainClass game;
@@ -88,15 +89,7 @@ public class GameScreen implements Screen, Observer {
 		this.gameManager = gameManager;
 	}
 
-	/**
-	 * The manager for all player textures (skins)
-	 */
-	private static final SkinManager skinManager = new SkinManager();
-
-	/**
-	 * The code for this client.
-	 */
-	public final Client client;
+	private final PlayerListener playerListener;
 
 	//Map related
 	/**
@@ -124,11 +117,6 @@ public class GameScreen implements Screen, Observer {
 	 * The labels in which the chat messages are shown.
 	 */
 	private final List<Label> oldchatlabels;
-
-	/**
-	 * The controller class for chat related issues.
-	 */
-	public final ChatManager chatManager;
 
 	/**
 	 * The shape renderer.
@@ -200,55 +188,40 @@ public class GameScreen implements Screen, Observer {
 	/**
 	 * Dialog to show messages.
 	 */
-	private Dialog messageDialog;
+	private final Dialog messageDialog;
 
 	/**
 	 * Boolean indicating whether to render the scoreboard.
 	 */
-
 	private boolean renderScoreboard;
 
 	/**
 	 * Shake used for shaking the camera when the player is hit.
 	 */
-	private Shake shake;
+	private final Shake shake;
 
 	/**
 	 * A boolean indicating if the player is spectating.
 	 */
-	private boolean isSpectating;
-
-	private PlayerListener playerListener;
+	private final boolean isSpectating;
 
 	/**
 	 * Initializes a new GameScreen.
+	 *
+	 * @param isSpectating indicates whether the main player is spectating.
 	 */
 	public GameScreen(boolean isSpectating) {
 		this.game = MainClass.getInstance();
 
-		this.gameManager = new GameManager();
+		this.gameManager = new GameManager(isSpectating);
 
 		this.stage = new Stage();
 		this.shake = new Shake();
 		this.isSpectating = isSpectating;
 
-		this.chatManager = new ChatManager(this);
-
 		this.fontwhite = new BitmapFont();
 		this.fontred = new BitmapFont();
 		this.fontred.setColor(Color.RED);
-
-		if (!game.selectedIp.equals("")) {
-
-			String fulltext = game.selectedIp.replaceAll("\\s+", "");
-			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
-			System.out.println(fullip);
-			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this, this.isSpectating);
-			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
-		} else {
-			this.client = null;
-			System.out.println("Error no ip selected");
-		}
 
 		//Setup map stuff
 		this.maps = new ArrayList();
@@ -308,10 +281,12 @@ public class GameScreen implements Screen, Observer {
 		this.stage.addActor(this.playerLabelNameHUD);
 
 		this.oldchatlabels = new ArrayList();
+
+		this.playerListener = new PlayerListener();
 	}
 
 	public static SkinManager getSkinManager() {
-		return skinManager;
+		return SKINMANAGER;
 	}
 
 	/**
@@ -361,15 +336,13 @@ public class GameScreen implements Screen, Observer {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
 
-		map = getRandomMap();
+		GameScreen.map = getRandomMap();
 
 		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId(), false);
 		mainPlayer.setPosition(64, 64);
-		gameManager.setMainPlayer(mainPlayer);
+		this.gameManager.setMainPlayer(mainPlayer);
 
 		mainPlayer.subscribe(this.playerListener, PropertyListenerNames.PLAYER_HEALTH);
-
-		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 
 		this.playerLabelName.setText(playerName);
 		this.playerLabelNameHUD.setText(playerName);
@@ -388,17 +361,15 @@ public class GameScreen implements Screen, Observer {
 		return maps.get(idx);
 	}
 
-	public void Respawn(String killer) {
+	public void respawn(String killer) {
 		Collection<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 		for (SimplePlayer splayer : localMultiplayers) {
 			if (splayer.getName().equals(killer)) {
 				splayer.increaseScore();
-				this.client.sendPlayer(splayer);
+				this.gameManager.sendPlayer(splayer);
 				break;
 			}
 		}
-
-		updatePlayerHealthLabels(gameManager.getMainPlayer().getHitPoints());
 
 		int mapid = getRandomMap().getId();
 		gameManager.getMainPlayer().setRoomId(mapid);
@@ -406,7 +377,7 @@ public class GameScreen implements Screen, Observer {
 		setLevel(mapid, Direction.UPLEFT);
 		gameManager.getMainPlayer().setPosition(64, 64);
 
-		this.client.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
+		this.gameManager.sendPlayer(new SimplePlayer(gameManager.getMainPlayer()));
 	}
 
 	public void setDialogMessage(String message) {
@@ -419,7 +390,7 @@ public class GameScreen implements Screen, Observer {
 	 */
 	@Override
 	public void show() {
-		this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
+		this.renderer = new OrthogonalTiledMapRenderer(GameScreen.map.getMap(), 1f);
 		this.renderer.setView(this.game.camera);
 
 		this.stage.setKeyboardFocus(null);
@@ -455,7 +426,7 @@ public class GameScreen implements Screen, Observer {
 		}
 
 		boolean founddoor = false;
-		for (RectangleMapObject rmo : this.map.getDoors().getByType(RectangleMapObject.class)) {
+		for (RectangleMapObject rmo : GameScreen.map.getDoors().getByType(RectangleMapObject.class)) {
 			if (Integer.parseInt(rmo.getName()) == oldMap.getId()) {
 				founddoor = true;
 				switch (direction) {
@@ -478,12 +449,12 @@ public class GameScreen implements Screen, Observer {
 		}
 
 		if (!founddoor) {
-			this.gameManager.getMainPlayer().setPosition(this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().x + 64, this.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().y);
+			this.gameManager.getMainPlayer().setPosition(GameScreen.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().x + 64, GameScreen.map.getDoors().getByType(RectangleMapObject.class).first().getRectangle().y);
 		}
 
-		this.renderer = new OrthogonalTiledMapRenderer(this.map.getMap(), 1f);
+		this.renderer = new OrthogonalTiledMapRenderer(GameScreen.map.getMap(), 1f);
 		this.renderer.setView(this.game.camera);
-		this.gameManager.getMainPlayer().setRoomId(this.map.getId());
+		this.gameManager.getMainPlayer().setRoomId(GameScreen.map.getId());
 	}
 
 	/**
@@ -494,21 +465,11 @@ public class GameScreen implements Screen, Observer {
 	 * false if the projectile was created by this client
 	 */
 	public void addProjectile(Projectile projectile, boolean receivedFromServer) {
-
-		System.out.println("ADDING PROJECTILE");
 		if (projectile == null) {
 			throw new IllegalArgumentException("Projectile can not be null.");
 		}
 
-		gameManager.addProjectile(projectile);
-
-		// Check if this projectile has not been received from the server,
-		// to prevent an infinite loop
-		if (!receivedFromServer) {
-			System.out.println("SENDING PROJECTILE TO SERVER.");
-			// Send projectile to other players
-			client.sendProjectile(new SimpleProjectile(projectile));
-		}
+		gameManager.addProjectile(projectile, receivedFromServer);
 	}
 
 	/**
@@ -586,7 +547,7 @@ public class GameScreen implements Screen, Observer {
 				gameManager.setMultiplayers(new ArrayList());
 			}
 			if (gameManager.getMultiplayer() == null) {
-				gameManager.setMultiplayer(new Player(this.gameManager, this));
+				gameManager.setMultiplayer(new Player(this.gameManager));
 			}
 			List<SimplePlayer> localMultiplayers = gameManager.getMultiplayers();
 			batch.begin();
@@ -616,7 +577,8 @@ public class GameScreen implements Screen, Observer {
 			//Draw new labels
 			int counter = 0;
 			int spacing = 15;
-			for (Label label : this.chatManager.getMessages()) {
+			for (String message : this.gameManager.chatManager.getMessages()) {
+				Label label = new Label(message, this.skin);
 				label.setPosition(10, Gdx.graphics.getHeight() - label.getHeight() - (counter * spacing));
 				this.oldchatlabels.add(label);
 				this.stage.addActor(label);
@@ -739,7 +701,7 @@ public class GameScreen implements Screen, Observer {
 			if (!sender.isEmpty() && !message.isEmpty()) {
 				this.stage.setKeyboardFocus(this.scoreLabel);
 				inputManager.isChatting = false;
-				this.chatManager.sendMessage(sender, message);
+				this.gameManager.chatManager.sendMessage(sender, message);
 				this.textfield.setText("");
 			} else {
 				this.stage.setKeyboardFocus(this.textfield);
@@ -772,7 +734,7 @@ public class GameScreen implements Screen, Observer {
 
 	@Override
 	public void dispose() {
-		client.stop(this.isSpectating);
+		this.gameManager.stop(this.isSpectating);
 	}
 
 	private class PlayerListener implements PropertyChangeListener {

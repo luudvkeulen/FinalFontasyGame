@@ -15,8 +15,6 @@ package com.ffxvi.game.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -25,7 +23,6 @@ import com.ffxvi.game.entities.PlayerAnimation;
 import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
 import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
-import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.SkinManager.PlayerSkin;
 import com.ffxvi.game.support.Utils;
@@ -35,8 +32,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Entity which represents a player.
@@ -96,11 +91,6 @@ public class Player extends SimplePlayer {
 	private PropertyChangeSupport propertyChangeSupport;
 
 	/**
-	 * The game screen.
-	 */
-	private final GameScreen screen;
-
-	/**
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
@@ -118,7 +108,7 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param roomId The id of the room where the player is in.
 	 */
-	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId, GameScreen screen) {
+	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
 
 		if (character == null) {
@@ -141,14 +131,13 @@ public class Player extends SimplePlayer {
 		this.modifiedGridSizeY = gridsize - 16;
 
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
-		this.screen = screen;
 	}
 
 	/**
 	 * Special constructor for Player, only use this for player data received
 	 * from the server.
 	 */
-	public Player(GameManager gameManager, GameScreen screen) {
+	public Player(GameManager gameManager) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
 
 		this.gameManager = gameManager;
@@ -158,8 +147,6 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
-
-		this.screen = screen;
 	}
 
 	/**
@@ -372,7 +359,7 @@ public class Player extends SimplePlayer {
 			this.hitPoints = 0;
 
 			this.die(attacker);
-			this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
+			this.gameManager.chatManager.sendMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
 		}
 
 		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
@@ -380,6 +367,7 @@ public class Player extends SimplePlayer {
 
 	/**
 	 * Lets the player die.
+	 *
 	 * @param killer
 	 */
 	public void die(String killer) {
@@ -413,7 +401,7 @@ public class Player extends SimplePlayer {
 
 	private void changeAnimation() {
 		if (super.animation != IDLE) {
-			 this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
+			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
 			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
 		}
@@ -428,9 +416,9 @@ public class Player extends SimplePlayer {
 			this.shootStart = System.nanoTime();
 
 			this.bowsound.play();
-			
+
 			// Create a bullet inside the player with the direction and speed
-			this.screen.addProjectile(new Projectile(new Vector(this.x
+			this.gameManager.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
 					30, this.aimDirection, this.roomId, this.playerName, this.gameManager), false);
 		}
@@ -460,23 +448,6 @@ public class Player extends SimplePlayer {
 	}
 
 	/**
-	 * Sets the direction to the given direction.
-	 *
-	 * @param direction The new direction.
-	 */
-	public void setDirection(Direction direction) {
-		super.animation = WALKING;
-		super.direction = direction;
-		this.changeAnimation();
-
-		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-			this.move();
-		}
-
-		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
-	}
-
-	/**
 	 * Moves in the current direction.
 	 */
 	protected void move() {
@@ -496,7 +467,7 @@ public class Player extends SimplePlayer {
 				break;
 		}
 
-		this.screen.client.sendPlayer(new SimplePlayer(this));
+		this.gameManager.sendPlayer(new SimplePlayer(this));
 	}
 
 	/**
@@ -534,7 +505,7 @@ public class Player extends SimplePlayer {
 	 * Update method
 	 */
 	public void update() {
-		screen.client.sendPlayer(new SimplePlayer(this));
+		this.gameManager.sendPlayer(new SimplePlayer(this));
 	}
 
 	protected void checkSlashing() {
@@ -566,62 +537,12 @@ public class Player extends SimplePlayer {
 		}
 	}
 
-	/**
-	 * Checks the given rec for collision with the given (wall)objects.
-	 *
-	 * @param rec The rectangle to check.
-	 * @param objects The objects to make sure are not in the rectangle.
-	 * @param wallobjects The wall objects to make sure are not in the
-	 * rectangle.
-	 * @return true if collision, false if not.
-	 */
-	private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects) {
-		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
-			Rectangle rectangleMapObject = mapObject.getRectangle();
-			if (rec.overlaps(rectangleMapObject)) {
-				return true;
-			}
-		}
-
-		for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class)) {
-			Rectangle rectangleMapObject = mapObject.getRectangle();
-			if (rec.overlaps(rectangleMapObject)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Checks if the given rectangle collides with a door.
-	 *
-	 * @param rec The rectangle to check for collision.
-	 * @param objects The objects (doors) of which should be looked within the
-	 * rectangle.
-	 */
-	private void checkDoorCollision(Rectangle rec, MapObjects objects) {
-		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
-			Rectangle rectangleMapObject = mapObject.getRectangle();
-			if (rec.overlaps(rectangleMapObject)) {
-				int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
-
-				try {
-					this.screen.setLevel(mapId, this.direction);
-				} catch (IllegalArgumentException ex) {
-					Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		}
-	}
-
-	protected void setDirectionInner(Direction direction) {
+	protected void setDirectionInner(Direction direction, boolean shouldMove) {
 		this.direction = direction;
-		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+		
+		if (shouldMove) {
 			this.move();
 		}
-
-		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
 	}
 
 	/**

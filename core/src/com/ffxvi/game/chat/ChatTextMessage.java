@@ -51,7 +51,7 @@ public class ChatTextMessage {
      * @throws IllegalArgumentException When a parameter does not reach the
      * requirements this method will give a exception.
      */
-    public ChatTextMessage(String playerName, String messageContent) {
+    public ChatTextMessage(String playerName, String messageContent, Date date) {
         if (playerName == null || messageContent == null
                 || messageContent.trim().isEmpty()) {
 
@@ -61,8 +61,13 @@ public class ChatTextMessage {
 
         this.playerName = playerName;
         this.messageContent = messageContent;
-        this.date = new Date();
+        this.date = date;
     }
+	
+	public ChatTextMessage(String receivedMessage)
+	{
+		
+	}
 
     /**
      * This method is the toString method. It returns the message like how it

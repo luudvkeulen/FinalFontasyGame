@@ -5,6 +5,11 @@
  */
 package com.ffxvi.game.models;
 
+import com.brashmonkey.spriter.Player.PlayerListener;
+import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.ChatTextMessage;
+import com.ffxvi.game.client.Client;
+import com.ffxvi.game.logics.ChatManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +20,13 @@ import java.util.List;
  * @author Joel
  */
 public class GameManager {
+
+	/**
+	 * The code for this client.
+	 */
+	public final Client client;
+
+	public final ChatManager chatManager;
 
 	/**
 	 * The main player of the game.
@@ -35,20 +47,40 @@ public class GameManager {
 	/**
 	 * An ArrayList containing all projectiles which are in the room.
 	 */
-	private List<Projectile> projectiles;
+	private final List<Projectile> projectiles;
 
-	public GameManager() {
-		projectiles = new ArrayList<Projectile>();
-		multiplayers = new ArrayList<SimplePlayer>();
+	public GameManager(boolean isSpectating) {
+		this.chatManager = new ChatManager(this);
 
+		this.projectiles = new ArrayList<Projectile>();
+		this.multiplayers = new ArrayList<SimplePlayer>();
+
+		MainClass game = MainClass.getInstance();
+
+		if (!game.selectedIp.equals("")) {
+
+			String fulltext = game.selectedIp.replaceAll("\\s+", "");
+			String fullip = fulltext.substring(fulltext.indexOf("-") + 1);
+			System.out.println(fullip);
+			this.client = new Client(fullip.substring(0, fullip.indexOf(":")), Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)), 1337, this, isSpectating);
+			System.out.println(fullip.substring(0, fullip.indexOf(":")) + Integer.parseInt(fullip.substring(fullip.indexOf(":") + 1)));
+		} else {
+			this.client = null;
+			System.out.println("Error no ip selected");
+		}
 	}
 
 	public List<Projectile> getProjectiles() {
 		return projectiles;
 	}
 
-	public void addProjectile(Projectile projectile) {
+	public void addProjectile(Projectile projectile, boolean receivedFromServer) {
 		projectiles.add(projectile);
+
+		if (!receivedFromServer) {
+			// Send projectile to other players
+			client.sendProjectile(new SimpleProjectile(projectile));
+		}
 	}
 
 	public List<SimplePlayer> getMultiplayers() {
@@ -69,6 +101,8 @@ public class GameManager {
 
 	public void setMainPlayer(Player mainPlayer) {
 		this.mainPlayer = mainPlayer;
+
+		this.client.sendPlayer(new SimplePlayer(this.getMainPlayer()));
 	}
 
 	/**
@@ -99,4 +133,11 @@ public class GameManager {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	public void sendPlayer(SimplePlayer player) {
+		this.client.sendPlayer(player);
+	}
+
+	public void stop(boolean isSpectating) {
+		this.client.stop(isSpectating);
+	}
 }

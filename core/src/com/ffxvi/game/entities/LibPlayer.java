@@ -9,6 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Rectangle;
 import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
 import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
@@ -20,6 +23,8 @@ import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,7 +54,7 @@ public class LibPlayer extends Player {
 	private final float animationSpeed;
 
 	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId, boolean isSpectating) {
-		super(character, playerName, position, gameScreen.getGameManager(), roomId, gameScreen);
+		super(character, playerName, position, gameScreen.getGameManager(), roomId);
 		this.screen = gameScreen;
 		this.animationSpeed = 0.05f;
 		this.changeSkin();
@@ -58,7 +63,7 @@ public class LibPlayer extends Player {
 	}
 
 	public LibPlayer(GameScreen screen) {
-		super(screen.getGameManager(), screen);
+		super(screen.getGameManager());
 		this.screen = screen;
 
 		this.animationSpeed = 0.05f;
@@ -115,8 +120,6 @@ public class LibPlayer extends Player {
 
 		super.checkSlashing();
 	}
-	
-	
 
 	/**
 	 * Sets the player's animation to idle.
@@ -142,11 +145,67 @@ public class LibPlayer extends Player {
 	 *
 	 * @param direction The new direction.
 	 */
-	@Override
 	public void setDirection(Direction direction) {
-		this.setDirectionInner(direction);
+		boolean shouldMove = false;
+
+		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+			shouldMove = true;
+		}
+
+		this.setDirectionInner(direction, shouldMove);
+
+		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
+		/**
+		 * Checks if the given rectangle collides with a door.
+		 *
+		 * @param rec The rectangle to check for collision.
+		 * @param objects The objects (doors) of which should be looked within
+		 * the rectangle.
+		 */
 		super.animation = WALKING;
 		this.changeAnimation();
+	}
+
+	/**
+	 * Checks the given rec for collision with the given (wall)objects.
+	 *
+	 * @param rec The rectangle to check.
+	 * @param objects The objects to make sure are not in the rectangle.
+	 * @param wallobjects The wall objects to make sure are not in the
+	 * rectangle.
+	 * @return true if collision, false if not.
+	 */
+	private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects) {
+		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangleMapObject = mapObject.getRectangle();
+			if (rec.overlaps(rectangleMapObject)) {
+				return true;
+			}
+		}
+
+		for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangleMapObject = mapObject.getRectangle();
+			if (rec.overlaps(rectangleMapObject)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void checkDoorCollision(Rectangle rec, MapObjects objects) {
+		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
+			Rectangle rectangleMapObject = mapObject.getRectangle();
+			if (rec.overlaps(rectangleMapObject)) {
+				int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
+
+				try {
+					this.screen.setLevel(mapId, this.direction);
+				} catch (IllegalArgumentException ex) {
+					Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		}
 	}
 
 	/**
