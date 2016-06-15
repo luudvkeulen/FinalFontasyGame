@@ -20,6 +20,7 @@ import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import org.w3c.dom.css.Counter;
 
 /**
  *
@@ -105,6 +106,7 @@ public class LibPlayer extends Player {
 		}
 	}
 
+	int counter = 0;
 	/**
 	 * Method that is performed each tick and focuses on drawing.
 	 *
@@ -112,7 +114,26 @@ public class LibPlayer extends Player {
 	 */
 	public void render(SpriteBatch batch) {
 		super.stateTime += Gdx.graphics.getDeltaTime();
-		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+
+		TextureRegion currentFrame = null;
+		
+		if(currentAnimation == this.playerSkin.getAnimation(SLASHING, super.direction)) {
+			currentFrame = this.currentAnimation.getKeyFrame(counter);
+			counter++;
+		} else {
+			currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+		}
+		
+		if(counter != 0) {
+			currentFrame =  this.playerSkin.getAnimation(SLASHING, super.direction).getKeyFrame(counter);
+			counter++;
+		}
+		
+		if(counter >= 10) {
+			counter = 0;
+		}
+		
+		
 		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
 
 		super.checkSlashing();

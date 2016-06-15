@@ -96,6 +96,7 @@ public class OptionsScreen implements Screen {
 		this.layout = new GlyphLayout();
 		this.batch = new SpriteBatch();
 		this.backgroundsprite = new Sprite(game.background);
+		reloadScreen();
 	}
 
 	public final void reloadScreen() {
@@ -276,7 +277,7 @@ public class OptionsScreen implements Screen {
 
 	@Override
 	public void show() {
-
+		
 	}
 
 	@Override
