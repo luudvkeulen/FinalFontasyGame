@@ -47,7 +47,7 @@ public class LibPlayer extends Player {
 	 */
 	private Animation currentAnimation;
 
-	private GameScreen screen;
+	private final GameScreen screen;
 
 	private long lastSlash = 0;
 
@@ -216,7 +216,7 @@ public class LibPlayer extends Player {
 
 			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
 				this.move();
-				this.animation = PlayerAnimation.WALKING;
+				super.animation = PlayerAnimation.WALKING;
 				this.changeAnimation();
 			}
 		} else {
