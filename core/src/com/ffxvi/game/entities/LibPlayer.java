@@ -9,9 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
-import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
-import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
+import static com.ffxvi.game.entities.PlayerAnimation.*;
 import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.models.Player;
 import com.ffxvi.game.models.PlayerCharacter;
@@ -20,6 +18,7 @@ import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.SkinManager;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import org.w3c.dom.css.Counter;
 
 /**
  *
@@ -38,6 +37,8 @@ public class LibPlayer extends Player {
 	private Animation currentAnimation;
 
 	private GameScreen screen;
+	
+	private long lastSlash = 0;
 
 	/**
 	 * The speed at which the animation runs.
@@ -89,16 +90,22 @@ public class LibPlayer extends Player {
 	 */
 	private void changeSkin() {
 		switch (super.skin) {
-			case SKELETON_DAGGER:
-				this.playerSkin = GameScreen.getSkinManager().getNormalSkeleton();
+			case SKELETON_NORMAL:
+				this.playerSkin = GameScreen.getSkinManager().getSkeletonNormal();
 				break;
 			case SKELETON_HOODED:
-				this.playerSkin = GameScreen.getSkinManager().getHoodedSkeleton();
+				this.playerSkin = GameScreen.getSkinManager().getSkeletonHooded();
 				break;
-
+			case HUMAN_SOLDIER:
+				this.playerSkin = GameScreen.getSkinManager().getHumanSoldier();
+				break;
+			case HUMAN_PIRATE:
+				this.playerSkin = GameScreen.getSkinManager().getHumanPirate();
+				break;
 		}
 	}
 
+	int counter = 0;
 	/**
 	 * Method that is performed each tick and focuses on drawing.
 	 *
@@ -106,7 +113,26 @@ public class LibPlayer extends Player {
 	 */
 	public void render(SpriteBatch batch) {
 		super.stateTime += Gdx.graphics.getDeltaTime();
-		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+
+		TextureRegion currentFrame = null;
+		
+		if(currentAnimation == this.playerSkin.getAnimation(SLASHING, super.direction)) {
+			currentFrame = this.currentAnimation.getKeyFrame(counter);
+			counter++;
+		} else {
+			currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+		}
+		
+		if(counter != 0) {
+			currentFrame =  this.playerSkin.getAnimation(SLASHING, super.direction).getKeyFrame(counter);
+			counter++;
+		}
+		
+		if(counter >= 10) {
+			counter = 0;
+		}
+		
+		
 		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
 
 		super.checkSlashing();
@@ -121,7 +147,7 @@ public class LibPlayer extends Player {
 		super.die(killerName);
 
 		// Set animation to DEATH
-		super.animation = PlayerAnimation.DEATH;
+		super.animation = PlayerAnimation.DYING;
 		this.changeAnimation();
 	}
 	
@@ -141,13 +167,16 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		if (!super.isSpectating) {
+		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
 			super.animation = SLASHING;
 			this.animation = SLASHING;
 			this.changeAnimation();
+			this.slash.play();
+			lastSlash = System.currentTimeMillis();
 		}
 	}
 
+	int counter2 = 0;
 	/**
 	 * Sets the direction to the given direction.
 	 *
@@ -155,9 +184,17 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void setDirection(Direction direction) {
-		this.setDirectionInner(direction);
-		super.animation = WALKING;
-		this.changeAnimation();
+		if(!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
+			this.setDirectionInner(direction);
+			super.animation = WALKING;
+			this.changeAnimation();
+		} else {
+			counter2++;
+		}
+		
+		if(counter2++ > 25) {
+			counter2 = 0;
+		}
 	}
 
 	/**

@@ -31,6 +31,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ffxvi.game.MainClass;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The screen for the main menu.
@@ -109,18 +111,14 @@ public class MenuScreen implements Screen {
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		//Background
-		Texture background = new Texture(Gdx.files.internal("background.png"));
-		this.backgroundsprite = new Sprite(background);
-		//this.sprite.scale(-0.3f);
-		//this.sprite.setPosition((stage.getWidth() / 2) - (texture.getWidth() / 2),
-		//this.stage.getHeight() - texture.getHeight() + 10);
+		this.backgroundsprite = new Sprite(game.background);
 		
 		// Store the default libgdx font under the name "default".
 		BitmapFont bfont = new BitmapFont();
 		this.skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
-		float rgbcolor = 0.1f;
+		float rgbcolor = 0.05f;
 		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
 		Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
 		
@@ -183,6 +181,11 @@ public class MenuScreen implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException ex) {
+					Logger.getLogger(MenuScreen.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				Gdx.app.exit();
 			}
 		});
@@ -204,9 +207,6 @@ public class MenuScreen implements Screen {
 	 */
 	@Override
 	public void render(float delta) {
-		// Draw background color
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
 		// Render background image
 		this.batch.begin();

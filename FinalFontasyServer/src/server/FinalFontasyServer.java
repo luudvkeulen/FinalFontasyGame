@@ -34,11 +34,7 @@ public class FinalFontasyServer {
 		System.out.println("\033[H\033[2J");
 		// Write a welcome message
 		System.out.println("\n---Welcome to the Final Fontasy XVI server---");
-
-		Scanner sc = new Scanner(System.in);
-		Scanner lineSc;
-		String line = "";
-		String input = "";
+		
 		switch (args.length) {
 			case 0:
 				startAndSubscribe("", 0);
@@ -54,8 +50,27 @@ public class FinalFontasyServer {
 				break;
 			default:
 				break;
-		}		
+		}
 		
+		Scanner sc = new Scanner(System.in);
+		String line = "";
+		Scanner lineSc = new Scanner(line);
+		String input = "";
+		String name = "";
+		System.out.println("");
+		while (name == "") {
+			System.out.print("Please enter a name for the server: ");
+			line = sc.nextLine();
+			lineSc = new Scanner(line);
+			try {
+				input = lineSc.next();
+				name = input;
+			} catch (NoSuchElementException nsee) {
+				System.out.println("Invalid name");
+			}
+		}
+		serverSubscriber.renameServer(name);
+		System.out.println(String.format("\nServer '%1$s' is now online. Type 'help' for a list of commands", name));
 
 		// A while loop with a boolean to be able to keep receiving commands from the terminal
 		boolean stop = false;
@@ -82,28 +97,43 @@ public class FinalFontasyServer {
 					break;
 				// Display the currently connected clients in the form of IP Addresses
 				case "players":
-					System.out.println("Current players:");
+					System.out.println(String.format(""
+							+ "--------------------------------------------------\n"
+							+ "Current players: [%1$s/%2$s]", server.getPlayerCount(), server.getPlayerLimit()));
 					for (String s : server.getPlayerInfo()) {
 						System.out.println(s);
 					}
-					System.out.println("----------------");
+					System.out.println(""
+							+ "--------------------------------------------------");
+					break;
+				// Display the amount of spectators that are connected
+				case "spectators":
+					System.out.println(String.format(""
+							+ "-------------------------------\n"
+							+ "Current spectators: [%1$s/%2$s]\n"
+							+ "-------------------------------", server.getSpectatorCount(), server.getSpectatorLimit()));
 					break;
 				case "name":
-					String name;
-					Scanner in = new Scanner(System.in);
-					name = in.nextLine();
+					try {
+						name = lineSc.next();
+					} catch (NoSuchElementException nsee) {
+						System.out.println(String.format("This server is known as: %1$s", name));
+						break;
+					}
 					serverSubscriber.renameServer(name);
 					System.out.println("renamed to: " + name);
 					break;
 				// Display all available commands
 				case "help":
-					System.out.println("----------------\n"
-							+ "help - Shows all available commands.\n"
-							+ "stop - Stops the server.\n"
-							+ "port - Shows the port that the server is listening on.\n"
-							+ "players - Shows the addresses of all the connected players.\n"
-							+ "name - sets the name of the server.\n"
-							+ "----------------");
+					System.out.println(""
+							+ "---------------------------------------------------------------------------\n"
+							+ "help\t\t\tShows all available commands.\n"
+							+ "stop\t\t\tStops the server.\n"
+							+ "port\t\t\tShows the port that the server is listening on.\n"
+							+ "players\t\t\tShows the addresses of all the connected players.\n"
+							+ "spectators\t\tShows the amount of spectators that are connected\n"
+							+ "name [name]\t\tSets the name of the server.\n"
+							+ "---------------------------------------------------------------------------");
 					break;
 			}
 			lineSc.close();
