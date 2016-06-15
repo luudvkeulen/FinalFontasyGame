@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Timer;
 import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
 import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  * @author gebruiker-pc
  */
 public class LibPlayer extends Player {
-	
+
 	/**
 	 * The textures (skin) that this player is using
 	 */
@@ -120,15 +121,30 @@ public class LibPlayer extends Player {
 
 	/**
 	 * Makes the player die.
-	 * @param killerName 
+	 *
+	 * @param killerName
 	 */
 	@Override
-	public void die(String killerName) {
+	public void die(final String killerName) {
 		super.die(killerName);
 
 		// Set animation to DEATH
 		super.animation = PlayerAnimation.DEATH;
 		this.changeAnimation();
+
+		// Delay in seconds
+		float delay = 1;
+
+		// Wait for X time
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+
+				// Respawn player
+				screen.respawn(killerName);
+				LibPlayer.this.respawn();
+			}
+		}, delay);
 	}
 
 	/**
@@ -158,13 +174,10 @@ public class LibPlayer extends Player {
 	 * @param direction The new direction.
 	 */
 	public void setDirection(Direction direction) {
-		boolean shouldMove = false;
-
+		this.direction = direction;
 		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-			shouldMove = true;
+			this.move();
 		}
-
-		this.setDirectionInner(direction, shouldMove);
 
 		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
 		/**

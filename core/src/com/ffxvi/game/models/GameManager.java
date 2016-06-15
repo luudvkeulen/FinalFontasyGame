@@ -5,9 +5,7 @@
  */
 package com.ffxvi.game.models;
 
-import com.brashmonkey.spriter.Player.PlayerListener;
 import com.ffxvi.game.MainClass;
-import com.ffxvi.game.chat.ChatTextMessage;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.logics.ChatManager;
 import java.util.ArrayList;
