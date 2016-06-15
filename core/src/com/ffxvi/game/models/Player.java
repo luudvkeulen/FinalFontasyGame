@@ -148,7 +148,7 @@ public class Player extends SimplePlayer {
 	 * from the server.
 	 */
 	public Player(GameManager gameManager, GameScreen screen) {
-		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
+		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_NORMAL);
 
 		this.gameManager = gameManager;
 

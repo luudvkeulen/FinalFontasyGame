@@ -9,9 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
-import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
-import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
+import static com.ffxvi.game.entities.PlayerAnimation.*;
 import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.models.Player;
 import com.ffxvi.game.models.PlayerCharacter;
@@ -96,13 +94,18 @@ public class LibPlayer extends Player {
 	 */
 	private void changeSkin() {
 		switch (super.skin) {
-			case SKELETON_DAGGER:
+			case SKELETON_NORMAL:
 				this.playerSkin = GameScreen.getSkinManager().getSkeletonNormal();
 				break;
 			case SKELETON_HOODED:
 				this.playerSkin = GameScreen.getSkinManager().getSkeletonHooded();
 				break;
-
+			case HUMAN_SOLDIER:
+				this.playerSkin = GameScreen.getSkinManager().getHumanSoldier();
+				break;
+			case HUMAN_PIRATE:
+				this.playerSkin = GameScreen.getSkinManager().getHumanPirate();
+				break;
 		}
 	}
 

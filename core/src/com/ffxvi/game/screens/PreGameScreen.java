@@ -163,63 +163,57 @@ public class PreGameScreen implements Screen {
 		final Sound click = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
 		
 		// Create imageButtons
-		TextButton enterAsSkeletonDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
-		enterAsSkeletonDaggerButton.setSize(200, 200);
-		enterAsSkeletonDaggerButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonDaggerButton.getWidth() * 2) - (BUTTON_OFFSET * 1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
-		enterAsSkeletonDaggerButton.addListener(new ClickListener() {
+		TextButton enterAsSkeletonNormalButton = new TextButton("Skeleton Normal", textButtonStyle);
+		enterAsSkeletonNormalButton.setSize(200, 200);
+		enterAsSkeletonNormalButton.setPosition((this.stage.getWidth() / 2) - (enterAsSkeletonNormalButton.getWidth() * 2) - (BUTTON_OFFSET * 1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonNormalButton.getHeight());
+		enterAsSkeletonNormalButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
-				enterGame(PlayerCharacter.SKELETON_DAGGER);
+				enterGame(PlayerCharacter.SKELETON_NORMAL);
 			}
 		});
-		this.stage.addActor(enterAsSkeletonDaggerButton);
+		this.stage.addActor(enterAsSkeletonNormalButton);
 
-		TextButton enterAsSkeletonHoodedBowButton = new TextButton("Skeleton Hooded Bow", textButtonStyle);
-		enterAsSkeletonHoodedBowButton.setSize(200, 200);
-		enterAsSkeletonHoodedBowButton.setPosition((this.stage.getWidth() / 2) - enterAsSkeletonHoodedBowButton.getWidth() - (BUTTON_OFFSET / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
-		enterAsSkeletonHoodedBowButton.addListener(new ClickListener() {
+		TextButton enterAsSkeletonHoodedButton = new TextButton("Skeleton Hooded", textButtonStyle);
+		enterAsSkeletonHoodedButton.setSize(200, 200);
+		enterAsSkeletonHoodedButton.setPosition((this.stage.getWidth() / 2) - enterAsSkeletonHoodedButton.getWidth() - (BUTTON_OFFSET / 2), (this.stage.getHeight() / 2) - enterAsSkeletonNormalButton.getHeight());
+		enterAsSkeletonHoodedButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
 				enterGame(PlayerCharacter.SKELETON_HOODED);
 			}
 		});
-		enterAsSkeletonHoodedBowButton.setTouchable(Touchable.disabled);
-		enterAsSkeletonHoodedBowButton.setDisabled(true);
-		enterAsSkeletonHoodedBowButton.setColor(Color.GRAY);
-		this.stage.addActor(enterAsSkeletonHoodedBowButton);
+		this.stage.addActor(enterAsSkeletonHoodedButton);
 
-		TextButton enterAsSkeletonHoodedBowButton2 = new TextButton("Skeleton Hooded Bow 2", textButtonStyle);
-		enterAsSkeletonHoodedBowButton2.setSize(200, 200);
-		enterAsSkeletonHoodedBowButton2.setPosition((this.stage.getWidth() / 2) + (BUTTON_OFFSET / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
-		enterAsSkeletonHoodedBowButton2.addListener(new ClickListener() {
+		TextButton enterAsHumanSoldierButton = new TextButton("Human Soldier", textButtonStyle);
+		enterAsHumanSoldierButton.setSize(200, 200);
+		enterAsHumanSoldierButton.setPosition((this.stage.getWidth() / 2) + (BUTTON_OFFSET / 2), (this.stage.getHeight() / 2) - enterAsSkeletonNormalButton.getHeight());
+		enterAsHumanSoldierButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
-				enterGame(PlayerCharacter.SKELETON_HOODED);
+				enterGame(PlayerCharacter.HUMAN_SOLDIER);
 			}
 		});
-		enterAsSkeletonHoodedBowButton2.setTouchable(Touchable.disabled);
-		enterAsSkeletonHoodedBowButton2.setDisabled(true);
-		enterAsSkeletonHoodedBowButton2.setColor(Color.GRAY);
-		this.stage.addActor(enterAsSkeletonHoodedBowButton2);
+		this.stage.addActor(enterAsHumanSoldierButton);
 
-		TextButton enterAsSkeletonHoodedDaggerButton = new TextButton("Skeleton Dagger", textButtonStyle);
-		enterAsSkeletonHoodedDaggerButton.setSize(200, 200);
-		enterAsSkeletonHoodedDaggerButton.setPosition((this.stage.getWidth() / 2) + enterAsSkeletonHoodedDaggerButton.getWidth() + (BUTTON_OFFSET * 1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight());
-		enterAsSkeletonHoodedDaggerButton.addListener(new ClickListener() {
+		TextButton enterAsHumanPirateButton = new TextButton("Human Pirate", textButtonStyle);
+		enterAsHumanPirateButton.setSize(200, 200);
+		enterAsHumanPirateButton.setPosition((this.stage.getWidth() / 2) + enterAsHumanPirateButton.getWidth() + (BUTTON_OFFSET * 1.5f), (this.stage.getHeight() / 2) - enterAsSkeletonNormalButton.getHeight());
+		enterAsHumanPirateButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				click.play();
-				enterGame(PlayerCharacter.SKELETON_HOODED);
+				enterGame(PlayerCharacter.HUMAN_PIRATE);
 			}
 		});
-		this.stage.addActor(enterAsSkeletonHoodedDaggerButton);
+		this.stage.addActor(enterAsHumanPirateButton);
 		
 		TextButton enterAsSpectatorButton = new TextButton("Spectate", textButtonStyle);
 		enterAsSpectatorButton.setSize(200, 60);
-		enterAsSpectatorButton.setPosition((this.stage.getWidth() / 2) - (enterAsSpectatorButton.getWidth() / 2), (this.stage.getHeight() / 2) - enterAsSkeletonDaggerButton.getHeight() - enterAsSpectatorButton.getHeight() - BUTTON_OFFSET);
+		enterAsSpectatorButton.setPosition((this.stage.getWidth() / 2) - (enterAsSpectatorButton.getWidth() / 2), (this.stage.getHeight() / 2) - enterAsSkeletonNormalButton.getHeight() - enterAsSpectatorButton.getHeight() - BUTTON_OFFSET);
 		enterAsSpectatorButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -251,7 +245,7 @@ public class PreGameScreen implements Screen {
 	public void enterAsSpectator() {
 		this.game.getScreen().dispose();
 		GameScreen gameScreen = new GameScreen(true);
-		gameScreen.addPlayer(this.txtUsername.getText(), PlayerCharacter.SKELETON_DAGGER);
+		gameScreen.addPlayer(this.txtUsername.getText(), PlayerCharacter.SKELETON_NORMAL);
 		this.game.setScreen(gameScreen);
 	}
 
