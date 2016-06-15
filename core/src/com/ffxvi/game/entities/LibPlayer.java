@@ -164,6 +164,7 @@ public class LibPlayer extends Player {
 		}
 	}
 
+	int counter2 = 0;
 	/**
 	 * Sets the direction to the given direction.
 	 *
@@ -171,9 +172,17 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void setDirection(Direction direction) {
-		this.setDirectionInner(direction);
-		super.animation = WALKING;
-		this.changeAnimation();
+		if(!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
+			this.setDirectionInner(direction);
+			super.animation = WALKING;
+			this.changeAnimation();
+		} else {
+			counter2++;
+		}
+		
+		if(counter2++ > 25) {
+			counter2 = 0;
+		}
 	}
 
 	/**
