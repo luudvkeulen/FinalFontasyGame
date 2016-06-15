@@ -410,7 +410,7 @@ public class Player extends SimplePlayer {
 			this.isDead = true;
 
 			// Set animation to DEATH
-			super.animation = PlayerAnimation.DEATH;
+//			super.animation = PlayerAnimation.DEATH;
 
 			// Delay in seconds
 			float delay = 1;

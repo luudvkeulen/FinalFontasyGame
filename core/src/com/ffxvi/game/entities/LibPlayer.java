@@ -76,7 +76,7 @@ public class LibPlayer extends Player {
 		return this.currentAnimation;
 	}
 
-	private void changeAnimation() {
+	public void changeAnimation() {
 		if (super.animation != IDLE) {
 			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
@@ -110,6 +110,19 @@ public class LibPlayer extends Player {
 		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
 
 		super.checkSlashing();
+	}
+	
+	/**
+	 * Makes the player die.
+	 * @param killerName 
+	 */
+	@Override
+	public void die(String killerName) {
+		super.die(killerName);
+
+		// Set animation to DEATH
+		super.animation = PlayerAnimation.DEATH;
+		this.changeAnimation();
 	}
 	
 	
