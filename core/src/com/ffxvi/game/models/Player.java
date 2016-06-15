@@ -104,10 +104,9 @@ public class Player extends SimplePlayer {
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
-	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
+	public final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
 	private long lastSlash = 0;
-	private long slashAnimCount = 0;
 
 	/**
 	 * Default constructor for Player.
@@ -449,12 +448,10 @@ public class Player extends SimplePlayer {
 	 */
 	public void slash() {
 		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-			this.animationSpeed = 0.01f;
 			super.animation = SLASHING;
 			this.animation = SLASHING;
 			this.changeAnimation();
 			this.slash.play();
-			slashAnimCount = 1;
 			lastSlash = System.currentTimeMillis();
 		}
 	}

@@ -42,6 +42,8 @@ public class LibPlayer extends Player {
 	private Animation currentAnimation;
 
 	private GameScreen screen;
+	
+	private long lastSlash = 0;
 
 	/**
 	 * The speed at which the animation runs.
@@ -132,9 +134,13 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		super.animation = SLASHING;
-		this.animation = SLASHING;
-		this.changeAnimation();
+		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+			this.slash.play();
+			lastSlash = System.currentTimeMillis();
+		}
 	}
 
 	/**
