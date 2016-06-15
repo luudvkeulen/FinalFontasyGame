@@ -14,6 +14,7 @@ package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -205,6 +206,16 @@ public class GameScreen implements Screen, Observer {
 	 * A boolean indicating if the player is spectating.
 	 */
 	private final boolean isSpectating;
+	
+	/**
+	 * A dimmed music object used to play background music.
+	 */
+	protected final Music musicDimmed;
+	
+	/**
+	 * A loud music object used to play background music.
+	 */
+	protected final Music musicLoud;
 
 	/**
 	 * Initializes a new GameScreen.
@@ -213,6 +224,16 @@ public class GameScreen implements Screen, Observer {
 	 */
 	public GameScreen(boolean isSpectating) {
 		this.game = MainClass.getInstance();
+		
+		musicDimmed = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+		musicDimmed.setVolume(1f);
+		musicDimmed.setLooping(true);
+		
+		musicLoud = Gdx.audio.newMusic(Gdx.files.internal("musicLoud.mp3"));
+		musicLoud.setVolume(0.5f);
+		musicLoud.setLooping(true);
+
+		musicDimmed.play();
 
 		this.gameManager = new GameManager(isSpectating);
 
@@ -418,6 +439,24 @@ public class GameScreen implements Screen, Observer {
 
 		if (direction == null) {
 			throw new IllegalArgumentException("direction can not be null.");
+		}
+		
+		System.out.println("Map ID: " + map.getId());
+		
+		if (map.getId() == 4) {
+			if (this.musicDimmed.isPlaying()) {
+				float position = this.musicDimmed.getPosition();
+				this.musicDimmed.stop();
+				this.musicLoud.play();
+				this.musicLoud.setPosition(position);
+			}
+		} else {
+			if (this.musicLoud.isPlaying()) {
+				float position = this.musicLoud.getPosition();
+				this.musicLoud.stop();
+				this.musicDimmed.play();
+				this.musicDimmed.setPosition(position);
+			}
 		}
 
 		Map oldMap = map;
@@ -741,6 +780,13 @@ public class GameScreen implements Screen, Observer {
 
 	@Override
 	public void dispose() {
+		if (this.musicDimmed.isPlaying()) {
+			this.musicDimmed.stop();
+		}
+		if (this.musicLoud.isPlaying()) {
+			this.musicLoud.stop();
+		}
+		
 		this.gameManager.stop(this.isSpectating);
 	}
 
