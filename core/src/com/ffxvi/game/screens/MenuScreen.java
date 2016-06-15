@@ -111,7 +111,6 @@ public class MenuScreen implements Screen {
 		this.skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		//Background
-		//Texture background = new Texture(Gdx.files.internal("background.png"));
 		this.backgroundsprite = new Sprite(game.background);
 		
 		// Store the default libgdx font under the name "default".

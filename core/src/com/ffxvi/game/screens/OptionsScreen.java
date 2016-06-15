@@ -116,11 +116,15 @@ public class OptionsScreen implements Screen {
 		skin.add("default", bfont);
 		buttonSkin.add("default", bfont);
 
+		float rgbcolor = 0.1f;
+		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
+		Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
+		
 		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
-		textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+		textButtonStyle.up = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.down = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.over = buttonSkin.newDrawable("white", blacktransparenthover);
 
 		textButtonStyle.font = buttonSkin.getFont("default");
 
@@ -168,9 +172,11 @@ public class OptionsScreen implements Screen {
 		final SelectBox<Object> sbResolutions = new SelectBox<Object>(skin);
 		sbResolutions.setItems(hmResolutions.keySet().toArray());
 		sbResolutions.setSize(200, 30);
+		sbResolutions.setColor(blacktransparent);
 
 		// Create a checkbox to toggle fullscreen
 		final CheckBox cbFullscreen = new CheckBox("Toggle fullscreen", skin);
+		cbFullscreen.setColor(blacktransparent);
 		cbFullscreen.setPosition((this.stage.getWidth() / 2) - (cbFullscreen.getWidth() / 2), (this.stage.getHeight() / 2) - 100);
 		cbFullscreen.addListener(new ClickListener() {
 			@Override
