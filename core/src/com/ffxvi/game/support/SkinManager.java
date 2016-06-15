@@ -18,8 +18,8 @@ import com.ffxvi.game.entities.PlayerAnimation;
  */
 public class SkinManager {
     
-    private PlayerSkin normalSkeleton;
-    private PlayerSkin hoodedSkeleton;
+    private final PlayerSkin normalSkeleton;
+    private final PlayerSkin hoodedSkeleton;
     
     public PlayerSkin getNormalSkeleton() {
         return normalSkeleton;
@@ -39,26 +39,30 @@ public class SkinManager {
         private float animationSpeed;
         private String skinDirectoryPath;
         
-        private int walkSheetCols = 9;
-        private int walkSheetRows = 4;
+        private final int walkSheetCols = 9;
+        private final int walkSheetRows = 4;
         private Animation walkUp;
         private Animation walkLeft;
         private Animation walkDown;
         private Animation walkRight;
         
-        private int slashSheetCols = 6;
-        private int slashSheetRows = 4;
+        private final int slashSheetCols = 6;
+        private final int slashSheetRows = 4;
         private Animation slashUp;
         private Animation slashLeft;
         private Animation slashDown;
         private Animation slashRight;
         
-        private int shootSheetCols = 13;
-        private int shootSheetRows = 4;
+        private final int shootSheetCols = 13;
+        private final int shootSheetRows = 4;
         private Animation shootUp;
         private Animation shootLeft;
         private Animation shootDown;
         private Animation shootRight;
+		
+		private final int deathSheetCols = 6;
+		private final int deathSheetRows = 1;
+		private Animation death;
         
         
         /**
@@ -109,6 +113,9 @@ public class SkinManager {
                         case RIGHT: ret = this.shootRight; break;
                     }
                     break;
+				case DEATH:
+					ret = this.death;
+					break;
             }
             return ret;
         }
@@ -117,6 +124,7 @@ public class SkinManager {
             setWalkingAnimations();
             setSlashingAnimations();
             setShootingAnimations();
+			setDeathAnimations();
         }
         
         private void setWalkingAnimations() {
@@ -160,5 +168,16 @@ public class SkinManager {
             this.shootDown = new Animation(shootSpeed, anims[2]);
             this.shootRight = new Animation(shootSpeed, anims[3]);
         }
+		
+		private void setDeathAnimations() {
+			float deathSpeed = this.animationSpeed * 1f;
+			
+			String path = skinDirectoryPath + "/Death.png";
+            Texture deathSheet = new Texture(Gdx.files.internal(path));
+            TextureRegion[][] anims = TextureRegion.split(deathSheet, deathSheet.getWidth()
+                    / deathSheetCols, deathSheet.getHeight() / deathSheetRows);
+            
+            this.death = new Animation(deathSpeed, anims[0]);
+		}
     }
 }

@@ -363,7 +363,7 @@ public class GameScreen implements Screen, Observer {
 
 		map = getRandomMap();
 
-		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId(), false);
+		Player mainPlayer = new LibPlayer(character, playerName, new Vector(64f, 64f), this, map.getId(), this.isSpectating);
 		mainPlayer.setPosition(64, 64);
 		gameManager.setMainPlayer(mainPlayer);
 

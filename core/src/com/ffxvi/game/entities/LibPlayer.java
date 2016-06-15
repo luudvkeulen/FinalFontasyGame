@@ -26,11 +26,7 @@ import com.ffxvi.game.support.Vector;
  * @author gebruiker-pc
  */
 public class LibPlayer extends Player {
-
-	/**
-	 * A boolean indicating whether the player is spectating.
-	 */
-	private boolean isSpectating;
+	
 	/**
 	 * The textures (skin) that this player is using
 	 */
@@ -49,7 +45,7 @@ public class LibPlayer extends Player {
 	private final float animationSpeed;
 
 	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId, boolean isSpectating) {
-		super(character, playerName, position, gameScreen.getGameManager(), roomId, gameScreen);
+		super(character, playerName, position, gameScreen.getGameManager(), roomId, gameScreen, isSpectating);
 		this.screen = gameScreen;
 		this.animationSpeed = 0.05f;
 		this.changeSkin();
@@ -132,9 +128,11 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		super.animation = SLASHING;
-		this.animation = SLASHING;
-		this.changeAnimation();
+		if (!super.isSpectating) {
+			super.animation = SLASHING;
+			this.animation = SLASHING;
+			this.changeAnimation();
+		}
 	}
 
 	/**

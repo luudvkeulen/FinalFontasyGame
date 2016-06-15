@@ -20,5 +20,6 @@ public enum PlayerAnimation {
     IDLE,
     WALKING,
     SLASHING,
-    SHOOTING
+    SHOOTING,
+	DEATH
 }
