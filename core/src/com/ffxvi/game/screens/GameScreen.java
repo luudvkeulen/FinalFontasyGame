@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -241,9 +242,14 @@ public class GameScreen implements Screen, Observer {
 
 		gameManager.setMultiplayer(new LibPlayer(this));
 
+		float rgbcolor = 0.05f;
+		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
+		//Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
+		
 		this.textfield = new TextField("", skin);
 		this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
 		this.textfield.setWidth(300);
+		this.textfield.setColor(blacktransparent);
 		this.stage.addActor(this.textfield);
 
 		// Setup dialog
@@ -509,7 +515,7 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
+		
 		if (gameManager.getMainPlayer() != null) {
 
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
@@ -632,18 +638,19 @@ public class GameScreen implements Screen, Observer {
 			int labelHeight = 40;
 			int headerHeight = 50;
 			Color labelColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-			Color backGroundColor = new Color(0.3f, 0.3f, 0.3f, 0.8f);
+			float rgbcolor = 0.05f;
+			Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
 
 			// Create a new stage for rendering labels,
 			// and a new shaperenderer for the background
 			Stage labelStage = new Stage();
-			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();
-
+			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();	
+			
 			// render background
 			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			backgroundShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-			backgroundShapeRenderer.setColor(backGroundColor);
+			backgroundShapeRenderer.setColor(blacktransparent);
 			backgroundShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding * 2), Gdx.graphics.getHeight() - (padding * 2));
 			backgroundShapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);

@@ -67,7 +67,7 @@ public class ServerSubscriber {
 		if(registry != null) {
 			try {
 				serverList = (IServerList) registry.lookup(BINDINGNAME);
-				System.out.println("ServerList binded");
+				System.out.println("ServerList bound");
 			} catch (RemoteException re) {
 				System.out.println("GameServer: RemoteException: " + re.getMessage());
 				serverList = null;

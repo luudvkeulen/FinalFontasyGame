@@ -100,7 +100,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = 1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_DAGGER;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_NORMAL;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }
@@ -122,7 +122,7 @@ public class SimplePlayerTest {
         float posX = -20f;
         float posY = 20f;
         int roomID = 1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_DAGGER;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_NORMAL;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }
@@ -133,7 +133,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = -20f;
         int roomID = 1;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_DAGGER;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_NORMAL;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }
@@ -144,7 +144,7 @@ public class SimplePlayerTest {
         float posX = 20f;
         float posY = 20f;
         int roomID = 0;
-        PlayerCharacter pc = PlayerCharacter.SKELETON_DAGGER;
+        PlayerCharacter pc = PlayerCharacter.SKELETON_NORMAL;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
     }

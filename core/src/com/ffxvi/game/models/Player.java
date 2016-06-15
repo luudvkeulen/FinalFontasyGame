@@ -106,10 +106,9 @@ public class Player extends SimplePlayer {
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
-	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
+	public final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
 	private long lastSlash = 0;
-	private long slashAnimCount = 0;
 
 	/**
 	 * Default constructor for Player.
@@ -159,7 +158,7 @@ public class Player extends SimplePlayer {
 	 * @param screen The screen object.
 	 */
 	public Player(GameManager gameManager) {
-		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
+		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_NORMAL);
 
 		this.gameManager = gameManager;
 
@@ -473,7 +472,7 @@ public class Player extends SimplePlayer {
 				this.animation = SLASHING;
 				this.changeAnimation();
 				this.slash.play();
-				slashAnimCount = 1;
+//				slashAnimCount = 1;
 				lastSlash = System.currentTimeMillis();
 			}
 		}
