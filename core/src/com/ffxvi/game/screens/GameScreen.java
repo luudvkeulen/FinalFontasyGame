@@ -263,7 +263,7 @@ public class GameScreen implements Screen, Observer {
 
 		gameManager.setMultiplayer(new LibPlayer(this));
 
-		float rgbcolor = 0.05f;
+		float rgbcolor = 0.8f;
 		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
 		//Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
 		
