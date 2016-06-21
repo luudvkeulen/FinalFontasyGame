@@ -27,6 +27,7 @@ import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
 import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.SkinManager.PlayerSkin;
+import com.ffxvi.game.support.Sounds;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeEvent;
@@ -101,12 +102,6 @@ public class Player extends SimplePlayer {
 	 * A boolean indicating if the player is spectating.
 	 */
 	protected boolean isSpectating;
-
-	/**
-	 * Shooting sound
-	 */
-	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
-	public final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
 	private long lastSlash = 0;
 
@@ -438,7 +433,7 @@ public class Player extends SimplePlayer {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
 
-			this.bowsound.play();
+			Sounds.BOW.play();
 
 			// Create a bullet inside the player with the direction and speed
 			this.gameManager.addProjectile(new Projectile(new Vector(this.x
@@ -465,7 +460,7 @@ public class Player extends SimplePlayer {
 				super.animation = SLASHING;
 				this.animation = SLASHING;
 				this.changeAnimation();
-				this.slash.play();
+				Sounds.SLASH.play();
 //				slashAnimCount = 1;
 				lastSlash = System.currentTimeMillis();
 			}
