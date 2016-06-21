@@ -5,9 +5,13 @@
  */
 package com.ffxvi.game.entities;
 
+import com.ffxvi.game.MainClass;
 import com.ffxvi.game.models.PlayerCharacter;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.Direction;
+import com.ffxvi.game.models.GameManager;
+import com.ffxvi.game.models.Player;
+import com.ffxvi.game.support.Vector;
 import org.junit.*;
 
 /**
@@ -16,6 +20,7 @@ import org.junit.*;
  */
 public class SimplePlayerTest {
     SimplePlayer simplePlayer;
+	SimplePlayer simplePlayerwithPlayer;
     
     @Before
     public void init() {
@@ -26,6 +31,9 @@ public class SimplePlayerTest {
         PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED;
         
         simplePlayer = new SimplePlayer(name, posX, posY, roomID, pc);
+		MainClass.getInstance().selectedIp = "";
+		GameManager gameManager = new GameManager(false);
+		simplePlayerwithPlayer = new SimplePlayer(new Player(pc,name,new Vector(posX,posY),gameManager,roomID ));
     }
     
     @Test
@@ -158,5 +166,11 @@ public class SimplePlayerTest {
         PlayerCharacter pc = PlayerCharacter.SKELETON_HOODED;
 
         SimplePlayer simplePlayer2 = new SimplePlayer(name, posX, posY, roomID, pc);
+    }
+	
+	@Test
+    public void increaseScore() {
+		simplePlayer.increaseScore();
+        Assert.assertTrue(simplePlayer.getScore() == 1);
     }
 }
