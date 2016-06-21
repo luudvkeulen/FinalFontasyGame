@@ -427,8 +427,10 @@ public class Player extends SimplePlayer {
 
 	/**
 	 * Fires a new projectile at the aim direction, given the player can fire.
+	 *
+	 * @return a boolean indicating whether the projectile was added.
 	 */
-	public void fire() {
+	public boolean fire() {
 		if (this.canFire()) {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
@@ -439,7 +441,11 @@ public class Player extends SimplePlayer {
 			this.gameManager.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
 					30, this.aimDirection, this.roomId, this.playerName, this.gameManager), false);
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -460,7 +466,6 @@ public class Player extends SimplePlayer {
 				super.animation = SLASHING;
 				this.animation = SLASHING;
 				this.changeAnimation();
-				Sounds.SLASH.play();
 //				slashAnimCount = 1;
 				lastSlash = System.currentTimeMillis();
 			}

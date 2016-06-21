@@ -26,6 +26,7 @@ import static com.ffxvi.game.models.PlayerCharacter.SKELETON_NORMAL;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.SkinManager;
+import com.ffxvi.game.support.Sounds;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.util.logging.Level;
@@ -97,6 +98,18 @@ public class LibPlayer extends Player {
 		}
 	}
 
+	@Override
+	public boolean fire()
+	{
+		boolean returnValue = super.fire();
+		
+		if (returnValue)
+		{
+			Sounds.BOW.play();
+		}
+		
+		return returnValue;
+	}
 	/**
 	 * Switches the textures (skin) of this player.
 	 */
@@ -196,7 +209,7 @@ public class LibPlayer extends Player {
 			super.animation = SLASHING;
 			this.animation = SLASHING;
 			this.changeAnimation();
-			this.slash.play();
+			Sounds.SLASH.play();
 			lastSlash = System.currentTimeMillis();
 		}
 	}
