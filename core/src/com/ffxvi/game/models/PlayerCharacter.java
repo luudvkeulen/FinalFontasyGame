@@ -18,11 +18,19 @@ package com.ffxvi.game.models;
  */
 public enum PlayerCharacter {
 	/**
-	 * A character representing a skeleton with a dagger.
+	 * A character representing a normal skeleton.
 	 */
-	SKELETON_DAGGER,
+	SKELETON_NORMAL,
 	/**
-	 * A character representing a hooded skeleton with a dagger.
+	 * A character representing a hooded skeleton.
 	 */
-	SKELETON_HOODED
+	SKELETON_HOODED,
+	/**
+	 * A character representing a soldier that is human
+	 */
+	HUMAN_SOLDIER,
+	/**
+	 * A character representing a pirate that is human
+	 */
+	HUMAN_PIRATE
 }

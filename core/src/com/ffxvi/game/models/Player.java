@@ -106,10 +106,9 @@ public class Player extends SimplePlayer {
 	 * Shooting sound
 	 */
 	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
-	private final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
+	public final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
 	private long lastSlash = 0;
-	private long slashAnimCount = 0;
 
 	/**
 	 * Default constructor for Player.
@@ -120,9 +119,6 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param gameManager The gamemanager object.
 	 * @param roomId The id of the room where the player is in.
-	 * @param screen The screen object.
-	 * @param isSpectating A boolean indicating whether the player is spectating
-	 * or not.
 	 */
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
@@ -146,8 +142,6 @@ public class Player extends SimplePlayer {
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
 
-		this.isSpectating = isSpectating;
-
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 
@@ -156,10 +150,9 @@ public class Player extends SimplePlayer {
 	 * from the server.
 	 *
 	 * @param gameManager The gamemanager object.
-	 * @param screen The screen object.
 	 */
 	public Player(GameManager gameManager) {
-		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_DAGGER);
+		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_NORMAL);
 
 		this.gameManager = gameManager;
 
@@ -473,7 +466,7 @@ public class Player extends SimplePlayer {
 				this.animation = SLASHING;
 				this.changeAnimation();
 				this.slash.play();
-				slashAnimCount = 1;
+//				slashAnimCount = 1;
 				lastSlash = System.currentTimeMillis();
 			}
 		}

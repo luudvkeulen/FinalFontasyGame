@@ -18,6 +18,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.ffxvi.game.screens.MenuScreen;
 
 /**
@@ -56,6 +57,10 @@ public class MainClass extends Game implements ApplicationListener {
 	public String selectedIp;
 
 	/**
+	 * background for all menus
+	 */
+	public static Texture background;
+	/**
 	 * Private constructor for singleton.
 	 */
 	//private MainClass() {}
@@ -82,6 +87,7 @@ public class MainClass extends Game implements ApplicationListener {
 	 */
 	@Override
 	public void create() {
+		background = new Texture(Gdx.files.internal("background.png"));
 		WIDTH = Gdx.graphics.getWidth();
 		HEIGHT = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera(WIDTH, HEIGHT);

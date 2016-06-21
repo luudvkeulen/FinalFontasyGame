@@ -14,6 +14,7 @@ package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -59,6 +60,7 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.management.jmxremote.ConnectorBootstrap.PropertyNames;
 
 /**
  * The screen for the game.
@@ -204,6 +206,16 @@ public class GameScreen implements Screen, Observer {
 	 * A boolean indicating if the player is spectating.
 	 */
 	private final boolean isSpectating;
+	
+	/**
+	 * A dimmed music object used to play background music.
+	 */
+	protected final Music musicDimmed;
+	
+	/**
+	 * A loud music object used to play background music.
+	 */
+	protected final Music musicLoud;
 
 	/**
 	 * Initializes a new GameScreen.
@@ -212,6 +224,16 @@ public class GameScreen implements Screen, Observer {
 	 */
 	public GameScreen(boolean isSpectating) {
 		this.game = MainClass.getInstance();
+		
+		musicDimmed = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+		musicDimmed.setVolume(1f);
+		musicDimmed.setLooping(true);
+		
+		musicLoud = Gdx.audio.newMusic(Gdx.files.internal("musicLoud.mp3"));
+		musicLoud.setVolume(0.5f);
+		musicLoud.setLooping(true);
+
+		musicDimmed.play();
 
 		this.gameManager = new GameManager(isSpectating);
 
@@ -241,9 +263,14 @@ public class GameScreen implements Screen, Observer {
 
 		gameManager.setMultiplayer(new LibPlayer(this));
 
+		float rgbcolor = 0.8f;
+		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
+		//Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
+		
 		this.textfield = new TextField("", skin);
 		this.textfield.setPosition(10, Gdx.graphics.getHeight() - 200);
 		this.textfield.setWidth(300);
+		this.textfield.setColor(blacktransparent);
 		this.stage.addActor(this.textfield);
 
 		// Setup dialog
@@ -413,6 +440,24 @@ public class GameScreen implements Screen, Observer {
 		if (direction == null) {
 			throw new IllegalArgumentException("direction can not be null.");
 		}
+		
+		System.out.println("Map ID: " + map.getId());
+		
+		if (map.getId() == 4) {
+			if (this.musicDimmed.isPlaying()) {
+				float position = this.musicDimmed.getPosition();
+				this.musicDimmed.stop();
+				this.musicLoud.play();
+				this.musicLoud.setPosition(position);
+			}
+		} else {
+			if (this.musicLoud.isPlaying()) {
+				float position = this.musicLoud.getPosition();
+				this.musicLoud.stop();
+				this.musicDimmed.play();
+				this.musicDimmed.setPosition(position);
+			}
+		}
 
 		Map oldMap = map;
 		for (Map m : this.maps) {
@@ -509,7 +554,7 @@ public class GameScreen implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
+		
 		if (gameManager.getMainPlayer() != null) {
 
 //            this.client.sendPlayer(new SimplePlayer(this.mainPlayer));
@@ -632,18 +677,19 @@ public class GameScreen implements Screen, Observer {
 			int labelHeight = 40;
 			int headerHeight = 50;
 			Color labelColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-			Color backGroundColor = new Color(0.3f, 0.3f, 0.3f, 0.8f);
+			float rgbcolor = 0.05f;
+			Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
 
 			// Create a new stage for rendering labels,
 			// and a new shaperenderer for the background
 			Stage labelStage = new Stage();
-			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();
-
+			ShapeRenderer backgroundShapeRenderer = new ShapeRenderer();	
+			
 			// render background
 			Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			backgroundShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-			backgroundShapeRenderer.setColor(backGroundColor);
+			backgroundShapeRenderer.setColor(blacktransparent);
 			backgroundShapeRenderer.rect(padding, padding, Gdx.graphics.getWidth() - (padding * 2), Gdx.graphics.getHeight() - (padding * 2));
 			backgroundShapeRenderer.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -734,13 +780,20 @@ public class GameScreen implements Screen, Observer {
 
 	@Override
 	public void dispose() {
+		if (this.musicDimmed.isPlaying()) {
+			this.musicDimmed.stop();
+		}
+		if (this.musicLoud.isPlaying()) {
+			this.musicLoud.stop();
+		}
+		
 		this.gameManager.stop(this.isSpectating);
 	}
 
 	private class PlayerListener implements PropertyChangeListener {
 
 		public PlayerListener() {
-			GameScreen.this.gameManager.getMainPlayer().subscribe(this, "PlayerHealthUpdated");
+			GameScreen.this.gameManager.getMainPlayer().subscribe(this, PropertyListenerNames.PLAYER_HEALTH);
 		}
 
 		@Override

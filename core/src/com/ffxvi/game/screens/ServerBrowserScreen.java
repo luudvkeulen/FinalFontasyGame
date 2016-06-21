@@ -24,11 +24,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -100,7 +103,17 @@ public class ServerBrowserScreen implements Screen {
 	 * The layout.
 	 */
 	private GlyphLayout layout;
-
+	
+	/**
+	 * The background sprite
+	 */
+	private final Sprite backgroundsprite;
+	
+	/**
+	 * The background batch
+	 */
+	private final SpriteBatch backgroundbatch;
+	
 	/**
 	 * A label for rendering the header text.
 	 */
@@ -116,6 +129,8 @@ public class ServerBrowserScreen implements Screen {
 	 */
 	public ServerBrowserScreen() {
 		this.game = MainClass.getInstance();
+		this.backgroundbatch = new SpriteBatch();
+		this.backgroundsprite = new Sprite(game.background);
 	}
 
 	/**
@@ -126,6 +141,10 @@ public class ServerBrowserScreen implements Screen {
 		this.stage = new Stage();
 		this.layout = new GlyphLayout();
 		Gdx.input.setInputProcessor(this.stage);
+		
+		float rgbcolor = 0.05f;
+		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
+		Color blacktransparenthover = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.95f));
 
 		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 		Skin buttonSkin = new Skin();
@@ -142,9 +161,9 @@ public class ServerBrowserScreen implements Screen {
 
 		// Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
 		TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-		textButtonStyle.up = buttonSkin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.down = buttonSkin.newDrawable("white", Color.WHITE);
-		textButtonStyle.over = buttonSkin.newDrawable("white", Color.LIGHT_GRAY);
+		textButtonStyle.up = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.down = buttonSkin.newDrawable("white", blacktransparent);
+		textButtonStyle.over = buttonSkin.newDrawable("white", blacktransparenthover);
 
 		textButtonStyle.font = buttonSkin.getFont("default");
 
@@ -194,8 +213,11 @@ public class ServerBrowserScreen implements Screen {
 				}
 			}
 		});
+		ListStyle listStyle1 = new ListStyle(bfont, Color.WHITE, Color.WHITE, buttonSkin.newDrawable("white", Color.PINK));
+		this.servers.setStyle(listStyle1);
 
 		this.scrollPane = new ScrollPane(servers, skin);
+		this.scrollPane.setColor(blacktransparent);
 
 		this.table = new Table(skin);
 		this.table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -240,9 +262,10 @@ public class ServerBrowserScreen implements Screen {
 			this.game.setScreen(new MenuScreen());
 			return;
 		}
-
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+		
+		backgroundbatch.begin();
+		backgroundsprite.draw(backgroundbatch);
+		backgroundbatch.end();
 
 		this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		this.stage.draw();

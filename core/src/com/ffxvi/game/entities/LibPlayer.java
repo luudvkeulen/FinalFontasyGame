@@ -19,6 +19,10 @@ import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
 import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.models.Player;
 import com.ffxvi.game.models.PlayerCharacter;
+import static com.ffxvi.game.models.PlayerCharacter.HUMAN_PIRATE;
+import static com.ffxvi.game.models.PlayerCharacter.HUMAN_SOLDIER;
+import static com.ffxvi.game.models.PlayerCharacter.SKELETON_HOODED;
+import static com.ffxvi.game.models.PlayerCharacter.SKELETON_NORMAL;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.SkinManager;
@@ -43,7 +47,9 @@ public class LibPlayer extends Player {
 	 */
 	private Animation currentAnimation;
 
-	private GameScreen screen;
+	private final GameScreen screen;
+
+	private long lastSlash = 0;
 
 	/**
 	 * The speed at which the animation runs.
@@ -96,15 +102,22 @@ public class LibPlayer extends Player {
 	 */
 	private void changeSkin() {
 		switch (super.skin) {
-			case SKELETON_DAGGER:
-				this.playerSkin = GameScreen.getSkinManager().getNormalSkeleton();
+			case SKELETON_NORMAL:
+				this.playerSkin = GameScreen.getSkinManager().getSkeletonNormal();
 				break;
 			case SKELETON_HOODED:
-				this.playerSkin = GameScreen.getSkinManager().getHoodedSkeleton();
+				this.playerSkin = GameScreen.getSkinManager().getSkeletonHooded();
 				break;
-
+			case HUMAN_SOLDIER:
+				this.playerSkin = GameScreen.getSkinManager().getHumanSoldier();
+				break;
+			case HUMAN_PIRATE:
+				this.playerSkin = GameScreen.getSkinManager().getHumanPirate();
+				break;
 		}
 	}
+
+	int counter = 0;
 
 	/**
 	 * Method that is performed each tick and focuses on drawing.
@@ -113,7 +126,25 @@ public class LibPlayer extends Player {
 	 */
 	public void render(SpriteBatch batch) {
 		super.stateTime += Gdx.graphics.getDeltaTime();
-		TextureRegion currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+
+		TextureRegion currentFrame = null;
+
+		if (currentAnimation == this.playerSkin.getAnimation(SLASHING, super.direction)) {
+			currentFrame = this.currentAnimation.getKeyFrame(counter);
+			counter++;
+		} else {
+			currentFrame = this.currentAnimation.getKeyFrame(super.stateTime, true);
+		}
+
+		if (counter != 0) {
+			currentFrame = this.playerSkin.getAnimation(SLASHING, super.direction).getKeyFrame(counter);
+			counter++;
+		}
+
+		if (counter >= 10) {
+			counter = 0;
+		}
+
 		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
 
 		super.checkSlashing();
@@ -129,7 +160,7 @@ public class LibPlayer extends Player {
 		super.die(killerName);
 
 		// Set animation to DEATH
-		super.animation = PlayerAnimation.DEATH;
+		super.animation = PlayerAnimation.DYING;
 		this.changeAnimation();
 
 		// Delay in seconds
@@ -161,12 +192,16 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		if (!super.isSpectating) {
+		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
 			super.animation = SLASHING;
 			this.animation = SLASHING;
 			this.changeAnimation();
+			this.slash.play();
+			lastSlash = System.currentTimeMillis();
 		}
 	}
+
+	int counter2 = 0;
 
 	/**
 	 * Sets the direction to the given direction.
@@ -175,20 +210,24 @@ public class LibPlayer extends Player {
 	 */
 	public void setDirection(Direction direction) {
 		this.direction = direction;
-		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-			this.move();
+
+		//If slashing, don't move
+		if (!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
+
+			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+				this.move();
+				super.animation = PlayerAnimation.WALKING;
+				this.changeAnimation();
+			}
+		} else {
+			counter2++;
+		}
+		if (counter2++ > 30) {
+			counter2 = 0;
 		}
 
 		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
-		/**
-		 * Checks if the given rectangle collides with a door.
-		 *
-		 * @param rec The rectangle to check for collision.
-		 * @param objects The objects (doors) of which should be looked within
-		 * the rectangle.
-		 */
-		super.animation = WALKING;
-		this.changeAnimation();
+
 	}
 
 	/**
