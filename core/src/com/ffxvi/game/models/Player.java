@@ -384,17 +384,19 @@ public class Player extends SimplePlayer {
 	 * @param attacker The name of the player that caused the damage.
 	 */
 	public void receiveDamage(int amount, String attacker) {
-		this.hitPoints -= amount;
+		if (!this.isDead && !this.isSpectating) {
+			this.hitPoints -= amount;
 
-		if (this.hitPoints <= 0) {
-			// Set the health to 0
-			this.hitPoints = 0;
+			if (this.hitPoints <= 0) {
+				// Set the health to 0
+				this.hitPoints = 0;
 
-			this.die(attacker);
-			this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
+				this.die(attacker);
+				this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
+			}
+
+			this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
 		}
-
-		this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
 	}
 
 	/**
@@ -466,12 +468,12 @@ public class Player extends SimplePlayer {
 	 * Fires a new projectile at the aim direction, given the player can fire.
 	 */
 	public void fire() {
-		if (this.canFire()) {
+		if (this.canFire() && !this.isSpectating) {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
 
 			this.bowsound.play();
-			
+
 			// Create a bullet inside the player with the direction and speed
 			this.screen.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
