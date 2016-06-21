@@ -30,11 +30,11 @@ public class PingRunnable extends Observable implements Runnable {
 
 	public PingRunnable(InetSocketAddress pingTarget) {
 		this.pingTarget = pingTarget;
-		this.startTime = System.nanoTime();
 	}
 	
 	@Override
 	public void run() {
+		this.startTime = System.nanoTime();
 		try {
 			pingTarget.getAddress().isReachable(200);
 		} catch (IOException ex) {

@@ -210,6 +210,7 @@ public class Server implements Observer {
 		}
 		if (canConnect > -1) {
 			players[canConnect] = ipAddress;
+			
 			playerStrikes.put(ipAddress, 0);
 			PingRunnable pr = new PingRunnable(ipAddress);
 			pr.addObserver(this);
@@ -232,6 +233,8 @@ public class Server implements Observer {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
 				if (players[i].equals(ipAddress)) {
+					System.out.format("DISCONNECTED %1$s\n", ipAddress.toString());
+					sendSingle("DISCONNECTED", ipAddress);
 					playerStrikes.remove(players[i]);
 					playerData.remove(players[i]);
 					players[i] = null;

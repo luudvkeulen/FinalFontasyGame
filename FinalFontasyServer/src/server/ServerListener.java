@@ -100,7 +100,7 @@ public class ServerListener implements Runnable {
 	}
 
 	/**
-	 * De-serializes a received byte array
+	 * De-serialises a received byte array
 	 *
 	 * @param bytes the received byte array
 	 * @return the Object created from the byte array
@@ -120,7 +120,7 @@ public class ServerListener implements Runnable {
 	 * Treats a received String the way it is supposed to be treated by adding a
 	 * client to the connected clients list when receiving CONNECTING and isn't
 	 * already connected. Removes a client from the connected clients list when
-	 * receiving DISCONNECTING. Otherwise a capitalized version of the received
+	 * receiving DISCONNECTING. Otherwise a capitalised version of the received
 	 * String will be replied to the sender.
 	 *
 	 * @param packet the received DatagramPacket
