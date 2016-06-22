@@ -144,11 +144,13 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void die(String killerName) {
-		super.die(killerName);
+		if (!super.isSpectating) {
+			super.die(killerName);
 
-		// Set animation to DEATH
-		super.animation = PlayerAnimation.DYING;
-		this.changeAnimation();
+			// Set animation to DEATH
+			super.animation = PlayerAnimation.DYING;
+			this.changeAnimation();
+		}
 	}
 
 	/**
@@ -156,7 +158,7 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void setIdle() {
-		if (!super.isDead) {
+		if (!super.isDead && !super.isSpectating) {
 			super.animation = IDLE;
 			this.changeAnimation();
 		}
@@ -167,12 +169,14 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-			super.animation = SLASHING;
-			this.animation = SLASHING;
-			this.changeAnimation();
-			this.slash.play();
-			lastSlash = System.currentTimeMillis();
+		if (!super.isSpectating) {
+			if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+				super.animation = SLASHING;
+				this.animation = SLASHING;
+				this.changeAnimation();
+				this.slash.play();
+				lastSlash = System.currentTimeMillis();
+			}
 		}
 	}
 
