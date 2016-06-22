@@ -172,6 +172,7 @@ public class FinalFontasyServer {
 	private static void startChatServer(int port) {
             ChatServer chat = new ChatServer(FinalFontasyServer.server);
             Thread t = new Thread(chat);
+			t.setName("ServerChatThread");
             t.start();
         }
         

@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +23,6 @@ import java.util.logging.Logger;
 public class PingRunnable extends Observable implements Runnable {
 	
 	private InetSocketAddress pingTarget;
-	private long startTime;
 	
 	public InetSocketAddress getTarget() {
 		return pingTarget;
@@ -34,20 +34,21 @@ public class PingRunnable extends Observable implements Runnable {
 	
 	@Override
 	public void run() {
-		this.startTime = System.nanoTime();
+		boolean reachable = false;
 		try {
-			pingTarget.getAddress().isReachable(200);
+//			String targetIP = pingTarget.getAddress().toString().substring(1);
+//			String command = String.format("ping -n 1 %1$s", targetIP);
+//			System.out.println(command);
+//			Process p1 = java.lang.Runtime.getRuntime().exec(command);
+//			reachable = p1.waitFor(200, TimeUnit.MILLISECONDS);
+			reachable = pingTarget.getAddress().isReachable(200);
+			sleep(800);
 		} catch (IOException ex) {
 			Logger.getLogger(PingRunnable.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		int latency = (int)(System.nanoTime() - startTime);
-		int sleepFor = 1000000000 - latency;
-		try {
-			sleep(sleepFor/1000000);
 		} catch (InterruptedException ex) {
 			Logger.getLogger(PingRunnable.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		setChanged();
-		notifyObservers(latency);
+		notifyObservers(reachable);
 	}
 }
