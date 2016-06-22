@@ -27,7 +27,7 @@ public class VoiceChat implements Runnable {
 	}
 
 	public void recordInput() throws Exception {
-		AudioFormat format = new AudioFormat(8000.0f, 16, 1, true, true);
+		AudioFormat format = new AudioFormat(8000.0f, 8, 1, true, true);
 		TargetDataLine line;
 		DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 		try {
@@ -39,16 +39,18 @@ public class VoiceChat implements Runnable {
 		}
 
 		while (programActive) {
+			Thread.sleep(10);
 			while (recording) {
-				byte[] data = new byte[800];
-				System.out.println("data length: " + data.length);
+				byte[] data = new byte[512];
 				line.start();
 				line.read(data, 0, data.length);
-				clientSender.sendVoiceSoud(new VoiceSound(data));
-				line.close();
+				VoiceSound sound = new VoiceSound(data);
+				clientSender.sendVoiceSoud(sound);
+				System.out.println(sound.getClass());
 			}
 		}
-
+		
+		line.close();
 	}
 
 	public void sendToServer(VoiceSound data) throws Exception {

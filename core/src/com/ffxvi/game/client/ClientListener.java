@@ -57,7 +57,7 @@ public class ClientListener implements Runnable {
 	 * The Game Screen.
 	 */
 	private final GameScreen screen;
-
+	
 	/**
 	 * Initiate this runnable.
 	 *
@@ -122,7 +122,6 @@ public class ClientListener implements Runnable {
 			if (object instanceof String) {
 				this.receiveString(receivePacket, (String) object);
 			} else if (object instanceof SimplePlayer) {
-				System.out.println("Increasing Score");
 				this.screen.getGameManager().getMainPlayer().increaseScore();
 			} else if (object instanceof Collection) {
 				// Check what type of collection the received object is
@@ -136,7 +135,6 @@ public class ClientListener implements Runnable {
 				this.receiveProjectile(receivePacket, (SimpleProjectile) object);
 			} else if (object instanceof VoiceSound) {
 				VoiceSound v = (VoiceSound) object;
-				System.out.println("SHOULD PLAY VOICESOUND");
 				v.playInput();
 			}
 		}

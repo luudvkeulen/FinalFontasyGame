@@ -6,6 +6,8 @@
 package com.ffxvi.game.chat;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -34,6 +36,7 @@ public class VoiceSound implements Serializable {
 
 	/**
 	 * Returns the data.
+	 *
 	 * @return data.
 	 */
 	public byte[] getData() {
@@ -42,25 +45,22 @@ public class VoiceSound implements Serializable {
 
 	/**
 	 * Play the input via the main speaker.
+	 *
 	 */
 	public void playInput() {
-		AudioFormat format = new AudioFormat(8000.0f, 16, 1, true, true);
-		SourceDataLine speakers;
-		System.out.println("GONNA TRY TO PLAY INPUT");
 		try {
+			AudioFormat format = new AudioFormat(8000.0f, 8, 1, true, true);
 			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
-			speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+			SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
 			speakers.open(format);
 			speakers.start();
-			System.out.println("data length of received packet: " + data.length);
+			speakers.open(format);
+			speakers.start();
 			speakers.write(data, 0, data.length);
 			speakers.drain();
 			speakers.close();
-
-			System.out.println("Should have played input");
-
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
+		} catch (LineUnavailableException ex) {
+			Logger.getLogger(VoiceSound.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 }
