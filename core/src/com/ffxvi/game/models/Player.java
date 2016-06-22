@@ -95,14 +95,6 @@ public class Player extends SimplePlayer {
 	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
 
-		if (character == null) {
-			throw new IllegalArgumentException("Character can not be null.");
-		}
-
-		if (playerName == null || playerName.trim().isEmpty()) {
-			throw new IllegalArgumentException(
-					"Character can neither be null nor an empty String.");
-		}
 
 		this.gameManager = gameManager;
 

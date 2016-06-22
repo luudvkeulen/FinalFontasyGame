@@ -7,8 +7,10 @@ package com.ffxvi.game.models;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeListener;
+import javax.rmi.CORBA.Util;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -167,7 +169,7 @@ public class PlayerTest {
 	@Test
 	public void testSetAimDirection_Vector() {
 		System.out.println("setAimDirection");
-		Vector mousePosition = new Vector(2, -4);
+		Vector mousePosition = new Vector(4, 2);
 		player.setAimDirection(mousePosition);
 		try {
 			player.fire();
@@ -180,129 +182,202 @@ public class PlayerTest {
 		
 		
 		
-		assertEquals(90f, gameManager.getProjectiles().get(0).getRotation());
+		assertEquals(258.53046f, gameManager.getProjectiles().get(0).getRotation(),0);
 	}
-//
-//	/**
-//	 * Test of setAimDirection method, of class Player.
-//	 */
-//	@Test
-//	public void testSetAimDirection_float_float() {
-//		System.out.println("setAimDirection");
-//		float controllerInputX = 0.0F;
-//		float controllerInputY = 0.0F;
-//		Player instance = null;
-//		instance.setAimDirection(controllerInputX, controllerInputY);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of setRoomId method, of class Player.
-//	 */
-//	@Test
-//	public void testSetRoomId() {
-//		System.out.println("setRoomId");
-//		int id = 0;
-//		Player instance = null;
-//		instance.setRoomId(id);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of getName method, of class Player.
-//	 */
-//	@Test
-//	public void testGetName() {
-//		System.out.println("getName");
-//		Player instance = null;
-//		String expResult = "";
-//		String result = instance.getName();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of getScore method, of class Player.
-//	 */
-//	@Test
-//	public void testGetScore() {
-//		System.out.println("getScore");
-//		Player instance = null;
-//		int expResult = 0;
-//		int result = instance.getScore();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of setScore method, of class Player.
-//	 */
-//	@Test
-//	public void testSetScore() {
-//		System.out.println("setScore");
-//		int score = 0;
-//		Player instance = null;
-//		instance.setScore(score);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of receiveDamage method, of class Player.
-//	 */
-//	@Test
-//	public void testReceiveDamage() {
-//		System.out.println("receiveDamage");
-//		int amount = 0;
-//		String attacker = "";
-//		Player instance = null;
-//		instance.receiveDamage(amount, attacker);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of die method, of class Player.
-//	 */
-//	@Test
-//	public void testDie() {
-//		System.out.println("die");
-//		String killer = "";
-//		Player instance = null;
-//		instance.die(killer);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of respawn method, of class Player.
-//	 */
-//	@Test
-//	public void testRespawn() {
-//		System.out.println("respawn");
-//		Player instance = null;
-//		instance.respawn();
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of getPosition method, of class Player.
-//	 */
-//	@Test
-//	public void testGetPosition() {
-//		System.out.println("getPosition");
-//		Player instance = null;
-//		Vector expResult = null;
-//		Vector result = instance.getPosition();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
+
+	/**
+	 * Test of setAimDirection method, of class Player.
+	 */
+	@Test
+	public void testSetAimDirection_float_floatDown() {
+
+		float controllerInputX = 0.0F;
+		float controllerInputY = -1.0F;
+		player.setAimDirection(controllerInputX, controllerInputY);
+			try {
+			player.fire();
+		} catch (NullPointerException ex)
+		{
+			
+		} catch (java.lang.ExceptionInInitializerError ex) {
+		
+		}
+		assertEquals(90f, gameManager.getProjectiles().get(0).getRotation(),0);
+	}
+	/**
+	 * Test of setAimDirection method, of class Player.
+	 */
+	@Test
+	public void testSetAimDirection_float_floatRight() {
+
+		float controllerInputX = 1.0F;
+		float controllerInputY = 0.0F;
+		player.setAimDirection(controllerInputX, controllerInputY);
+			try {
+			player.fire();
+		} catch (NullPointerException ex)
+		{
+			
+		} catch (java.lang.ExceptionInInitializerError ex) {
+		
+		}
+		assertEquals(0f, gameManager.getProjectiles().get(0).getRotation(),0);
+	}
+	/**
+	 * Test of setAimDirection method, of class Player.
+	 */
+	@Test
+	public void testSetAimDirection_float_floatUp() {
+
+		float controllerInputX = 0.0F;
+		float controllerInputY = 1.0F;
+		player.setAimDirection(controllerInputX, controllerInputY);
+			try {
+			player.fire();
+		} catch (NullPointerException ex)
+		{
+			
+		} catch (java.lang.ExceptionInInitializerError ex) {
+		
+		}
+		assertEquals(270, gameManager.getProjectiles().get(0).getRotation(),0);
+	}
+	/**
+	 * Test of setAimDirection method, of class Player.
+	 */
+	@Test (expected = IllegalArgumentException.class)
+	public void testSetAimDirection_float_floatIllegalArg() {
+
+		float controllerInputX = 0.0F;
+		float controllerInputY = 0.0F;
+		player.setAimDirection(controllerInputX, controllerInputY);
+	}
+
+	/**
+	 * Test of setRoomId method, of class Player.
+	 */
+	@Test
+	public void testSetRoomId() {
+		System.out.println("setRoomId");
+		int expectedResult = 2;
+		player.setRoomId(2);
+		assertEquals(expectedResult, player.getRoomId());
+	}
+
+	/**
+	 * Test of getName method, of class Player.
+	 */
+	@Test
+	public void testGetName() {
+		String expResult = "speler";
+		String result = player.getName();
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of getScore method, of class Player.
+	 */
+	@Test
+	public void testGetScore() {
+		System.out.println("getScore");
+		int expResult = 0;
+		int result = player.getScore();
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of setScore method, of class Player.
+	 */
+	@Test
+	public void testSetScore() {
+		System.out.println("setScore");
+		int score = 10;
+		player.setScore(score);
+		assertEquals(score, player.getScore());
+	}
+	
+		/**
+	 * Test of setScore method, of class Player.
+	 */
+	@Test (expected = IllegalArgumentException.class)
+	public void testSetScoreNegative() {
+		System.out.println("setScore");
+		int score = -1;
+		player.setScore(score);
+		assertEquals(score, player.getScore());
+	}
+
+	/**
+	 * Test of receiveDamage method, of class Player.
+	 */
+	@Test
+	public void testReceiveDamage() {
+		System.out.println("receiveDamage");
+		int amount = 10;
+		String attacker = "andereSpeler";
+		player.receiveDamage(amount, attacker);
+		assertEquals(100-amount, player.getHitPoints());
+	}
+	/**
+	 * Test of receiveDamage method, of class Player.
+	 */
+	@Test
+	public void testReceiveDamageNegative() {
+		System.out.println("receiveDamage");
+		int amount = -10;
+		String attacker = "andereSpeler";
+		player.receiveDamage(amount, attacker);
+		assertEquals(100-amount, player.getHitPoints());
+	}
+		/**
+	 * Test of receiveDamage method, of class Player.
+	 */
+	@Test
+	public void testReceiveDamageMoreThanHP() {
+		System.out.println("receiveDamage");
+		int amount = 1000;
+		String attacker = "andereSpeler";
+		try {
+			player.receiveDamage(amount, attacker);
+		} catch (NullPointerException ex){
+		
+		}	
+		assertEquals(0, player.getHitPoints());
+	}
+
+	/**
+	 * Test of die method, of class Player.
+	 */
+	@Test
+	public void testDie() {
+		System.out.println("die");
+		String killer = "andereSpeler";
+		player.die(killer);
+		assertTrue(player.isDead);
+	}
+
+	/**
+	 * Test of respawn method, of class Player.
+	 */
+	@Test
+	public void testRespawn() {
+		String killer = "respawn";
+		player.die(killer);
+		player.respawn();
+		assertFalse(player.isDead);
+		assertEquals(100, player.getHitPoints());
+	}
+
+	/**
+	 * Test of getPosition method, of class Player.
+	 */
+	@Test
+	public void testGetPosition() {
+		System.out.println("getPosition");
+		Vector expResult = new Vector(2f,2f);
+		Vector result = player.getPosition();
+		assertEquals(expResult, result);
+	}
 //
 //	/**
 //	 * Test of fire method, of class Player.
@@ -317,69 +392,143 @@ public class PlayerTest {
 //		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
-//
-//	/**
-//	 * Test of setIdle method, of class Player.
-//	 */
-//	@Test
-//	public void testSetIdle() {
-//		System.out.println("setIdle");
-//		Player instance = null;
-//		instance.setIdle();
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of slash method, of class Player.
-//	 */
-//	@Test
-//	public void testSlash() {
-//		System.out.println("slash");
-//		Player instance = null;
-//		instance.slash();
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of move method, of class Player.
-//	 */
-//	@Test
-//	public void testMove() {
-//		System.out.println("move");
-//		Player instance = null;
-//		instance.move();
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of getCollisionBox method, of class Player.
-//	 */
-//	@Test
-//	public void testGetCollisionBox() {
-//		System.out.println("getCollisionBox");
-//		Player instance = null;
-//		Rectangle expResult = null;
-//		Rectangle result = instance.getCollisionBox();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of update method, of class Player.
-//	 */
-//	@Test
-//	public void testUpdate() {
-//		System.out.println("update");
-//		Player instance = null;
-//		instance.update();
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
+
+
+	/**
+	 * Test of move method, of class Player.
+	 */
+	@Test
+	public void testMove() {
+		System.out.println("move");
+		player.direction = Direction.LEFT;
+		try {
+			player.move();
+		} catch (NullPointerException ex){
+		
+		}
+		
+		assertEquals(2f-player.getMoveSpeed(), player.getPosition().getX(),0);
+		assertEquals(2f, player.getPosition().getY(),0);
+	}
+	/**
+	 * Test of move method, of class Player.
+	 */
+	@Test
+	public void testMoveLeft() {
+		System.out.println("move");
+		player.direction = Direction.LEFT;
+		try {
+			player.move();
+		} catch (NullPointerException ex){
+		
+		}
+		
+		assertEquals(2f-player.getMoveSpeed(), player.getPosition().getX(),0);
+		assertEquals(2f, player.getPosition().getY(),0);
+	}
+	/**
+	 * Test of move method, of class Player.
+	 */
+	@Test
+	public void testMoveRight() {
+		System.out.println("move");
+		player.direction = Direction.RIGHT;
+		try {
+			player.move();
+		} catch (NullPointerException ex){
+		
+		}
+		
+		assertEquals(2f+player.getMoveSpeed(), player.getPosition().getX(),0);
+		assertEquals(2f, player.getPosition().getY(),0);
+	}
+	/**
+	 * Test of move method, of class Player.
+	 */
+	@Test
+	public void testMoveDown() {
+		System.out.println("move");
+		player.direction = Direction.DOWN;
+		try {
+			player.move();
+		} catch (NullPointerException ex){
+		
+		}
+		
+		assertEquals(2f, player.getPosition().getX(),0);
+		assertEquals(2f-player.getMoveSpeed(), player.getPosition().getY(),0);
+	}
+	/**
+	 * Test of move method, of class Player.
+	 */
+	@Test
+	public void testMoveUp() {
+		System.out.println("move");
+		player.direction = Direction.UP;
+		try {
+			player.move();
+		} catch (NullPointerException ex){
+		
+		}
+		
+		assertEquals(2f, player.getPosition().getX(),0);
+		assertEquals(2f+player.getMoveSpeed(), player.getPosition().getY(),0);
+	}
+
+	/**
+	 * Test of getCollisionBox method, of class Player.
+	 */
+	@Test
+	public void testGetCollisionBoxLeft() {
+		System.out.println("getCollisionBox");
+		player.direction = Direction.LEFT;
+		Rectangle expResult = new Rectangle(2f+16-5f,2f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle result = player.getCollisionBox();
+		assertEquals(expResult, result);
+	}
+		/**
+	 * Test of getCollisionBox method, of class Player.
+	 */
+	@Test
+	public void testGetCollisionBoxRight() {
+		System.out.println("getCollisionBox");
+		player.direction = Direction.RIGHT;
+		Rectangle expResult = new Rectangle(2f+16+5f,2f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle result = player.getCollisionBox();
+		assertEquals(expResult, result);
+	}
+		/**
+	 * Test of getCollisionBox method, of class Player.
+	 */
+	@Test
+	public void testGetCollisionBoxUp() {
+		System.out.println("getCollisionBox");
+		player.direction = Direction.UP;
+		Rectangle expResult = new Rectangle(2f+16,2f+5f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle result = player.getCollisionBox();
+		assertEquals(expResult, result);
+	}
+		/**
+	 * Test of getCollisionBox method, of class Player.
+	 */
+	@Test
+	public void testGetCollisionBoxDown() {
+		System.out.println("getCollisionBox");
+		player.direction = Direction.DOWN;
+		Rectangle expResult = new Rectangle(2f+16,2f-5f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle result = player.getCollisionBox();
+		assertEquals(expResult, result);
+	}
+		@Test
+	public void testGetCollisionBoxDownSprinting() {
+		System.out.println("getCollisionBox");
+		player.setSprint(true);
+		player.direction = Direction.DOWN;
+		Rectangle expResult = new Rectangle(2f+16,2f-8f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle result = player.getCollisionBox();
+		assertEquals(expResult, result);
+	}
+
 //	/**
 //	 * Test of checkSlashing method, of class Player.
 //	 */
