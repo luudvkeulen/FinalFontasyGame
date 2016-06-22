@@ -72,11 +72,27 @@ public class ChatTextMessage {
      */
     @Override
     public String toString() {
-        String hour = Integer.toString(this.date.getHours());
-        String minute = Integer.toString(this.date.getMinutes());
-        String seconds = Integer.toString(this.date.getSeconds());
+		int hours = this.date.getHours();
+		int minutes = this.date.getMinutes();
+		int seconds = this.date.getSeconds();
+		
+        String hoursString = Integer.toString(hours);
+        String minutesString = Integer.toString(minutes);
+        String secondsString = Integer.toString(seconds);
+		
+		if (hours < 10) {
+			hoursString = "0" + hoursString;
+		}
+		
+		if (minutes < 10) {
+			minutesString = "0" + minutesString;
+		}
+		
+		if (seconds < 10) {
+			secondsString = "0" + secondsString;
+		}
 
-        return hour + ":" + minute + ":" + seconds + ": - "
+        return hoursString + ":" + minutesString + ":" + secondsString + ": - "
                 + this.playerName + ": " + this.messageContent;
     }
 
