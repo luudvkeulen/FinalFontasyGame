@@ -57,7 +57,7 @@ public class LibPlayer extends Player {
 	/**
 	 * The speed at which the animation runs.
 	 */
-	private final float animationSpeed;
+	private float animationSpeed;
 
 	public LibPlayer(PlayerCharacter character, String playerName, Vector position, GameScreen gameScreen, int roomId, boolean isSpectating) {
 		super(character, playerName, position, gameScreen.getGameManager(), roomId);
@@ -106,7 +106,7 @@ public class LibPlayer extends Player {
 		return this.currentAnimation;
 	}
 
-	public void changeAnimation() {
+	public final void changeAnimation() {
 		if (super.animation != IDLE) {
 			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
@@ -115,17 +115,16 @@ public class LibPlayer extends Player {
 	}
 
 	@Override
-	public boolean fire()
-	{
+	public boolean fire() {
 		boolean returnValue = super.fire();
-		
-		if (returnValue)
-		{
+
+		if (returnValue) {
 			Sounds.BOW.play();
 		}
-		
+
 		return returnValue;
 	}
+
 	/**
 	 * Switches the textures (skin) of this player.
 	 */
@@ -210,7 +209,6 @@ public class LibPlayer extends Player {
 	/**
 	 * Sets the player's animation to idle.
 	 */
-	@Override
 	public void setIdle() {
 		super.animation = IDLE;
 		this.changeAnimation();
@@ -222,7 +220,7 @@ public class LibPlayer extends Player {
 	@Override
 	public void slash() {
 		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-			super.animation = SLASHING;
+			this.animationSpeed = 0.01f;
 			this.animation = SLASHING;
 			this.changeAnimation();
 			Sounds.SLASH.play();

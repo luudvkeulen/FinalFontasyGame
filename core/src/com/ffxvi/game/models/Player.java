@@ -12,22 +12,16 @@
  */
 package com.ffxvi.game.models;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerAnimation;
 import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
-import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
 import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.SkinManager.PlayerSkin;
-import com.ffxvi.game.support.Sounds;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeEvent;
@@ -63,11 +57,6 @@ public class Player extends SimplePlayer {
 	private PlayerSkin playerSkin;
 
 	/**
-	 * The animation that this player is currently in
-	 */
-	private Animation currentAnimation;
-
-	/**
 	 * The direction where the player is aiming his/her weapon in degrees.
 	 */
 	private float aimDirection;
@@ -76,9 +65,7 @@ public class Player extends SimplePlayer {
 	 * The time before a next shot can be fired.
 	 */
 	private long shootStart;
-
-	private float animationSpeed;
-
+	
 	/**
 	 * The grid size of the player in width.
 	 */
@@ -411,14 +398,6 @@ public class Player extends SimplePlayer {
 		return false;
 	}
 
-	private void changeAnimation() {
-		if (super.animation != IDLE) {
-			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
-		} else {
-			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
-		}
-	}
-
 	/**
 	 * Fires a new projectile at the aim direction, given the player can fire.
 	 *
@@ -428,8 +407,6 @@ public class Player extends SimplePlayer {
 		if (this.canFire()) {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
-
-			Sounds.BOW.play();
 
 			// Create a bullet inside the player with the direction and speed
 			this.gameManager.addProjectile(new Projectile(new Vector(this.x
@@ -443,24 +420,11 @@ public class Player extends SimplePlayer {
 	}
 
 	/**
-	 * Sets the player's animation to idle.
-	 */
-	public void setIdle() {
-		super.animation = IDLE;
-		this.changeAnimation();
-	}
-
-	/**
 	 * Slashes in the given direction, given the player can slash.
 	 */
 	public void slash() {
 		if (!this.isDead && !this.isSpectating) {
 			if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-				this.animationSpeed = 0.01f;
-				super.animation = SLASHING;
-				this.animation = SLASHING;
-				this.changeAnimation();
-//				slashAnimCount = 1;
 				lastSlash = System.currentTimeMillis();
 			}
 		}
