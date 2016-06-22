@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ffxvi.game.entities;
+package com.ffxvi.game.models;
 
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.models.GameManager;

@@ -12,7 +12,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Timer;
+import com.ffxvi.game.MainClass;
 import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
 import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
@@ -79,6 +81,20 @@ public class LibPlayer extends Player {
 
 		this.changeSkin();
 		this.changeAnimation();
+	}
+	
+	@Override
+	public void setAimDirection(Vector mousePosition){
+		if (mousePosition == null) {
+			throw new IllegalArgumentException("Mouse position can not be null.");
+		}
+
+		// Create a vector3 with the player's coordinates
+		Vector3 playerPosition = new Vector3(this.x, this.y, 0);
+
+		// Project the position to the camera
+		MainClass.getInstance().camera.project(playerPosition);
+		super.setAimDirection(mousePosition);
 	}
 
 	/**

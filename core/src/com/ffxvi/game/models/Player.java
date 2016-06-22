@@ -273,16 +273,10 @@ public class Player extends SimplePlayer {
 			throw new IllegalArgumentException("Mouse position can not be null.");
 		}
 
-		// Create a vector3 with the player's coordinates
-		Vector3 playerPosition = new Vector3(this.x, this.y, 0);
-
-		// Project the position to the camera
-		MainClass.getInstance().camera.project(playerPosition);
-
 		// Calculate the direction of the bullet using arctan
 		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
-				- playerPosition.y - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
-				mousePosition.getX() - playerPosition.x
+				- this.getPosition().getX() - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
+				mousePosition.getX() - this.getPosition().getX()
 				- (this.modifiedGridSizeX / 2)));
 
 		if (dir < 0) {
