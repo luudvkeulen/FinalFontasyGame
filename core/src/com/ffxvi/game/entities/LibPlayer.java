@@ -150,16 +150,16 @@ public class LibPlayer extends Player {
 		super.animation = PlayerAnimation.DYING;
 		this.changeAnimation();
 	}
-	
-	
 
 	/**
 	 * Sets the player's animation to idle.
 	 */
 	@Override
 	public void setIdle() {
-		super.animation = IDLE;
-		this.changeAnimation();
+		if (!super.isDead) {
+			super.animation = IDLE;
+			this.changeAnimation();
+		}
 	}
 
 	/**
