@@ -171,7 +171,7 @@ public class Projectile extends SimpleProjectile {
 	 * @param objects The objects to check for collision with.
 	 * @return
 	 */
-	private boolean checkWallCollision(Rectangle rec, MapObjects objects) {
+	protected boolean checkWallCollision(Rectangle rec, MapObjects objects) {
 		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if (rec.overlaps(rectangleMapObject)) {

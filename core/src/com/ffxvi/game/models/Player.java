@@ -540,6 +540,7 @@ public class Player extends SimplePlayer {
 
 	public void subscribe(PropertyChangeListener listener, String property) {
 		this.propertyChangeSupport.addPropertyChangeListener(property, listener);
+		
 	}
 
 	public void unsubsribe(PropertyChangeListener listener) {

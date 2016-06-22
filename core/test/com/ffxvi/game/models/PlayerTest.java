@@ -7,8 +7,11 @@ package com.ffxvi.game.models;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.entities.PlayerAnimation;
+import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.rmi.CORBA.Util;
 import org.junit.After;
@@ -34,6 +37,7 @@ public class PlayerTest {
 	String playerName = "speler";
 	Player player;
 	GameManager gameManager;
+	boolean gehoord = false;
 
 	@Before
 	public void setUp() {
@@ -139,8 +143,9 @@ public class PlayerTest {
 		player.setSprint(true);
 		float result = player.getMoveSpeed();
 		float expResult = 8f;
-		assertEquals(expResult, result,0);
+		assertEquals(expResult, result, 0);
 	}
+
 	/**
 	 * Test of setSprint method, of class Player.
 	 */
@@ -150,19 +155,19 @@ public class PlayerTest {
 		player.setSprint(false);
 		float result = player.getMoveSpeed();
 		float expResult = 5f;
-		assertEquals(expResult, result,0);
+		assertEquals(expResult, result, 0);
 	}
 
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testSetAimDirection_VectorNull() {
 		System.out.println("setAimDirection");
 		Vector mousePosition = null;
 		player.setAimDirection(mousePosition);
 	}
-	
+
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
@@ -173,16 +178,13 @@ public class PlayerTest {
 		player.setAimDirection(mousePosition);
 		try {
 			player.fire();
-		} catch (NullPointerException ex)
-		{
-			
+		} catch (NullPointerException ex) {
+
 		} catch (java.lang.ExceptionInInitializerError ex) {
-		
+
 		}
-		
-		
-		
-		assertEquals(258.53046f, gameManager.getProjectiles().get(0).getRotation(),0);
+
+		assertEquals(258.53046f, gameManager.getProjectiles().get(0).getRotation(), 0);
 	}
 
 	/**
@@ -194,16 +196,16 @@ public class PlayerTest {
 		float controllerInputX = 0.0F;
 		float controllerInputY = -1.0F;
 		player.setAimDirection(controllerInputX, controllerInputY);
-			try {
+		try {
 			player.fire();
-		} catch (NullPointerException ex)
-		{
-			
+		} catch (NullPointerException ex) {
+
 		} catch (java.lang.ExceptionInInitializerError ex) {
-		
+
 		}
-		assertEquals(90f, gameManager.getProjectiles().get(0).getRotation(),0);
+		assertEquals(90f, gameManager.getProjectiles().get(0).getRotation(), 0);
 	}
+
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
@@ -213,16 +215,16 @@ public class PlayerTest {
 		float controllerInputX = 1.0F;
 		float controllerInputY = 0.0F;
 		player.setAimDirection(controllerInputX, controllerInputY);
-			try {
+		try {
 			player.fire();
-		} catch (NullPointerException ex)
-		{
-			
+		} catch (NullPointerException ex) {
+
 		} catch (java.lang.ExceptionInInitializerError ex) {
-		
+
 		}
-		assertEquals(0f, gameManager.getProjectiles().get(0).getRotation(),0);
+		assertEquals(0f, gameManager.getProjectiles().get(0).getRotation(), 0);
 	}
+
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
@@ -232,20 +234,20 @@ public class PlayerTest {
 		float controllerInputX = 0.0F;
 		float controllerInputY = 1.0F;
 		player.setAimDirection(controllerInputX, controllerInputY);
-			try {
+		try {
 			player.fire();
-		} catch (NullPointerException ex)
-		{
-			
+		} catch (NullPointerException ex) {
+
 		} catch (java.lang.ExceptionInInitializerError ex) {
-		
+
 		}
-		assertEquals(270, gameManager.getProjectiles().get(0).getRotation(),0);
+		assertEquals(270, gameManager.getProjectiles().get(0).getRotation(), 0);
 	}
+
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testSetAimDirection_float_floatIllegalArg() {
 
 		float controllerInputX = 0.0F;
@@ -295,11 +297,22 @@ public class PlayerTest {
 		player.setScore(score);
 		assertEquals(score, player.getScore());
 	}
-	
-		/**
+
+	/**
 	 * Test of setScore method, of class Player.
 	 */
-	@Test (expected = IllegalArgumentException.class)
+	@Test
+	public void testSetDirection() {
+		System.out.println("setDirection");
+		Direction expResult = Direction.RIGHT;
+		player.setDirection(Direction.RIGHT);
+		assertEquals(expResult, player.getDirection());
+	}
+
+	/**
+	 * Test of setScore method, of class Player.
+	 */
+	@Test(expected = IllegalArgumentException.class)
 	public void testSetScoreNegative() {
 		System.out.println("setScore");
 		int score = -1;
@@ -316,8 +329,9 @@ public class PlayerTest {
 		int amount = 10;
 		String attacker = "andereSpeler";
 		player.receiveDamage(amount, attacker);
-		assertEquals(100-amount, player.getHitPoints());
+		assertEquals(100 - amount, player.getHitPoints());
 	}
+
 	/**
 	 * Test of receiveDamage method, of class Player.
 	 */
@@ -327,9 +341,10 @@ public class PlayerTest {
 		int amount = -10;
 		String attacker = "andereSpeler";
 		player.receiveDamage(amount, attacker);
-		assertEquals(100-amount, player.getHitPoints());
+		assertEquals(100 - amount, player.getHitPoints());
 	}
-		/**
+
+	/**
 	 * Test of receiveDamage method, of class Player.
 	 */
 	@Test
@@ -339,9 +354,9 @@ public class PlayerTest {
 		String attacker = "andereSpeler";
 		try {
 			player.receiveDamage(amount, attacker);
-		} catch (NullPointerException ex){
-		
-		}	
+		} catch (NullPointerException ex) {
+
+		}
 		assertEquals(0, player.getHitPoints());
 	}
 
@@ -354,6 +369,29 @@ public class PlayerTest {
 		String killer = "andereSpeler";
 		player.die(killer);
 		assertTrue(player.isDead);
+	}
+
+	/**
+	 * Test of die method, of class Player.
+	 */
+	@Test
+	public void testDieFalse() {
+		System.out.println("die");
+		String killer = "andereSpeler";
+		player.die(killer);
+		assertFalse(player.die(killer));
+	}
+
+	/**
+	 * Test of die method, of class Player.
+	 */
+	@Test
+	public void testDieFalseSpectating() {
+		System.out.println("die");
+		String killer = "andereSpeler";
+		player.isDead = false;
+		player.isSpectating = true;
+		assertFalse(player.die(killer));
 	}
 
 	/**
@@ -374,25 +412,10 @@ public class PlayerTest {
 	@Test
 	public void testGetPosition() {
 		System.out.println("getPosition");
-		Vector expResult = new Vector(2f,2f);
+		Vector expResult = new Vector(2f, 2f);
 		Vector result = player.getPosition();
 		assertEquals(expResult, result);
 	}
-//
-//	/**
-//	 * Test of fire method, of class Player.
-//	 */
-//	@Test
-//	public void testFire() {
-//		System.out.println("fire");
-//		Player instance = null;
-//		boolean expResult = false;
-//		boolean result = instance.fire();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-
 
 	/**
 	 * Test of move method, of class Player.
@@ -403,13 +426,14 @@ public class PlayerTest {
 		player.direction = Direction.LEFT;
 		try {
 			player.move();
-		} catch (NullPointerException ex){
-		
+		} catch (NullPointerException ex) {
+
 		}
-		
-		assertEquals(2f-player.getMoveSpeed(), player.getPosition().getX(),0);
-		assertEquals(2f, player.getPosition().getY(),0);
+
+		assertEquals(2f - player.getMoveSpeed(), player.getPosition().getX(), 0);
+		assertEquals(2f, player.getPosition().getY(), 0);
 	}
+
 	/**
 	 * Test of move method, of class Player.
 	 */
@@ -419,13 +443,14 @@ public class PlayerTest {
 		player.direction = Direction.LEFT;
 		try {
 			player.move();
-		} catch (NullPointerException ex){
-		
+		} catch (NullPointerException ex) {
+
 		}
-		
-		assertEquals(2f-player.getMoveSpeed(), player.getPosition().getX(),0);
-		assertEquals(2f, player.getPosition().getY(),0);
+
+		assertEquals(2f - player.getMoveSpeed(), player.getPosition().getX(), 0);
+		assertEquals(2f, player.getPosition().getY(), 0);
 	}
+
 	/**
 	 * Test of move method, of class Player.
 	 */
@@ -435,13 +460,14 @@ public class PlayerTest {
 		player.direction = Direction.RIGHT;
 		try {
 			player.move();
-		} catch (NullPointerException ex){
-		
+		} catch (NullPointerException ex) {
+
 		}
-		
-		assertEquals(2f+player.getMoveSpeed(), player.getPosition().getX(),0);
-		assertEquals(2f, player.getPosition().getY(),0);
+
+		assertEquals(2f + player.getMoveSpeed(), player.getPosition().getX(), 0);
+		assertEquals(2f, player.getPosition().getY(), 0);
 	}
+
 	/**
 	 * Test of move method, of class Player.
 	 */
@@ -451,13 +477,14 @@ public class PlayerTest {
 		player.direction = Direction.DOWN;
 		try {
 			player.move();
-		} catch (NullPointerException ex){
-		
+		} catch (NullPointerException ex) {
+
 		}
-		
-		assertEquals(2f, player.getPosition().getX(),0);
-		assertEquals(2f-player.getMoveSpeed(), player.getPosition().getY(),0);
+
+		assertEquals(2f, player.getPosition().getX(), 0);
+		assertEquals(2f - player.getMoveSpeed(), player.getPosition().getY(), 0);
 	}
+
 	/**
 	 * Test of move method, of class Player.
 	 */
@@ -467,12 +494,30 @@ public class PlayerTest {
 		player.direction = Direction.UP;
 		try {
 			player.move();
-		} catch (NullPointerException ex){
-		
+		} catch (NullPointerException ex) {
+
 		}
-		
-		assertEquals(2f, player.getPosition().getX(),0);
-		assertEquals(2f+player.getMoveSpeed(), player.getPosition().getY(),0);
+
+		assertEquals(2f, player.getPosition().getX(), 0);
+		assertEquals(2f + player.getMoveSpeed(), player.getPosition().getY(), 0);
+	}
+
+	/**
+	 * Test of move method, of class Player.
+	 */
+	@Test
+	public void testMoveDownDead() {
+		System.out.println("move");
+		player.die("andereSpeler");
+		player.direction = Direction.DOWN;
+		try {
+			player.move();
+		} catch (NullPointerException ex) {
+
+		}
+
+		assertEquals(2f, player.getPosition().getX(), 0);
+		assertEquals(2f, player.getPosition().getY(), 0);
 	}
 
 	/**
@@ -482,104 +527,255 @@ public class PlayerTest {
 	public void testGetCollisionBoxLeft() {
 		System.out.println("getCollisionBox");
 		player.direction = Direction.LEFT;
-		Rectangle expResult = new Rectangle(2f+16-5f,2f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle expResult = new Rectangle(2f + 16 - 5f, 2f, Utils.GRIDSIZE - 32, Utils.GRIDSIZE - 16);
 		Rectangle result = player.getCollisionBox();
 		assertEquals(expResult, result);
 	}
-		/**
+
+	/**
 	 * Test of getCollisionBox method, of class Player.
 	 */
 	@Test
 	public void testGetCollisionBoxRight() {
 		System.out.println("getCollisionBox");
 		player.direction = Direction.RIGHT;
-		Rectangle expResult = new Rectangle(2f+16+5f,2f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle expResult = new Rectangle(2f + 16 + 5f, 2f, Utils.GRIDSIZE - 32, Utils.GRIDSIZE - 16);
 		Rectangle result = player.getCollisionBox();
 		assertEquals(expResult, result);
 	}
-		/**
+
+	/**
 	 * Test of getCollisionBox method, of class Player.
 	 */
 	@Test
 	public void testGetCollisionBoxUp() {
 		System.out.println("getCollisionBox");
 		player.direction = Direction.UP;
-		Rectangle expResult = new Rectangle(2f+16,2f+5f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle expResult = new Rectangle(2f + 16, 2f + 5f, Utils.GRIDSIZE - 32, Utils.GRIDSIZE - 16);
 		Rectangle result = player.getCollisionBox();
 		assertEquals(expResult, result);
 	}
-		/**
+
+	/**
 	 * Test of getCollisionBox method, of class Player.
 	 */
 	@Test
 	public void testGetCollisionBoxDown() {
 		System.out.println("getCollisionBox");
 		player.direction = Direction.DOWN;
-		Rectangle expResult = new Rectangle(2f+16,2f-5f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
-		Rectangle result = player.getCollisionBox();
-		assertEquals(expResult, result);
-	}
-		@Test
-	public void testGetCollisionBoxDownSprinting() {
-		System.out.println("getCollisionBox");
-		player.setSprint(true);
-		player.direction = Direction.DOWN;
-		Rectangle expResult = new Rectangle(2f+16,2f-8f,Utils.GRIDSIZE - 32,Utils.GRIDSIZE - 16);
+		Rectangle expResult = new Rectangle(2f + 16, 2f - 5f, Utils.GRIDSIZE - 32, Utils.GRIDSIZE - 16);
 		Rectangle result = player.getCollisionBox();
 		assertEquals(expResult, result);
 	}
 
-//	/**
-//	 * Test of checkSlashing method, of class Player.
-//	 */
-//	@Test
-//	public void testCheckSlashing() {
-//		System.out.println("checkSlashing");
-//		Player instance = null;
-//		instance.checkSlashing();
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
+	@Test
+	public void testGetCollisionBoxDownSprinting() {
+		System.out.println("getCollisionBox");
+		player.setSprint(true);
+		player.direction = Direction.DOWN;
+		Rectangle expResult = new Rectangle(2f + 16, 2f - 8f, Utils.GRIDSIZE - 32, Utils.GRIDSIZE - 16);
+		Rectangle result = player.getCollisionBox();
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of checkSlashing method, of class Player.
+	 */
+	@Test
+	public void testCheckSlashing() {
+		System.out.println("checkSlashing");
+		Player otherPlayer = new Player(PlayerCharacter.HUMAN_PIRATE, "andereSpeler", new Vector(2, 2), gameManager, roomdID);
+		otherPlayer.animation = PlayerAnimation.SLASHING;
+		try {
+			gameManager.addToMultiplayers(otherPlayer);
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(99, player.getHitPoints());
+	}
+
+	/**
+	 * Test of checkSlashing method, of class Player.
+	 */
+	@Test
+	public void testCheckSlashingNotSlashing() {
+		System.out.println("checkSlashing");
+		Player otherPlayer = new Player(PlayerCharacter.HUMAN_PIRATE, "andereSpeler", new Vector(2, 2), gameManager, roomdID);
+		otherPlayer.animation = PlayerAnimation.SHOOTING;
+		try {
+			gameManager.addToMultiplayers(otherPlayer);
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(100, player.getHitPoints());
+	}
+
+	/**
+	 * Test of checkSlashing method, of class Player.
+	 */
+	@Test
+	public void testCheckSlashingNoOverlap() {
+		System.out.println("checkSlashing");
+		Player otherPlayer = new Player(PlayerCharacter.HUMAN_PIRATE, "andereSpeler", new Vector(100, 100), gameManager, roomdID);
+		otherPlayer.animation = PlayerAnimation.SLASHING;
+		try {
+			gameManager.addToMultiplayers(otherPlayer);
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(100, player.getHitPoints());
+	}
+
+	@Test
+	public void testCheckSlashingSamePlayer() {
+		System.out.println("checkSlashing");
+		Player otherPlayer = new Player(PlayerCharacter.HUMAN_PIRATE, "speler", new Vector(2, 2), gameManager, roomdID);
+		otherPlayer.animation = PlayerAnimation.SLASHING;
+		try {
+			gameManager.addToMultiplayers(otherPlayer);
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(100, player.getHitPoints());
+	}
+
+	@Test
+	public void testCheckSlashingNoPlayers() {
+		System.out.println("checkSlashing");
+		try {
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(100, player.getHitPoints());
+	}
+
+	@Test
+	public void testCheckSlashingSpectator() {
+		System.out.println("checkSlashing");
+		player.isSpectating = true;
+		try {
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(100, player.getHitPoints());
+	}
+
+	/**
+	 * Test of getRectangle method, of class Player.
+	 */
+	@Test
+	public void testGetRectangle() {
+		System.out.println("getRectangle");
+
+		Rectangle expResult = new Rectangle(2f, 2f, Utils.GRIDSIZE - 32, Utils.GRIDSIZE - 16);
+		Rectangle result = player.getRectangle();
+		assertEquals(expResult, result);
+	}
+
+	@Test
+	public void testSetIdle() {
+		player.setIdle();
+		assertEquals(PlayerAnimation.IDLE, player.animation);
+	}
+
+	@Test
+	public void testSlash() {
+		player.slash();
+		assertEquals(PlayerAnimation.SLASHING, player.getAnimation());
+
+	}
+
+	@Test
+	public void testCantSlash() {
+		player.die("andereSpeler");
+		player.slash();
+
+		assertNotEquals(PlayerAnimation.SLASHING, player.getAnimation());
+
+	}
+
+	@Test
+	public void testFireCant() {
+		player.isDead = true;
+		assertFalse(player.fire());
+
+	}
+
+	@Test
+	public void testFire() {
+		try {
+			player.fire();
+		} catch (NullPointerException ex) {
+
+		}
+		assertEquals(1, gameManager.getProjectiles().size());
+
+	}
+
+	@Test
+	public void testSetInnerData() {
+		SimplePlayer simple = new SimplePlayer("andereSpeler", 1f, 1f, 3, PlayerCharacter.SKELETON_HOODED);
+		player.setDataInner(simple);
+		assertEquals("andereSpeler", player.getName());
+		assertEquals(100, player.getHitPoints());
+		assertEquals(0, player.getScore());
+		assertEquals(3, player.getRoomId());
+		assertEquals(1f, player.getPosition().getX(), 0);
+		assertEquals(1f, player.getPosition().getY(), 0);
+		assertEquals(0.0f, player.getMoveSpeed(), 0);
+		assertEquals(Direction.DOWN, player.getDirection());
+		assertEquals(PlayerCharacter.SKELETON_HOODED, player.getSkin());
+		assertEquals(PlayerAnimation.IDLE, player.getAnimation());
+		assertEquals(0f, player.stateTime, 0);
+
+	}
+
+	@Test
+	public void testPlayerWithManager() {
+		Player player2 = new Player(gameManager);
+		assertEquals(0f, player2.getMoveSpeed(), 0);
+		assertEquals(0f, player2.getPosition().getX(), 0);
+		assertEquals(0f, player2.getPosition().getY(), 0);
+		assertEquals(PlayerCharacter.SKELETON_NORMAL, player2.getSkin());
+		assertEquals("blank", player2.getName());
+	}
+
+	@Test
+	public void testSubscribe() {
+		gehoord = false;
+		PropListener prop = new PropListener();
+		player.subscribe(prop, PropertyListenerNames.PLAYER_HEALTH);
+		player.receiveDamage(10, "andereSpeler");
+		assertTrue(gehoord);
+
+	}
+//		@Test
+//	public void testUnsubscribe() throws InterruptedException {
+//		gehoord = false;
+//		PropListener prop = new PropListener();
 //
-//	/**
-//	 * Test of getRectangle method, of class Player.
-//	 */
-//	@Test
-//	public void testGetRectangle() {
-//		System.out.println("getRectangle");
-//		Player instance = null;
-//		Rectangle expResult = null;
-//		Rectangle result = instance.getRectangle();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
+//		player.subscribe(prop, PropertyListenerNames.PLAYER_HEALTH);
+//		player.unsubsribe(prop);
+//		player.receiveDamage(10, "andereSpeler");
+//		assertFalse(gehoord);
 //	}
-//
-//	/**
-//	 * Test of subscribe method, of class Player.
-//	 */
-//	@Test
-//	public void testSubscribe() {
-//		System.out.println("subscribe");
-//		PropertyChangeListener listener = null;
-//		String property = "";
-//		Player instance = null;
-//		instance.subscribe(listener, property);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
-//	/**
-//	 * Test of unsubsribe method, of class Player.
-//	 */
-//	@Test
-//	public void testUnsubsribe() {
-//		System.out.println("unsubsribe");
-//		PropertyChangeListener listener = null;
-//		Player instance = null;
-//		instance.unsubsribe(listener);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//	
+	
+	
+	public class PropListener implements PropertyChangeListener {
+
+
+		@Override
+		public void propertyChange(PropertyChangeEvent pce) {
+			gehoord = true;
+			
+			
+		}
+	
+	}
 }
