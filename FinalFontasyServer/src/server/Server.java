@@ -234,7 +234,7 @@ public class Server implements Observer {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
 				if (players[i].equals(ipAddress)) {
-					System.out.format("DISCONNECTED %1$s\n", ipAddress.toString());
+					System.out.format("DISCONNECTED Client at %1$s\n", ipAddress.toString());
 					sendSingle("DISCONNECTED", ipAddress);
 					playerStrikes.remove(players[i]);
 					playerData.remove(players[i]);
