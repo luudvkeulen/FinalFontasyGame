@@ -14,6 +14,7 @@ package com.ffxvi.game.client;
 
 import com.badlogic.gdx.Gdx;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.VoiceSound;
 import com.ffxvi.game.models.Ending;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.models.SimplePlayer;
@@ -133,6 +134,10 @@ public class ClientListener implements Runnable {
 				}
 			} else if (object instanceof SimpleProjectile) {
 				this.receiveProjectile(receivePacket, (SimpleProjectile) object);
+			} else if (object instanceof VoiceSound) {
+				VoiceSound v = (VoiceSound) object;
+				System.out.println("SHOULD PLAY VOICESOUND");
+				v.playInput();
 			}
 		}
 	}
