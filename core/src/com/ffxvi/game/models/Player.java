@@ -15,6 +15,7 @@ package com.ffxvi.game.models;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.ffxvi.game.entities.PlayerAnimation;
+import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
 import com.ffxvi.game.support.PropertyListenerNames;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
@@ -54,7 +55,7 @@ public class Player extends SimplePlayer {
 	 * The time before a next shot can be fired.
 	 */
 	private long shootStart;
-	
+
 	/**
 	 * The grid size of the player in width.
 	 */
@@ -348,13 +349,21 @@ public class Player extends SimplePlayer {
 	 * Lets the player die.
 	 *
 	 * @param killer
+	 * @return A boolean indicating if the player could die.
 	 */
-	public void die(final String killer) {
+	public boolean die(final String killer) {
 		if (!this.isDead && !this.isSpectating) {
+
+			// Set animation to DEATH
+			super.animation = PlayerAnimation.DYING;
 
 			// Set isDead to true
 			this.isDead = true;
+
+			return true;
 		}
+
+		return false;
 	}
 
 	public void respawn() {
@@ -408,14 +417,17 @@ public class Player extends SimplePlayer {
 		return false;
 	}
 
+	protected boolean canSlash() {
+		return !this.isDead && !this.isSpectating && (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500);
+	}
+
 	/**
 	 * Slashes in the given direction, given the player can slash.
 	 */
 	public void slash() {
-		if (!this.isDead && !this.isSpectating) {
-			if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-				lastSlash = System.currentTimeMillis();
-			}
+		if (this.canSlash()) {
+			this.animation = SLASHING;
+			this.lastSlash = System.currentTimeMillis();
 		}
 	}
 
@@ -440,8 +452,13 @@ public class Player extends SimplePlayer {
 					break;
 			}
 
+			this.animation = PlayerAnimation.WALKING;
 			this.gameManager.sendPlayer(new SimplePlayer(this));
 		}
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
 	}
 
 	/**
@@ -511,6 +528,13 @@ public class Player extends SimplePlayer {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Sets the player's animation to idle.
+	 */
+	public void setIdle() {
+		this.animation = PlayerAnimation.IDLE;
 	}
 
 	/**

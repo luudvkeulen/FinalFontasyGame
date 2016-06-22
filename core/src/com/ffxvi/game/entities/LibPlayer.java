@@ -52,8 +52,6 @@ public class LibPlayer extends Player {
 
 	private final GameScreen screen;
 
-	private long lastSlash = 0;
-
 	/**
 	 * The speed at which the animation runs.
 	 */
@@ -82,9 +80,9 @@ public class LibPlayer extends Player {
 		this.changeSkin();
 		this.changeAnimation();
 	}
-	
+
 	@Override
-	public void setAimDirection(Vector mousePosition){
+	public void setAimDirection(Vector mousePosition) {
 		if (mousePosition == null) {
 			throw new IllegalArgumentException("Mouse position can not be null.");
 		}
@@ -107,7 +105,7 @@ public class LibPlayer extends Player {
 	}
 
 	public final void changeAnimation() {
-		if (super.animation != IDLE) {
+		if (this.animation != IDLE) {
 			this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
 		} else {
 			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
@@ -178,17 +176,12 @@ public class LibPlayer extends Player {
 		super.checkSlashing();
 	}
 
-	/**
-	 * Makes the player die.
-	 *
-	 * @param killerName
-	 */
 	@Override
-	public void die(final String killerName) {
-		super.die(killerName);
+	public boolean die(final String killerName) {
+		if (!super.die(killerName)) {
+			return false;
+		}
 
-		// Set animation to DEATH
-		super.animation = PlayerAnimation.DYING;
 		this.changeAnimation();
 
 		// Delay in seconds
@@ -204,13 +197,13 @@ public class LibPlayer extends Player {
 				LibPlayer.this.respawn();
 			}
 		}, delay);
+
+		return true;
 	}
 
-	/**
-	 * Sets the player's animation to idle.
-	 */
+	@Override
 	public void setIdle() {
-		super.animation = IDLE;
+		super.setIdle();
 		this.changeAnimation();
 	}
 
@@ -219,15 +212,13 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void slash() {
-		if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
+		if (this.canSlash()) {
 			this.animationSpeed = 0.01f;
-			this.animation = SLASHING;
 			this.changeAnimation();
 			Sounds.SLASH.play();
-			lastSlash = System.currentTimeMillis();
 		}
 	}
-
+	
 	int counter2 = 0;
 
 	/**
@@ -235,15 +226,14 @@ public class LibPlayer extends Player {
 	 *
 	 * @param direction The new direction.
 	 */
+	@Override
 	public void setDirection(Direction direction) {
-		this.direction = direction;
 
 		//If slashing, don't move
-		if (!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
+		if (this.animation != PlayerAnimation.SLASHING || counter2 == 0) {
 
 			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
 				this.move();
-				super.animation = PlayerAnimation.WALKING;
 				this.changeAnimation();
 			}
 		} else {
@@ -267,14 +257,17 @@ public class LibPlayer extends Player {
 	 * @return true if collision, false if not.
 	 */
 	private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects) {
-		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
+		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class
+		)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if (rec.overlaps(rectangleMapObject)) {
 				return true;
+
 			}
 		}
 
-		for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class)) {
+		for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class
+		)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if (rec.overlaps(rectangleMapObject)) {
 				return true;
@@ -282,18 +275,22 @@ public class LibPlayer extends Player {
 		}
 
 		return false;
+
 	}
 
 	private void checkDoorCollision(Rectangle rec, MapObjects objects) {
-		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
+		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class
+		)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if (rec.overlaps(rectangleMapObject)) {
 				int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
 
 				try {
 					this.screen.setLevel(mapId, this.direction);
+
 				} catch (IllegalArgumentException ex) {
-					Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+					Logger.getLogger(Player.class
+							.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
 		}
