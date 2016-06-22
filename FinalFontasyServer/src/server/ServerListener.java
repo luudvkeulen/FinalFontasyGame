@@ -139,7 +139,7 @@ public class ServerListener implements Runnable {
 		} else if (message.equals("DISCONNECTING")) {
 			// Remove the client from the connected clients list
 			if (server.disconnectPlayer(playerAddress)) {
-				server.sendSingle("DISCONNECTED", playerAddress);
+//				server.sendSingle("DISCONNECTED", playerAddress);
 			}
 		} else if (message.equals("SPECTATING")) {
 			server.addSpectator(packet.getAddress());
