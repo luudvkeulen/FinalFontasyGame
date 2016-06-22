@@ -12,16 +12,10 @@
  */
 package com.ffxvi.game.models;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
-import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerAnimation;
-import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
-import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
 import com.ffxvi.game.support.PropertyListenerNames;
-import com.ffxvi.game.support.SkinManager.PlayerSkin;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeEvent;
@@ -50,11 +44,6 @@ public class Player extends SimplePlayer {
 	 * The cooldown between firing.
 	 */
 	private static final float SHOOTCOOLDOWN = 0.5f;
-
-	/**
-	 * The textures (skin) that this player is using
-	 */
-	private PlayerSkin playerSkin;
 
 	/**
 	 * The direction where the player is aiming his/her weapon in degrees.
