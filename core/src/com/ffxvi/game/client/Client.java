@@ -207,7 +207,7 @@ public final class Client {
 	
 	/**
 	 * Send a text message to everyone in the server.
-	 * @param ctm The textmessage which you want to send.
+	 * @param ctm The text message which you want to send.
 	 */
 	public void sendMessage(ChatTextMessage ctm) {
 		chatListener.getChatSender().sendTextMessage(ctm);
@@ -216,8 +216,8 @@ public final class Client {
     /**
      * Turns the given Object into a byte array
      *
-     * @param obj the Object to serialize
-     * @return the serialized Object turned into a byte array
+     * @param obj the Object to serialise
+     * @return the serialised Object turned into a byte array
      * @throws IOException when the OutputStream gets disrupted
      */
     private byte[] serialize(Object obj) throws IOException {

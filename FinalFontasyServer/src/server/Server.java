@@ -19,8 +19,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,13 +32,15 @@ import java.util.logging.Logger;
  *
  * @author Robin
  */
-public class Server {
+public class Server implements Observer {
 
 	private InetSocketAddress[] players;
 	private List<InetSocketAddress> spectators;
 	private HashMap<InetSocketAddress, SimplePlayer> playerData;
+	private HashMap<InetSocketAddress, Integer> playerStrikes;
 	private ServerListener serverListener;
-	private Timer updateTimer;
+	private Timer updateDataTimer;
+	private ExecutorService threadPool;
 	
 	private int playerLimit;
 	private int spectatorLimit;
@@ -125,12 +131,15 @@ public class Server {
 		players = new InetSocketAddress[playerLimit];
 		// Initialize the playerData HashMap
 		playerData = new HashMap(playerLimit);
+		// Initialize the playerStrikes HashMap
+		playerStrikes = new HashMap(playerLimit);
 		spectatorLimit = 1000;
 		spectators = new ArrayList();
 		// Set the port to receive data on
 		serverListener = new ServerListener(this, listenerPort);
 		Thread listenerThread = new Thread(serverListener);
 		listenerThread.start();
+		threadPool = Executors.newFixedThreadPool(playerLimit);
 
 		// Start the updateTimer
 		startTimer();
@@ -141,7 +150,7 @@ public class Server {
 	 * seconds (20 milliseconds)
 	 */
 	private void startTimer() {
-		updateTimer = new Timer();
+		updateDataTimer = new Timer();
 		TimerTask tt = new TimerTask() {
 			@Override
 			public void run() {
@@ -179,7 +188,7 @@ public class Server {
 			}
 		};
 		// Execute the TimerTask once every 0.02 seconds (20 milliseconds)
-		updateTimer.scheduleAtFixedRate(tt, 0, 20);
+		updateDataTimer.scheduleAtFixedRate(tt, 0, 20);
 	}
 
 	/**
@@ -201,6 +210,11 @@ public class Server {
 		}
 		if (canConnect > -1) {
 			players[canConnect] = ipAddress;
+			
+			playerStrikes.put(ipAddress, 0);
+			PingRunnable pr = new PingRunnable(ipAddress);
+			pr.addObserver(this);
+			threadPool.submit(pr);
 			return true;
 		}
 		return false;
@@ -219,6 +233,9 @@ public class Server {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
 				if (players[i].equals(ipAddress)) {
+					System.out.format("DISCONNECTED %1$s\n", ipAddress.toString());
+					sendSingle("DISCONNECTED", ipAddress);
+					playerStrikes.remove(players[i]);
 					playerData.remove(players[i]);
 					players[i] = null;
 					return true;
@@ -233,7 +250,7 @@ public class Server {
 	 */
 	public void stop() {
 		serverListener.stopListening();
-		updateTimer.cancel();
+		updateDataTimer.cancel();
 		sendAll("SERVER CLOSING", null);
 		for (int i = 0; i < players.length; i++) {
 			players[i] = null;
@@ -385,11 +402,34 @@ public class Server {
 				}
 			}
 		}
-                for (InetSocketAddress spectator : spectators) {
-                    if (spectator != null) {
-                        sendSingle(simpleProjectile, spectator);
-                    }
-                }
+        for (InetSocketAddress spectator : spectators) {
+            if (spectator != null) {
+                sendSingle(simpleProjectile, spectator);
+            }
+        }
 //		sendAll(simpleProjectile, validSender.getAddress());
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		PingRunnable run = (PingRunnable) o;
+		InetSocketAddress player = run.getTarget();
+		int latency = (int) arg;
+		System.out.println(latency);
+		// If the latency is greater than 200.000.000 nanoseconds (0.2 seconds),
+		// the player will get a strike. 
+		if (latency >= 200000000) {
+			playerStrikes.put(player, playerStrikes.get(player)+1);
+		} else if (playerStrikes.get(player) > 0) {
+			playerStrikes.put(player, 0);
+		}
+		// If the player has had a latency greater than 0.2 seconds for 5 consecutive
+		// seconds, the player will be removed ('kicked') from the server
+		if (playerStrikes.get(player) >= 5) {
+			disconnectPlayer(player);
+		}
+		PingRunnable pr = new PingRunnable(player);
+		pr.addObserver(this);
+		threadPool.submit(pr);
 	}
 }
