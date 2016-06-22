@@ -7,6 +7,7 @@ package com.ffxvi.game.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import static com.ffxvi.game.entities.PlayerAnimation.*;
@@ -114,9 +115,9 @@ public class LibPlayer extends Player {
 	public void render(SpriteBatch batch) {
 		super.stateTime += Gdx.graphics.getDeltaTime();
 
-		TextureRegion currentFrame = null;
+		TextureRegion currentFrame;
 		
-		if(currentAnimation == this.playerSkin.getAnimation(SLASHING, super.direction)) {
+		if(this.currentAnimation == this.playerSkin.getAnimation(PlayerAnimation.SLASHING, super.direction)) {
 			currentFrame = this.currentAnimation.getKeyFrame(counter);
 			counter++;
 		} else {
@@ -124,14 +125,13 @@ public class LibPlayer extends Player {
 		}
 		
 		if(counter != 0) {
-			currentFrame =  this.playerSkin.getAnimation(SLASHING, super.direction).getKeyFrame(counter);
+			currentFrame =  this.playerSkin.getAnimation(PlayerAnimation.SLASHING, super.direction).getKeyFrame(counter);
 			counter++;
 		}
 		
 		if(counter >= 10) {
 			counter = 0;
 		}
-		
 		
 		batch.draw(currentFrame, super.x, super.y, Utils.GRIDSIZE, Utils.GRIDSIZE);
 
@@ -146,8 +146,7 @@ public class LibPlayer extends Player {
 	public void die(String killerName) {
 		if (!super.isSpectating) {
 			super.die(killerName);
-
-			// Set animation to DEATH
+			super.stateTime = 0;
 			super.animation = PlayerAnimation.DYING;
 			this.changeAnimation();
 		}
@@ -188,16 +187,18 @@ public class LibPlayer extends Player {
 	 */
 	@Override
 	public void setDirection(Direction direction) {
-		if(!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
-			this.setDirectionInner(direction);
-			super.animation = WALKING;
-			this.changeAnimation();
-		} else {
-			counter2++;
-		}
-		
-		if(counter2++ > 25) {
-			counter2 = 0;
+		if (!super.isDead) {
+			if(!(currentAnimation == playerSkin.getAnimation(SLASHING, super.direction)) || counter2 == 0) {
+				this.setDirectionInner(direction);
+				super.animation = WALKING;
+				this.changeAnimation();
+			} else {
+				counter2++;
+			}
+
+			if(counter2++ > 25) {
+				counter2 = 0;
+			}
 		}
 	}
 

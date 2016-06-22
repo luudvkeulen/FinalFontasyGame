@@ -468,7 +468,7 @@ public class Player extends SimplePlayer {
 	 * Fires a new projectile at the aim direction, given the player can fire.
 	 */
 	public void fire() {
-		if (this.canFire() && !this.isSpectating) {
+		if (this.canFire()) {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
 
@@ -485,8 +485,10 @@ public class Player extends SimplePlayer {
 	 * Sets the player's animation to idle.
 	 */
 	public void setIdle() {
-		super.animation = IDLE;
-		this.changeAnimation();
+		if (!this.isDead) {
+			super.animation = IDLE;
+			this.changeAnimation();
+		}
 	}
 
 	/**
@@ -500,7 +502,6 @@ public class Player extends SimplePlayer {
 				this.animation = SLASHING;
 				this.changeAnimation();
 				this.slash.play();
-//				slashAnimCount = 1;
 				lastSlash = System.currentTimeMillis();
 			}
 		}
@@ -512,15 +513,17 @@ public class Player extends SimplePlayer {
 	 * @param direction The new direction.
 	 */
 	public void setDirection(Direction direction) {
-		super.animation = WALKING;
-		super.direction = direction;
-		this.changeAnimation();
+		if (!this.isDead) {
+			super.animation = WALKING;
+			super.direction = direction;
+			this.changeAnimation();
 
-		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-			this.move();
+			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+				this.move();
+			}
+
+			this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
 		}
-
-		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
 	}
 
 	/**
@@ -587,7 +590,7 @@ public class Player extends SimplePlayer {
 	}
 
 	protected void checkSlashing() {
-		if (!this.isSpectating) {
+		if (!this.isSpectating && !this.isDead) {
 			//Check if player gets slashed
 			Collection<SimplePlayer> localMultiplayers = new ArrayList(gameManager.getMultiplayers());
 			if (localMultiplayers.isEmpty()) {
@@ -597,8 +600,6 @@ public class Player extends SimplePlayer {
 				if (p.animation == PlayerAnimation.SLASHING
 						&& !p.getName().equals(this.playerName)) {
 
-	//				LibPlayer player = new LibPlayer(this.screen);
-	//				player.setData(p);
 					Circle cEnemy = new Circle();
 					cEnemy.x = p.getX();
 					cEnemy.y = p.getY();
