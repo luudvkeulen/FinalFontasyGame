@@ -17,12 +17,15 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.VoiceChat;
 import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.models.Direction;
 
 import com.ffxvi.game.screens.MenuScreen;
 import com.ffxvi.game.support.Vector;
 import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class which is responsible for the registration of keyboard, mouse and
@@ -70,14 +73,32 @@ public class InputManager extends Observable {
 	 * Boolean to check if the player is chatting so we can disable input
 	 */
 	public boolean isChatting;
+	
+	/**
+	 * The voicechat manager.
+	 * Is responisble for getting input.
+	 */
+	private VoiceChat voiceChat;
+	
+	/**
+	 * Thread to send voicechats
+	 */
+	private Thread t;
+	
+	/**
+	 * A boolean which represents if you
+	 * are recording voiceChat.
+	 */
+	private boolean recordingVoice;
 
 	/**
 	 * The Constructor which is used to create an inputManager
 	 *
 	 * @param mainPlayer The player which needs to be moved by this
 	 * inputManager.
+	 * @param voiceChat The voicechat manager.
 	 */
-	public InputManager(LibPlayer mainPlayer) {
+	public InputManager(LibPlayer mainPlayer, VoiceChat voiceChat) {
 
 		if (mainPlayer == null) {
 			throw new IllegalArgumentException("MainPlayer can not be null.");
@@ -86,6 +107,9 @@ public class InputManager extends Observable {
 		this.isChatting = false;
 		this.game = MainClass.getInstance();
 		this.mainPlayer = mainPlayer;
+		this.voiceChat = voiceChat;
+		this.t = new Thread(voiceChat);
+		t.start();
 	}
 
 	/**
@@ -189,7 +213,7 @@ public class InputManager extends Observable {
 			int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
 
 			if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-				this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
+				this.mainPlayer.setAimDirectionLib(new Vector((float) mouseX, (float) mouseY));
 				mainPlayer.fire();
 				returnValue = true;
 			}
@@ -203,6 +227,21 @@ public class InputManager extends Observable {
 				mainPlayer.toggleShowScoreboard();
 				return true;
 			}
+			
+			if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+				recordingVoice = true;
+				voiceChat.recording = recordingVoice;
+				System.out.println("REC VOICE IS SET TO: " + recordingVoice);
+				return true;
+			}
+			
+			if (!Gdx.input.isKeyPressed(Input.Keys.P)) {
+				recordingVoice = false;
+				voiceChat.recording = recordingVoice;
+				return true;
+			}
+			
+			
 		}
 
 		return returnValue;

@@ -5,6 +5,7 @@
  */
 package server;
 
+import com.ffxvi.game.chat.VoiceSound;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +42,7 @@ public class Server implements Observer {
 	private ServerListener serverListener;
 	private Timer updateDataTimer;
 	private ExecutorService threadPool;
-	
+
 	private int playerLimit;
 	private int spectatorLimit;
 	private byte[] sendData;
@@ -54,25 +55,26 @@ public class Server implements Observer {
 	public InetSocketAddress[] getPlayerAddresses() {
 		return players;
 	}
-	
+
 	public int getPlayerCount() {
 		return playerData.size();
 	}
-	
+
 	public int getPlayerLimit() {
 		return playerLimit;
 	}
-	
+
 	public int getSpectatorCount() {
 		return spectators.size();
 	}
-	
+
 	public int getSpectatorLimit() {
 		return spectatorLimit;
 	}
-	
+
 	/**
 	 * Return the addresses + names of the connected Players
+	 *
 	 * @return a List of the connected Player's info
 	 */
 	public List<String> getPlayerInfo() {
@@ -95,9 +97,10 @@ public class Server implements Observer {
 	public int getListeningPort() {
 		return serverListener.getPort();
 	}
-	
+
 	/**
 	 * Adds the given InetAddres (IP) to the list of spectators
+	 *
 	 * @param ip the IP that's to be added to the list of spectators
 	 */
 	public void addSpectator(InetAddress ip) {
@@ -105,9 +108,10 @@ public class Server implements Observer {
 			spectators.add(new InetSocketAddress(ip, 1337));
 		}
 	}
-	
+
 	/**
 	 * Remove the given InetAddress (IP) from the list of spectators
+	 *
 	 * @param ip the IP that's to be removed from the list of spectators
 	 */
 	public void removeSpectator(InetAddress ip) {
@@ -138,7 +142,6 @@ public class Server implements Observer {
 		// Set the port to receive data on
 		serverListener = new ServerListener(this, listenerPort);
 		Thread listenerThread = new Thread(serverListener);
-		listenerThread.setName("ServerListenerThread");
 		listenerThread.start();
 		threadPool = Executors.newFixedThreadPool(playerLimit);
 
@@ -151,7 +154,7 @@ public class Server implements Observer {
 	 * seconds (20 milliseconds)
 	 */
 	private void startTimer() {
-		updateDataTimer = new Timer("ServerUpdateDataTimer");
+		updateDataTimer = new Timer();
 		TimerTask tt = new TimerTask() {
 			@Override
 			public void run() {
@@ -165,16 +168,16 @@ public class Server implements Observer {
 							dataMapWithoutSender.remove(address);
 							Collection<SimplePlayer> dataListWithoutSender = new ArrayList();
 							// Remove the data from players that are not in the client's room from the Collection
+
 //							for (SimplePlayer sp : dataListWithoutSender){
 //								if (sp.getRoomId() != clientRoomId){
 //									dataListWithoutSender.remove(sp);
 //								}
 //							}
-
 							for (InetSocketAddress key : dataMapWithoutSender.keySet()) {
 								SimplePlayer sp = dataMapWithoutSender.get(key);
 								//if (sp.getRoomId() == clientRoomId) {
-									dataListWithoutSender.add(sp);
+								dataListWithoutSender.add(sp);
 								//}
 							}
 							sendSingle(dataListWithoutSender, address);
@@ -211,7 +214,7 @@ public class Server implements Observer {
 		}
 		if (canConnect > -1) {
 			players[canConnect] = ipAddress;
-			
+
 			playerStrikes.put(ipAddress, 0);
 			PingRunnable pr = new PingRunnable(ipAddress);
 			pr.addObserver(this);
@@ -385,8 +388,8 @@ public class Server implements Observer {
 	}
 
 	/**
-	 * Treats received SimpleProjectile the way it is supposed to be treated by sending
-	 * the client's data to all the other clients
+	 * Treats received SimpleProjectile the way it is supposed to be treated by
+	 * sending the client's data to all the other clients
 	 *
 	 * @param playerAddress the senders InetSocketAddress (IP + Port)
 	 * @param simpleProjectile the received SimpleProjectile data
@@ -394,21 +397,21 @@ public class Server implements Observer {
 	public void receiveProjectile(InetSocketAddress playerAddress, SimpleProjectile simpleProjectile) {
 		for (InetSocketAddress address : players) {
 			if (address != null) {
-				if (!address.equals(playerAddress)){
+				if (!address.equals(playerAddress)) {
 					SimplePlayer sPlayer = playerData.get(address);
 					if (sPlayer != null) {
-						if (sPlayer.getRoomId() == simpleProjectile.getRoomID()){
+						if (sPlayer.getRoomId() == simpleProjectile.getRoomID()) {
 							sendSingle(simpleProjectile, address);
 						}
 					}
 				}
 			}
 		}
-        for (InetSocketAddress spectator : spectators) {
-            if (spectator != null) {
-                sendSingle(simpleProjectile, spectator);
-            }
-        }
+		for (InetSocketAddress spectator : spectators) {
+			if (spectator != null) {
+				sendSingle(simpleProjectile, spectator);
+			}
+		}
 //		sendAll(simpleProjectile, validSender.getAddress());
 	}
 
@@ -416,15 +419,13 @@ public class Server implements Observer {
 	public void update(Observable o, Object arg) {
 		PingRunnable run = (PingRunnable) o;
 		InetSocketAddress player = run.getTarget();
-		// If the client responds within 200 milliseconds (0.2 seconds), they are
-		// considered 'reachable'
-		boolean reachable = (boolean) arg;
-		System.out.format("%1$s is reachable: %2$s\n", player.getAddress().toString().substring(1), reachable);
-		
-		// If the client has a latency greater than 200 milliseconds (0.2 seconds)
-		// for 5 seconds, they will be disconnected.
-		if (!reachable) {
-			playerStrikes.put(player, playerStrikes.get(player)+1);
+		int latency = (int) arg;
+		System.out.println(latency);
+		// If the latency is greater than 200.000.000 nanoseconds (0.2 seconds),
+		// the player will get a strike. 
+		//IK HEB EEN 0 TOEGEVOEGD, GR GUIDO (IVM TEST STRUGLLES)
+		if (latency >= 2000000000) {
+			playerStrikes.put(player, playerStrikes.get(player) + 1);
 		} else if (playerStrikes.get(player) > 0) {
 			playerStrikes.put(player, 0);
 		}
@@ -436,5 +437,20 @@ public class Server implements Observer {
 		PingRunnable pr = new PingRunnable(player);
 		pr.addObserver(this);
 		threadPool.submit(pr);
+	}
+
+	void receiveVoiceSound(InetSocketAddress validSender, VoiceSound voiceSound) {
+		System.out.println("SHOULD send back the VoiceChat");
+		for (InetSocketAddress address : players) {
+			if (address != null) {
+				//if (!address.equals(validSender)) {
+				SimplePlayer sPlayer = playerData.get(address);
+				if (sPlayer != null) {
+					System.out.println("Sending back the VoiceChat");
+					sendSingle(voiceSound, address);
+				}
+				//}
+			}
+		}
 	}
 }

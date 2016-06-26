@@ -13,10 +13,10 @@
 package com.ffxvi.game.client;
 
 import com.ffxvi.game.chat.ChatListener;
-import com.ffxvi.game.chat.ChatTextMessage;
+import com.ffxvi.game.chat.VoiceSound;
+import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
-import com.ffxvi.game.screens.GameScreen;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -61,9 +61,10 @@ public final class Client {
      * @param hostIP the IP address that the client will connect with
      * @param hostPort the port on the host that the client will connect with
      * @param listenerPort the port that the client will be listening on
-     * @param screen the GameScreen that uses this client
+	 * @param manager the game manager
+	 * @param isSpectating indicates whether the main player is spectating.
      */
-    public Client(String hostIP, int hostPort, int listenerPort, GameScreen screen, boolean isSpectating) {
+    public Client(String hostIP, int hostPort, int listenerPort, GameManager manager, boolean isSpectating) {
 
         // Set the host to send data to
         this.hostAddress = new InetSocketAddress(hostIP, hostPort);
@@ -75,12 +76,12 @@ public final class Client {
 		}
 		
         // Set the port to receive data on
-        this.clientListener = new ClientListener(listenerPort, screen);
+        this.clientListener = new ClientListener(listenerPort, manager);
         Thread listenerThread = new Thread(this.clientListener);
         listenerThread.start();
 		
 		try {
-			ChatListener chat = new ChatListener(hostIP, screen.chatManager);
+			ChatListener chat = new ChatListener(hostIP, manager.chatManager);
 			this.chatListener = chat;
 			Thread t = new Thread(chat);
 			t.start();
@@ -128,6 +129,7 @@ public final class Client {
     /**
      * Stop listening for new data and stop sending data to the host, use this
      * for disconnecting or stopping the application
+	 * @param isSpectating a boolean indicating whether the client is currently in spectate mode.
      */
     public void stop(boolean isSpectating) {
 		if (isSpectating) {
@@ -151,6 +153,16 @@ public final class Client {
         }
         throw new IllegalArgumentException("SimplePlayer can't be a null value");
     }
+	
+	public void sendVoiceSoud(VoiceSound voiceSound) {
+		if (voiceSound == null) {
+			throw new IllegalArgumentException("VoiceSound can not be null");
+		}
+		
+		else {
+			send(voiceSound);
+		}
+	}
 
     /**
      * Send a SimpleProjectile to the host, only use this when the projectile is
@@ -207,10 +219,11 @@ public final class Client {
 	
 	/**
 	 * Send a text message to everyone in the server.
-	 * @param ctm The text message which you want to send.
+
+	 * @param message the message to send.
 	 */
-	public void sendMessage(ChatTextMessage ctm) {
-		chatListener.getChatSender().sendTextMessage(ctm);
+	public void sendMessage(String message) {
+		chatListener.getChatSender().sendTextMessage(message);
 	}
 
     /**

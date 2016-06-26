@@ -46,17 +46,19 @@ public class ChatListener implements Runnable {
 	/**
 	 * The chatsender of the session.
 	 */
-	private ChatSender chatSender;
+	private final ChatSender chatSender;
 	
 	/**
 	 * The ChatManager which is responsible for GUI.
 	 */
-	private ChatManager chatManager;
+	private final ChatManager chatManager;
 	
     /**
      * The constructor of this class. Initializes all the variables in this
      * class.
      *
+	 * @param hostIP the ip address of the host
+	 * @param manager the GUI chat manager
      * @throws IOException throws exception when the listener couldn't
      * initialize itself.
      */

@@ -232,6 +232,8 @@ public class PreGameScreen implements Screen {
 		if (character == null) {
 			throw new IllegalArgumentException("Character can not be null.");
 		}
+		
+		if(this.txtUsername.getText().equals("")) return;
 
 		this.game.getScreen().dispose();
 		GameScreen gameScreen = new GameScreen(false);

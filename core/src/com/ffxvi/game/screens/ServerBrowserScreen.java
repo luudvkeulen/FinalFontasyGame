@@ -23,10 +23,12 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
@@ -35,13 +37,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.serverlist.ServerRetriever;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import queryServer.IServer;
@@ -100,7 +102,7 @@ public class ServerBrowserScreen implements Screen {
 	/**
 	 * The layout.
 	 */
-	private final GlyphLayout layout;
+	private GlyphLayout layout;
 	
 	/**
 	 * The background sprite
@@ -115,19 +117,30 @@ public class ServerBrowserScreen implements Screen {
 	/**
 	 * A label for rendering the header text.
 	 */
-	private final Label headerLabel;
+	private Label headerLabel;
+	
+	/**
+	 * A playButton to enter a game.
+	 */
+	private TextButton playButton;
 
 	/**
 	 * Initializes a new ServerBrowserScreen.
 	 */
 	public ServerBrowserScreen() {
 		this.game = MainClass.getInstance();
+		this.backgroundbatch = new SpriteBatch();
+		this.backgroundsprite = new Sprite(game.background);
+	}
+
+	/**
+	 * Shows the screen.
+	 */
+	@Override
+	public void show() {
 		this.stage = new Stage();
 		this.layout = new GlyphLayout();
-		this.backgroundbatch = new SpriteBatch();
 		Gdx.input.setInputProcessor(this.stage);
-		
-		this.backgroundsprite = new Sprite(game.background);
 		
 		float rgbcolor = 0.05f;
 		Color blacktransparent = new Color(Color.rgba8888(rgbcolor, rgbcolor, rgbcolor, 0.8f));
@@ -166,7 +179,7 @@ public class ServerBrowserScreen implements Screen {
 		final Sound click = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
 		
 		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
-		TextButton playButton = new TextButton("PLAY", textButtonStyle);
+		playButton = new TextButton("PLAY", textButtonStyle);
 		playButton.setPosition((this.stage.getWidth() / 2) - (playButton.getWidth() / 2), (playButton.getHeight() / 2) - 20);
 		playButton.addListener(new ClickListener() {
 			@Override
@@ -177,6 +190,7 @@ public class ServerBrowserScreen implements Screen {
 				game.setScreen(new PreGameScreen());
 			}
 		});
+		playButton.setTouchable(Touchable.disabled);
 		this.stage.addActor(playButton);
 
 		/* Connect to the RMI Server */
@@ -186,9 +200,19 @@ public class ServerBrowserScreen implements Screen {
 			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		this.servers = new List(skin);
-		servers.getSelection().setMultiple(true);
-		servers.getSelection().setRequired(false);
+		this.servers.getSelection().setMultiple(true);
+		this.servers.getSelection().setRequired(false);
 		this.servers.setItems(new String[]{});
+		this.servers.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+				if (servers.getSelected() == null) {
+					playButton.setTouchable(Touchable.disabled);
+				} else {
+					playButton.setTouchable(Touchable.enabled);
+				}
+			}
+		});
 		ListStyle listStyle1 = new ListStyle(bfont, Color.WHITE, Color.WHITE, buttonSkin.newDrawable("white", Color.PINK));
 		this.servers.setStyle(listStyle1);
 
@@ -208,13 +232,6 @@ public class ServerBrowserScreen implements Screen {
 		} catch (RemoteException ex) {
 			Logger.getLogger(ServerBrowserScreen.class.getName()).log(Level.SEVERE, null, ex);
 		}
-	}
-
-	/**
-	 * Shows the screen.
-	 */
-	@Override
-	public void show() {
 	}
 
 	/**

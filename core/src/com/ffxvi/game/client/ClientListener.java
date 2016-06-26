@@ -14,7 +14,9 @@ package com.ffxvi.game.client;
 
 import com.badlogic.gdx.Gdx;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.VoiceSound;
 import com.ffxvi.game.models.Ending;
+import com.ffxvi.game.models.GameManager;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
@@ -53,20 +55,20 @@ public class ClientListener implements Runnable {
 	private DatagramSocket listenerSocket;
 
 	/**
-	 * The Game Screen.
+	 * The Game Manager.
 	 */
-	private final GameScreen screen;
+	private final GameManager manager;
 
 	/**
 	 * Initiate this runnable.
 	 *
 	 * @param listenOnPort the port that the client will use for listening
-	 * @param screen the GameScreen that uses this client
+	 * @param manager the game manager
 	 */
-	public ClientListener(int listenOnPort, GameScreen screen) {
+	public ClientListener(int listenOnPort, GameManager manager) {
 		this.listening = true;
 		this.listenerPort = listenOnPort;
-		this.screen = screen;
+		this.manager = manager;
 //        System.out.println(screen.getClass().getName());
 	}
 
@@ -121,8 +123,9 @@ public class ClientListener implements Runnable {
 			if (object instanceof String) {
 				this.receiveString(receivePacket, (String) object);
 			} else if (object instanceof SimplePlayer) {
-				System.out.println("Increasing Score");
-				this.screen.getGameManager().getMainPlayer().increaseScore();
+
+				this.manager.getMainPlayer().increaseScore();
+
 			} else if (object instanceof Collection) {
 				// Check what type of collection the received object is
 				for (Object o : (Collection) object) {
@@ -133,6 +136,9 @@ public class ClientListener implements Runnable {
 				}
 			} else if (object instanceof SimpleProjectile) {
 				this.receiveProjectile(receivePacket, (SimpleProjectile) object);
+			} else if (object instanceof VoiceSound) {
+				VoiceSound v = (VoiceSound) object;
+				v.playInput();
 			}
 		}
 	}
@@ -214,7 +220,7 @@ public class ClientListener implements Runnable {
 	 */
 	private void receivePlayers(DatagramPacket packet, Collection<SimplePlayer> data) {
 		// System.out.println(String.format("RECEIVED DATA FROM %1$s PLAYERS", data.size()));
-		this.screen.getGameManager().addMultiPlayers(data);
+		this.manager.addMultiPlayers(data);
 	}
 
 	/**
@@ -227,9 +233,9 @@ public class ClientListener implements Runnable {
 	private void receiveProjectile(DatagramPacket packet, SimpleProjectile data) {
 		// Convert the SimpleProjectile to a Projectile
 		Projectile projectile = new Projectile(new Vector(data.getX(), data.getY()),
-				data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName(), this.screen.getGameManager());
+				data.getSpeed(), data.getRotation(), data.getRoomID(), data.getPlayerName(), this.manager);
 
 		// Add the projectile to the GameScreen
-		screen.addProjectile(projectile, true);
+		this.manager.addProjectile(projectile, true);
 	}
 }

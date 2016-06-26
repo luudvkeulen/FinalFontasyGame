@@ -8,6 +8,7 @@ package com.ffxvi.game.support;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.ffxvi.game.models.Direction;
 import com.ffxvi.game.entities.PlayerAnimation;
@@ -17,7 +18,6 @@ import com.ffxvi.game.entities.PlayerAnimation;
  * @author Robin
  */
 public class SkinManager {
-
 	private PlayerSkin skeletonNormal;
 	private PlayerSkin skeletonHooded;
 	private PlayerSkin humanSoldier;
@@ -72,7 +72,7 @@ public class SkinManager {
 		private Animation shootDown;
 		private Animation shootRight;
 		
-		private final int deathSheetCols = 5;
+		private final int deathSheetCols = 6;
 		private final int deathSheetRows = 1;
 		private Animation death;
 
@@ -207,7 +207,7 @@ public class SkinManager {
 		}
 		
 		private void setDeathAnimations() {
-			float deathSpeed = this.animationSpeed * 1f;
+			float deathSpeed = this.animationSpeed * 3.2f;
 			
 			String path = skinDirectoryPath + "/Death.png";
 			Texture deathSheet = new Texture(Gdx.files.internal(path));
@@ -215,6 +215,7 @@ public class SkinManager {
 					/ deathSheetCols, deathSheet.getHeight() / deathSheetRows);
 
 			this.death = new Animation(deathSpeed, anims[0]);
+			this.death.setPlayMode(PlayMode.NORMAL);
 		}
 	}
 }
