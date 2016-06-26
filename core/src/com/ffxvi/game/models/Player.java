@@ -240,7 +240,7 @@ public class Player extends SimplePlayer {
 		if (mousePosition == null) {
 			throw new IllegalArgumentException("Mouse position can not be null.");
 		}
-
+		
 		// Calculate the direction of the bullet using arctan
 		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
 				- this.getPosition().getX() - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),

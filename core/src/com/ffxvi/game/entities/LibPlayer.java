@@ -90,9 +90,9 @@ public class LibPlayer extends Player {
 
 		// Create a vector3 with the player's coordinates
 		Vector3 playerPosition = new Vector3(this.x, this.y, 0);
+		MainClass.getInstance().camera.project(playerPosition);
 
 		// Project the position to the camera
-		MainClass.getInstance().camera.project(playerPosition);
 		super.setAimDirection(mousePosition);
 	}
 
@@ -128,7 +128,7 @@ public class LibPlayer extends Player {
 	 * Switches the textures (skin) of this player.
 	 */
 	private void changeSkin() {
-		switch (super.skin) {
+		switch (super.skin) {  
 			case SKELETON_NORMAL:
 				this.playerSkin = GameScreen.getSkinManager().getSkeletonNormal();
 				break;
@@ -214,6 +214,7 @@ public class LibPlayer extends Player {
 	@Override
 	public void slash() {
 		if (this.canSlash()) {
+			super.slash();
 			this.animationSpeed = 0.01f;
 			this.changeAnimation();
 			Sounds.SLASH.play();
@@ -234,7 +235,7 @@ public class LibPlayer extends Player {
 		if (this.animation != PlayerAnimation.SLASHING || counter2 == 0) {
 			super.setDirection(direction);
 			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-				
+
 				this.move();
 				this.changeAnimation();
 			}
