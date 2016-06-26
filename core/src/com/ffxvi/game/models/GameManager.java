@@ -127,10 +127,6 @@ public class GameManager {
 		projectiles.remove(projectile);
 	}
 
-	public void setMultiplayers(ArrayList arrayList) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
 	public void sendPlayer(SimplePlayer player) {
 		this.client.sendPlayer(player);
 	}

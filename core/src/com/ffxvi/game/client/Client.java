@@ -129,6 +129,7 @@ public final class Client {
     /**
      * Stop listening for new data and stop sending data to the host, use this
      * for disconnecting or stopping the application
+	 * @param isSpectating a boolean indicating whether the client is currently in spectate mode.
      */
     public void stop(boolean isSpectating) {
 		if (isSpectating) {

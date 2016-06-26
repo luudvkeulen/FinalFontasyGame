@@ -14,7 +14,6 @@ package com.ffxvi.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
@@ -32,7 +31,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
 import com.ffxvi.game.chat.VoiceChat;
-import com.ffxvi.game.client.Client;
 
 import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.entities.LibProjectile;
@@ -63,7 +61,6 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.management.jmxremote.ConnectorBootstrap.PropertyNames;
 
 /**
  * The screen for the game.
@@ -559,9 +556,6 @@ public class GameScreen implements Screen, Observer {
 			this.scoreLabel.setPosition(Gdx.graphics.getWidth() - (this.scoreLabel.getWidth() * 2), this.scoreLabel.getHeight());
 
 			//Render other players
-			if (gameManager.getMultiplayers() == null) {
-				gameManager.setMultiplayers(new ArrayList());
-			}
 			if (gameManager.getMultiplayer() == null) {
 				gameManager.setMultiplayer(new Player(this.gameManager));
 			}

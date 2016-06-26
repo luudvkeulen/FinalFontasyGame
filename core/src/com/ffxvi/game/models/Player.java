@@ -235,6 +235,7 @@ public class Player extends SimplePlayer {
 	 *
 	 * @param mousePosition The position of the mouse, relative to the player's
 	 * position.
+	 * @param playerPosition The position of the player, relative to the camera position.
 	 */
 	protected void setAimDirection(Vector mousePosition, Vector playerPosition) {
 		if (mousePosition == null) {
@@ -340,7 +341,7 @@ public class Player extends SimplePlayer {
 	/**
 	 * Lets the player die.
 	 *
-	 * @param killer
+	 * @param killer The name of the killer.
 	 * @return A boolean indicating if the player could die.
 	 */
 	public boolean die(final String killer) {
@@ -457,7 +458,7 @@ public class Player extends SimplePlayer {
 	/**
 	 * Gets a collision box for the direction in which the player is moving.
 	 *
-	 * @return
+	 * @return a rectangle for collision.
 	 */
 	protected Rectangle getCollisionBox() {
 		Rectangle rec;
@@ -539,10 +540,6 @@ public class Player extends SimplePlayer {
 	public void subscribe(PropertyChangeListener listener, String property) {
 		this.propertyChangeSupport.addPropertyChangeListener(property, listener);
 
-	}
-
-	public void unsubsribe(PropertyChangeListener listener) {
-		this.propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
 	private void firePropertyChangeEvent(String property, Object newValue) {

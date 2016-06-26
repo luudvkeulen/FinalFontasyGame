@@ -165,28 +165,27 @@ public class PlayerTest {
 	public void testSetAimDirection_VectorNull() {
 		System.out.println("setAimDirection");
 		Vector mousePosition = null;
-		player.setAimDirection(mousePosition,null);
+		player.setAimDirection(mousePosition, null);
 	}
 
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
-//	@Test
-//	public void testSetAimDirection_Vector() {
-//		System.out.println("setAimDirection");
-//		Vector mousePosition = new Vector(4, 2);
-//		player.setAimDirection(mousePosition);
-//		try {
-//			player.fire();
-//		} catch (NullPointerException ex) {
-//
-//		} catch (java.lang.ExceptionInInitializerError ex) {
-//
-//		}
-//
-//		assertEquals(258.53046f, gameManager.getProjectiles().get(0).getRotation(), 0);
-//	}
+	@Test
+	public void testSetAimDirection_Vector() {
+		System.out.println("setAimDirection");
+		Vector mousePosition = new Vector(4, 2);
+		player.setAimDirection(mousePosition, new Vector(8,4));
+		try {
+			player.fire();
+		} catch (NullPointerException ex) {
 
+		} catch (java.lang.ExceptionInInitializerError ex) {
+
+		}
+
+		assertEquals(254.268f, gameManager.getProjectiles().get(0).getRotation(), 0);
+	}
 	/**
 	 * Test of setAimDirection method, of class Player.
 	 */
@@ -358,6 +357,33 @@ public class PlayerTest {
 
 		}
 		assertEquals(0, player.getHitPoints());
+	}
+
+	/**
+	 * Test of receiveDamage method, of class Player.
+	 */
+	@Test
+	public void testReceiveDamageIsDead() {
+		System.out.println("receiveDamage");
+		int amount = 10;
+		String attacker = "andereSpeler";
+		player.die(attacker);
+		player.receiveDamage(amount, attacker);
+		assertEquals(100, player.getHitPoints());
+	}
+
+	/**
+	 * Test of receiveDamage method, of class Player.
+	 */
+	@Test
+	public void testReceiveDamageIsSpectator() {
+		System.out.println("receiveDamage");
+		int amount = 10;
+		String attacker = "andereSpeler";
+		player.isSpectating = true;
+		player.die(attacker);
+		player.receiveDamage(amount, attacker);
+		assertEquals(100, player.getHitPoints());
 	}
 
 	/**
@@ -667,6 +693,26 @@ public class PlayerTest {
 	}
 
 	/**
+	 * Test of checkSlashing method, of class Player.
+	 */
+	@Test
+	public void testCheckSlashingIsDead() {
+		System.out.println("checkSlashing");
+
+		Player otherPlayer = new Player(PlayerCharacter.HUMAN_PIRATE, "andereSpeler", new Vector(2, 2), gameManager, roomdID);
+		otherPlayer.animation = PlayerAnimation.SLASHING;
+		try {
+			gameManager.addToMultiplayers(otherPlayer);
+			player.receiveDamage(100, "OtherPlayer");
+			player.checkSlashing();
+		} catch (NullPointerException ex) {
+
+		}
+
+		assertEquals(0, player.getHitPoints());
+	}
+
+	/**
 	 * Test of getRectangle method, of class Player.
 	 */
 	@Test
@@ -704,7 +750,12 @@ public class PlayerTest {
 	public void testFireCant() {
 		player.isDead = true;
 		assertFalse(player.fire());
+	}
 
+	@Test
+	public void testFireSpectator() {
+		player.isSpectating = true;
+		assertFalse(player.fire());
 	}
 
 	@Test
@@ -765,17 +816,14 @@ public class PlayerTest {
 //		player.receiveDamage(10, "andereSpeler");
 //		assertFalse(gehoord);
 //	}
-	
-	
-	public class PropListener implements PropertyChangeListener {
 
+	public class PropListener implements PropertyChangeListener {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent pce) {
 			gehoord = true;
-			
-			
+
 		}
-	
+
 	}
 }

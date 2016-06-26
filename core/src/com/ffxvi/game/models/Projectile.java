@@ -60,12 +60,8 @@ public class Projectile extends SimpleProjectile {
 	 * @param roomID The id of the room which this projectile exists in. When
 	 * not greater than 0, throw an IllegalArgumentException.
 	 * @param playerName The name of the player which fired the bullet. When an
-	 * empty String (ex
-	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameManager gameManager) {
-		super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
-
-		if (roomID <= 0) {
-			throw new IllegalArgumentException("The room id must be bigger than 0.");cluding spaces), throw an IllegalArgumentException.
+	 * empty String (excluding spaces), throw new IllegalArgumentException.
+	 * @param gameManager The Game Manager instance.
 	 */
 	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameManager gameManager) {
 		super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
@@ -169,7 +165,7 @@ public class Projectile extends SimpleProjectile {
 	 *
 	 * @param rec The rectangle to check.
 	 * @param objects The objects to check for collision with.
-	 * @return
+	 * @return a boolean indicating there was collision.
 	 */
 	protected boolean checkWallCollision(Rectangle rec, MapObjects objects) {
 		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
