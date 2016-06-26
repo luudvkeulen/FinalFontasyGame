@@ -721,8 +721,13 @@ public class GameScreen implements Screen, Observer {
 				this.gameManager.chatManager.sendMessage(sender, message);
 				this.textfield.setText("");
 			} else {
-				this.stage.setKeyboardFocus(this.textfield);
-				inputManager.isChatting = true;
+				if(this.stage.getKeyboardFocus() != this.textfield) {
+					this.stage.setKeyboardFocus(this.textfield);
+					inputManager.isChatting = true;
+				} else {
+					this.stage.setKeyboardFocus(null);
+					inputManager.isChatting = false;
+				}
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
