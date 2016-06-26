@@ -236,15 +236,15 @@ public class Player extends SimplePlayer {
 	 * @param mousePosition The position of the mouse, relative to the player's
 	 * position.
 	 */
-	public void setAimDirection(Vector mousePosition) {
+	protected void setAimDirection(Vector mousePosition, Vector playerPosition) {
 		if (mousePosition == null) {
 			throw new IllegalArgumentException("Mouse position can not be null.");
 		}
 		
 		// Calculate the direction of the bullet using arctan
 		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
-				- this.getPosition().getX() - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
-				mousePosition.getX() - this.getPosition().getX()
+				- playerPosition.getY() - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
+				mousePosition.getX() - playerPosition.getX()
 				- (this.modifiedGridSizeX / 2)));
 
 		if (dir < 0) {

@@ -82,8 +82,8 @@ public class LibPlayer extends Player {
 		this.changeAnimation();
 	}
 
-	@Override
-	public void setAimDirection(Vector mousePosition) {
+
+	public void setAimDirectionLib(Vector mousePosition) {
 		if (mousePosition == null) {
 			throw new IllegalArgumentException("Mouse position can not be null.");
 		}
@@ -93,7 +93,7 @@ public class LibPlayer extends Player {
 		MainClass.getInstance().camera.project(playerPosition);
 
 		// Project the position to the camera
-		super.setAimDirection(mousePosition);
+		this.setAimDirection(mousePosition, new Vector(playerPosition.x,playerPosition.y));
 	}
 
 	/**

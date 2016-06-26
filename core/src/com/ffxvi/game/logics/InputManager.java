@@ -213,7 +213,7 @@ public class InputManager extends Observable {
 			int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY() + 50;
 
 			if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-				this.mainPlayer.setAimDirection(new Vector((float) mouseX, (float) mouseY));
+				this.mainPlayer.setAimDirectionLib(new Vector((float) mouseX, (float) mouseY));
 				mainPlayer.fire();
 				returnValue = true;
 			}
