@@ -32,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.VoiceChat;
 import com.ffxvi.game.client.Client;
 import com.ffxvi.game.entities.LibPlayer;
 import com.ffxvi.game.entities.LibProjectile;
@@ -380,7 +381,8 @@ public class GameScreen implements Screen, Observer {
 		this.playerLabelName.setText(playerName);
 		this.playerLabelNameHUD.setText(playerName);
 
-		this.inputManager = new InputManager((LibPlayer) gameManager.getMainPlayer());
+		this.inputManager = new InputManager((LibPlayer) gameManager.getMainPlayer(), 
+				new VoiceChat(this.client));
 		this.inputManager.addObserver(this);
 
 		this.sendChatMessage("[SERVER]", gameManager.getMainPlayer().getName() + " HAS CONNECTED");

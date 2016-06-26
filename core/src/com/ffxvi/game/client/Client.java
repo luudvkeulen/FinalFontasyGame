@@ -14,6 +14,7 @@ package com.ffxvi.game.client;
 
 import com.ffxvi.game.chat.ChatListener;
 import com.ffxvi.game.chat.ChatTextMessage;
+import com.ffxvi.game.chat.VoiceSound;
 import com.ffxvi.game.models.SimplePlayer;
 import com.ffxvi.game.models.SimpleProjectile;
 import com.ffxvi.game.screens.GameScreen;
@@ -151,6 +152,16 @@ public final class Client {
         }
         throw new IllegalArgumentException("SimplePlayer can't be a null value");
     }
+	
+	public void sendVoiceSoud(VoiceSound voiceSound) {
+		if (voiceSound == null) {
+			throw new IllegalArgumentException("VoiceSound can not be null");
+		}
+		
+		else {
+			send(voiceSound);
+		}
+	}
 
     /**
      * Send a SimpleProjectile to the host, only use this when the projectile is

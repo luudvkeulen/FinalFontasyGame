@@ -14,6 +14,7 @@ package com.ffxvi.game.client;
 
 import com.badlogic.gdx.Gdx;
 import com.ffxvi.game.MainClass;
+import com.ffxvi.game.chat.VoiceSound;
 import com.ffxvi.game.models.Ending;
 import com.ffxvi.game.models.Projectile;
 import com.ffxvi.game.models.SimplePlayer;
@@ -56,7 +57,7 @@ public class ClientListener implements Runnable {
 	 * The Game Screen.
 	 */
 	private final GameScreen screen;
-
+	
 	/**
 	 * Initiate this runnable.
 	 *
@@ -121,7 +122,6 @@ public class ClientListener implements Runnable {
 			if (object instanceof String) {
 				this.receiveString(receivePacket, (String) object);
 			} else if (object instanceof SimplePlayer) {
-				System.out.println("Increasing Score");
 				this.screen.getGameManager().getMainPlayer().increaseScore();
 			} else if (object instanceof Collection) {
 				// Check what type of collection the received object is
@@ -133,6 +133,9 @@ public class ClientListener implements Runnable {
 				}
 			} else if (object instanceof SimpleProjectile) {
 				this.receiveProjectile(receivePacket, (SimpleProjectile) object);
+			} else if (object instanceof VoiceSound) {
+				VoiceSound v = (VoiceSound) object;
+				v.playInput();
 			}
 		}
 	}
