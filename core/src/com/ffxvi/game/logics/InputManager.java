@@ -232,13 +232,13 @@ public class InputManager extends Observable {
 				recordingVoice = true;
 				voiceChat.recording = recordingVoice;
 				System.out.println("REC VOICE IS SET TO: " + recordingVoice);
-				return returnValue;
+				return true;
 			}
 			
 			if (!Gdx.input.isKeyPressed(Input.Keys.P)) {
 				recordingVoice = false;
 				voiceChat.recording = recordingVoice;
-				System.out.println("REC VOICE IS SET TO: " + recordingVoice);
+				return true;
 			}
 			
 			

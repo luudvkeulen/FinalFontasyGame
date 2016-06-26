@@ -230,8 +230,11 @@ public class LibPlayer extends Player {
 	@Override
 	public void setDirection(Direction direction) {
 		//If slashing, don't move
+
 		if (this.animation != PlayerAnimation.SLASHING || counter2 == 0) {
+			super.setDirection(direction);
 			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
+				
 				this.move();
 				this.changeAnimation();
 			}
