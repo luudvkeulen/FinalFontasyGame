@@ -12,24 +12,11 @@
  */
 package com.ffxvi.game.models;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
-import com.ffxvi.game.MainClass;
 import com.ffxvi.game.entities.PlayerAnimation;
-import static com.ffxvi.game.entities.PlayerAnimation.IDLE;
 import static com.ffxvi.game.entities.PlayerAnimation.SLASHING;
-import static com.ffxvi.game.entities.PlayerAnimation.WALKING;
-import com.ffxvi.game.screens.GameScreen;
 import com.ffxvi.game.support.PropertyListenerNames;
-import com.ffxvi.game.support.SkinManager.PlayerSkin;
 import com.ffxvi.game.support.Utils;
 import com.ffxvi.game.support.Vector;
 import java.beans.PropertyChangeEvent;
@@ -37,8 +24,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Entity which represents a player.
@@ -62,16 +47,6 @@ public class Player extends SimplePlayer {
 	private static final float SHOOTCOOLDOWN = 0.5f;
 
 	/**
-	 * The textures (skin) that this player is using
-	 */
-	private PlayerSkin playerSkin;
-
-	/**
-	 * The animation that this player is currently in
-	 */
-	private Animation currentAnimation;
-
-	/**
 	 * The direction where the player is aiming his/her weapon in degrees.
 	 */
 	private float aimDirection;
@@ -80,8 +55,6 @@ public class Player extends SimplePlayer {
 	 * The time before a next shot can be fired.
 	 */
 	private long shootStart;
-
-	private float animationSpeed;
 
 	/**
 	 * The grid size of the player in width.
@@ -96,27 +69,16 @@ public class Player extends SimplePlayer {
 	private GameManager gameManager;
 
 	private PropertyChangeSupport propertyChangeSupport;
-	
+
 	/**
 	 * A boolean indicating if the player is dead.
 	 */
 	protected boolean isDead;
-	
+
 	/**
 	 * A boolean indicating if the player is spectating.
 	 */
 	protected boolean isSpectating;
-
-	/**
-	 * The game screen.
-	 */
-	private final GameScreen screen;
-
-	/**
-	 * Shooting sound
-	 */
-	private final Sound bowsound = Gdx.audio.newSound(Gdx.files.internal("arrow.mp3"));
-	public final Sound slash = Gdx.audio.newSound(Gdx.files.internal("slash.mp3"));
 
 	private long lastSlash = 0;
 
@@ -129,20 +91,9 @@ public class Player extends SimplePlayer {
 	 * @param position The position of this player.
 	 * @param gameManager The gamemanager object.
 	 * @param roomId The id of the room where the player is in.
-	 * @param screen The screen object.
-	 * @param isSpectating A boolean indicating whether the player is spectating or not.
 	 */
-	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId, GameScreen screen, boolean isSpectating) {
+	public Player(PlayerCharacter character, String playerName, Vector position, GameManager gameManager, int roomId) {
 		super(playerName, position.getX(), position.getY(), roomId, character);
-
-		if (character == null) {
-			throw new IllegalArgumentException("Character can not be null.");
-		}
-
-		if (playerName == null || playerName.trim().isEmpty()) {
-			throw new IllegalArgumentException(
-					"Character can neither be null nor an empty String.");
-		}
 
 		this.gameManager = gameManager;
 
@@ -153,21 +104,17 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
-		
-		this.isSpectating = isSpectating;
 
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
-		this.screen = screen;
 	}
 
 	/**
 	 * Special constructor for Player, only use this for player data received
 	 * from the server.
-	 * 
+	 *
 	 * @param gameManager The gamemanager object.
-	 * @param screen The screen object.
 	 */
-	public Player(GameManager gameManager, GameScreen screen) {
+	public Player(GameManager gameManager) {
 		super("blank", 0, 0, 1, PlayerCharacter.SKELETON_NORMAL);
 
 		this.gameManager = gameManager;
@@ -177,8 +124,6 @@ public class Player extends SimplePlayer {
 		int gridsize = Utils.GRIDSIZE;
 		this.modifiedGridSizeX = gridsize - 32;
 		this.modifiedGridSizeY = gridsize - 16;
-
-		this.screen = screen;
 	}
 
 	/**
@@ -296,16 +241,10 @@ public class Player extends SimplePlayer {
 			throw new IllegalArgumentException("Mouse position can not be null.");
 		}
 
-		// Create a vector3 with the player's coordinates
-		Vector3 playerPosition = new Vector3(this.x, this.y, 0);
-
-		// Project the position to the camera
-		MainClass.getInstance().camera.project(playerPosition);
-
 		// Calculate the direction of the bullet using arctan
 		float dir = (float) Math.toDegrees(Math.atan2(mousePosition.getY()
-				- playerPosition.y - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
-				mousePosition.getX() - playerPosition.x
+				- this.getPosition().getX() - (this.modifiedGridSizeY) - (Utils.GRIDSIZE / 3),
+				mousePosition.getX() - this.getPosition().getX()
 				- (this.modifiedGridSizeX / 2)));
 
 		if (dir < 0) {
@@ -392,45 +331,39 @@ public class Player extends SimplePlayer {
 				this.hitPoints = 0;
 
 				this.die(attacker);
-				this.screen.sendChatMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
+				this.gameManager.chatManager.sendMessage("[SERVER]", this.playerName.toLowerCase() + " HAS DIED");
 			}
-
 			this.firePropertyChangeEvent(PropertyListenerNames.PLAYER_HEALTH, null);
 		}
 	}
 
 	/**
 	 * Lets the player die.
+	 *
 	 * @param killer
+	 * @return A boolean indicating if the player could die.
 	 */
-	public void die(String killer) {
+	public boolean die(final String killer) {
 		if (!this.isDead && !this.isSpectating) {
-			final String killer_name = killer;
+			this.stateTime = 0;
+			// Set animation to DEATH
+			this.animation = PlayerAnimation.DYING;
 
 			// Set isDead to true
 			this.isDead = true;
-
-			// Set animation to DEATH
-			super.animation = PlayerAnimation.DYING;
-
 			// Delay in seconds
 			float delay = 1;
-
-			// Wait for X time
-			Timer.schedule(new Task() {
-				@Override
-				public void run() {
-					// Set isDead to false
-					isDead = false;
-
-					// Reset hitpoints
-					hitPoints = 100;
-
-					// Respawn player
-					screen.Respawn(killer_name);
-				}
-			}, delay);
+			return true;
 		}
+
+		return false;
+	}
+
+	public void respawn() {
+		isDead = false;
+
+		// Reset hitpoints
+		hitPoints = 100;
 	}
 
 	/**
@@ -452,77 +385,41 @@ public class Player extends SimplePlayer {
 		if (!this.isSpectating && !this.isDead) {
 			return System.nanoTime() - this.shootStart > SHOOTCOOLDOWN * 1000000000;
 		}
-		
-		return false;
-	}
 
-	private void changeAnimation() {
-		if (super.animation != IDLE) {
-			 this.currentAnimation = this.playerSkin.getAnimation(super.animation, super.direction);
-		} else {
-			this.currentAnimation = new Animation(0, this.playerSkin.getAnimation(WALKING, super.direction).getKeyFrame(0));
-		}
+		return false;
 	}
 
 	/**
 	 * Fires a new projectile at the aim direction, given the player can fire.
+	 *
+	 * @return a boolean indicating whether the projectile was added.
 	 */
-	public void fire() {
+	public boolean fire() {
 		if (this.canFire()) {
 			// Reset the shoot delay
 			this.shootStart = System.nanoTime();
-
-			this.bowsound.play();
-
 			// Create a bullet inside the player with the direction and speed
-			this.screen.addProjectile(new Projectile(new Vector(this.x
+			this.gameManager.addProjectile(new Projectile(new Vector(this.x
 					+ (modifiedGridSizeX), this.y + (modifiedGridSizeY / 2)),
 					30, this.aimDirection, this.roomId, this.playerName, this.gameManager), false);
+
+			return true;
 		}
+
+		return false;
 	}
 
-	/**
-	 * Sets the player's animation to idle.
-	 */
-	public void setIdle() {
-		if (!this.isDead) {
-			super.animation = IDLE;
-			this.changeAnimation();
-		}
+	protected boolean canSlash() {
+		return !this.isDead && !this.isSpectating && (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500);
 	}
 
 	/**
 	 * Slashes in the given direction, given the player can slash.
 	 */
 	public void slash() {
-		if (!this.isDead && !this.isSpectating) {
-			if (lastSlash == 0 || System.currentTimeMillis() - lastSlash >= 500) {
-				this.animationSpeed = 0.01f;
-				super.animation = SLASHING;
-				this.animation = SLASHING;
-				this.changeAnimation();
-				this.slash.play();
-				lastSlash = System.currentTimeMillis();
-			}
-		}
-	}
-
-	/**
-	 * Sets the direction to the given direction.
-	 *
-	 * @param direction The new direction.
-	 */
-	public void setDirection(Direction direction) {
-		if (!this.isDead) {
-			super.animation = WALKING;
-			super.direction = direction;
-			this.changeAnimation();
-
-			if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-				this.move();
-			}
-
-			this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
+		if (this.canSlash()) {
+			this.animation = SLASHING;
+			this.lastSlash = System.currentTimeMillis();
 		}
 	}
 
@@ -547,8 +444,14 @@ public class Player extends SimplePlayer {
 					break;
 			}
 
-			this.screen.client.sendPlayer(new SimplePlayer(this));
+			this.animation = PlayerAnimation.WALKING;
+			this.gameManager.sendPlayer(new SimplePlayer(this));
 		}
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+		
 	}
 
 	/**
@@ -586,7 +489,7 @@ public class Player extends SimplePlayer {
 	 * Update method
 	 */
 	public void update() {
-		screen.client.sendPlayer(new SimplePlayer(this));
+		this.gameManager.sendPlayer(new SimplePlayer(this));
 	}
 
 	protected void checkSlashing() {
@@ -599,7 +502,6 @@ public class Player extends SimplePlayer {
 			for (SimplePlayer p : localMultiplayers) {
 				if (p.animation == PlayerAnimation.SLASHING
 						&& !p.getName().equals(this.playerName)) {
-
 					Circle cEnemy = new Circle();
 					cEnemy.x = p.getX();
 					cEnemy.y = p.getY();
@@ -619,61 +521,10 @@ public class Player extends SimplePlayer {
 	}
 
 	/**
-	 * Checks the given rec for collision with the given (wall)objects.
-	 *
-	 * @param rec The rectangle to check.
-	 * @param objects The objects to make sure are not in the rectangle.
-	 * @param wallobjects The wall objects to make sure are not in the
-	 * rectangle.
-	 * @return true if collision, false if not.
+	 * Sets the player's animation to idle.
 	 */
-	private boolean checkCollision(Rectangle rec, MapObjects objects, MapObjects wallobjects) {
-		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
-			Rectangle rectangleMapObject = mapObject.getRectangle();
-			if (rec.overlaps(rectangleMapObject)) {
-				return true;
-			}
-		}
-
-		for (RectangleMapObject mapObject : wallobjects.getByType(RectangleMapObject.class)) {
-			Rectangle rectangleMapObject = mapObject.getRectangle();
-			if (rec.overlaps(rectangleMapObject)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Checks if the given rectangle collides with a door.
-	 *
-	 * @param rec The rectangle to check for collision.
-	 * @param objects The objects (doors) of which should be looked within the
-	 * rectangle.
-	 */
-	private void checkDoorCollision(Rectangle rec, MapObjects objects) {
-		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
-			Rectangle rectangleMapObject = mapObject.getRectangle();
-			if (rec.overlaps(rectangleMapObject)) {
-				int mapId = Integer.parseInt(mapObject.getName().replaceAll("\\D", ""));
-
-				try {
-					this.screen.setLevel(mapId, this.direction);
-				} catch (IllegalArgumentException ex) {
-					Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		}
-	}
-
-	protected void setDirectionInner(Direction direction) {
-		this.direction = direction;
-		if (!this.checkCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getWallObjects(), GameScreen.getCurrentMap().getObjects())) {
-			this.move();
-		}
-
-		this.checkDoorCollision(this.getCollisionBox(), GameScreen.getCurrentMap().getDoors());
+	public void setIdle() {
+		this.animation = PlayerAnimation.IDLE;
 	}
 
 	/**
@@ -687,6 +538,7 @@ public class Player extends SimplePlayer {
 
 	public void subscribe(PropertyChangeListener listener, String property) {
 		this.propertyChangeSupport.addPropertyChangeListener(property, listener);
+
 	}
 
 	public void unsubsribe(PropertyChangeListener listener) {

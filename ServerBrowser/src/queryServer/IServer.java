@@ -10,6 +10,11 @@ public interface IServer extends Remote {
 	
 	String getName() throws RemoteException;
 	
+	/**
+	 * 
+	 * @return adres + ":" + port
+	 * @throws RemoteException 
+	 */
 	String getFullAddress() throws RemoteException;
 	
 	int getPlayers() throws RemoteException;

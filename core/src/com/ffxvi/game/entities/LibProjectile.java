@@ -46,8 +46,8 @@ public class LibProjectile extends Projectile {
 			if (this.canCollide) {
 
 				if (super.checkCollision()) {
-					this.canCollide = false;
 					this.despawnDelay = 0;
+					this.canCollide = false;
 					this.speed = 0;
 				}
 			}

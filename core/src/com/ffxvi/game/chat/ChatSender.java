@@ -50,19 +50,17 @@ public class ChatSender {
      * This method sends a message to the server via PrintWriter. If the
      * printwriter couldn't be initialized this method does nothing.
      *
-     * @param textMessage The textmessage which needs to be send. This may not
-     * be null.
-     *
+	 * @param message the text message which needs to be sent.
      * @throws IllegalArgumentException Throws exception when textmessage is
      * null.
      */
-    public void sendTextMessage(ChatTextMessage textMessage) {
-        if (textMessage == null) {
+    public void sendTextMessage(String message) {
+        if (message == null || message.trim().isEmpty()) {
             throw new IllegalArgumentException();
         }
 
         if (this.out != null) {
-            this.out.println(textMessage.toString());
+            this.out.println(message);
         } else {
             System.out.println("There is no connection with the server");
         }

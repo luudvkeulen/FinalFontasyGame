@@ -13,11 +13,11 @@
 package com.ffxvi.game.logics;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.ffxvi.game.chat.ChatTextMessage;
-import com.ffxvi.game.screens.GameScreen;
+import com.ffxvi.game.models.GameManager;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,24 +29,20 @@ public class ChatManager {
 	/**
 	 * The list of chatlabels used to display messages
 	 */
-	private final List<Label> chatLabels;
-
-	/**
-	 * the Skin that needs to display the chat messages
-	 */
-	private final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+	private final List<String> chatMessages;
 	
 	/**
 	 * The gamescreen of the current session.
 	 */
-	private final GameScreen gameScreen;
+	private final GameManager manager;
 
 	/**
 	 * Initializes a new chat manager.
+	 * @param manager the game manager.
 	 */
-	public ChatManager(GameScreen gameScreen) {
-		this.chatLabels = new ArrayList();
-		this.gameScreen = gameScreen;
+	public ChatManager(GameManager manager) {
+		this.chatMessages = new ArrayList();
+		this.manager = manager;
 	}
 
 	/**
@@ -68,8 +64,7 @@ public class ChatManager {
 			throw new IllegalArgumentException("PlayerName can neither be null nor an empty string (excluding spaces).");
 		}
 		
-		ChatTextMessage ctm = new ChatTextMessage(playerName, message);
-		gameScreen.client.sendMessage(ctm);
+		this.manager.client.sendMessage(this.generateMessage(playerName, message, new Date()));
 	}
 
 	public void receiveMessage(String message) {
@@ -78,10 +73,10 @@ public class ChatManager {
 			throw new IllegalArgumentException("Message can neither be null nor an empty string (excluding spaces).");
 		}
 		
-		this.chatLabels.add(new Label(message, skin));
+		this.chatMessages.add(message);
 	
-		if (this.chatLabels.size() > 10) {
-			this.chatLabels.remove(0);
+		if (this.chatMessages.size() > 10) {
+			this.chatMessages.remove(0);
 		}
 	}
 	/**
@@ -89,7 +84,17 @@ public class ChatManager {
 	 *
 	 * @return List which contains the labels in this chatManager
 	 */
-	public List<Label> getMessages() {
-		return this.chatLabels;
+	public List<String> getMessages() {
+		return Collections.unmodifiableList(this.chatMessages);
+	}
+	
+	private String generateMessage(String playerName, String messageContent, Date sendDate)
+	{
+		String hour = Integer.toString(sendDate.getHours());
+        String minute = Integer.toString(sendDate.getMinutes());
+        String seconds = Integer.toString(sendDate.getSeconds());
+
+        return hour + ":" + minute + ":" + seconds + ": - "
+                + playerName + ": " + messageContent;
 	}
 }

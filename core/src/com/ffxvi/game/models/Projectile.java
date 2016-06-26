@@ -60,26 +60,21 @@ public class Projectile extends SimpleProjectile {
 	 * @param roomID The id of the room which this projectile exists in. When
 	 * not greater than 0, throw an IllegalArgumentException.
 	 * @param playerName The name of the player which fired the bullet. When an
-	 * empty String (excluding spaces), throw an IllegalArgumentException.
-	 */
+	 * empty String (ex
 	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameManager gameManager) {
 		super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
 
-		if (rotation < 0 || rotation >= 360) {
-			throw new IllegalArgumentException("The rotation of the projectile must be >= 0 & < 360.");
-		}
+		if (roomID <= 0) {
+			throw new IllegalArgumentException("The room id must be bigger than 0.");cluding spaces), throw an IllegalArgumentException.
+	 */
+	public Projectile(Vector position, float speed, float rotation, int roomID, String playerName, GameManager gameManager) {
+		super(rotation, speed, position.getX(), position.getY(), playerName, roomID);
 
 		if (roomID <= 0) {
 			throw new IllegalArgumentException("The room id must be bigger than 0.");
 		}
 
-		if (playerName == null || playerName.trim().isEmpty()) {
-			throw new IllegalArgumentException("The playername can neither be null nor an empty String (excluding spaces).");
-		}
-
 		this.position = position;
-		this.rotation = rotation;
-		this.speed = speed;
 		this.canCollide = true;
 		this.despawnDelay = 10;
 		this.startTime = System.nanoTime();
@@ -88,19 +83,14 @@ public class Projectile extends SimpleProjectile {
 	}
 
 	protected Projectile(Projectile projectile, GameManager gameManager) {
-		super(projectile.rotation, projectile.speed, projectile.position.getX(), projectile.position.getY(), projectile.playerName, projectile.roomID);
+		super(projectile);
 		
-		if (projectile == null) {
-			throw new IllegalArgumentException("Projectile can not be null.");
-		}
 		
 		if (gameManager == null) {
 			throw new IllegalArgumentException("GameManager can not be null.");
 		}
 
 		this.position = projectile.position;
-		this.rotation = projectile.rotation;
-		this.speed = projectile.speed;
 		this.canCollide = true;
 		this.despawnDelay = 10;
 		this.startTime = projectile.startTime;
@@ -181,7 +171,7 @@ public class Projectile extends SimpleProjectile {
 	 * @param objects The objects to check for collision with.
 	 * @return
 	 */
-	private boolean checkWallCollision(Rectangle rec, MapObjects objects) {
+	protected boolean checkWallCollision(Rectangle rec, MapObjects objects) {
 		for (RectangleMapObject mapObject : objects.getByType(RectangleMapObject.class)) {
 			Rectangle rectangleMapObject = mapObject.getRectangle();
 			if (rec.overlaps(rectangleMapObject)) {
