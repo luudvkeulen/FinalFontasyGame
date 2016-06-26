@@ -138,6 +138,7 @@ public class Server implements Observer {
 		// Set the port to receive data on
 		serverListener = new ServerListener(this, listenerPort);
 		Thread listenerThread = new Thread(serverListener);
+		listenerThread.setName("ServerListenerThread");
 		listenerThread.start();
 		threadPool = Executors.newFixedThreadPool(playerLimit);
 
@@ -150,7 +151,7 @@ public class Server implements Observer {
 	 * seconds (20 milliseconds)
 	 */
 	private void startTimer() {
-		updateDataTimer = new Timer();
+		updateDataTimer = new Timer("ServerUpdateDataTimer");
 		TimerTask tt = new TimerTask() {
 			@Override
 			public void run() {
@@ -233,7 +234,7 @@ public class Server implements Observer {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
 				if (players[i].equals(ipAddress)) {
-					System.out.format("DISCONNECTED %1$s\n", ipAddress.toString());
+					System.out.format("DISCONNECTED Client at %1$s\n", ipAddress.toString());
 					sendSingle("DISCONNECTED", ipAddress);
 					playerStrikes.remove(players[i]);
 					playerData.remove(players[i]);
@@ -251,6 +252,7 @@ public class Server implements Observer {
 	public void stop() {
 		serverListener.stopListening();
 		updateDataTimer.cancel();
+		threadPool.shutdownNow();
 		sendAll("SERVER CLOSING", null);
 		for (int i = 0; i < players.length; i++) {
 			players[i] = null;
@@ -414,11 +416,14 @@ public class Server implements Observer {
 	public void update(Observable o, Object arg) {
 		PingRunnable run = (PingRunnable) o;
 		InetSocketAddress player = run.getTarget();
-		int latency = (int) arg;
-		System.out.println(latency);
-		// If the latency is greater than 200.000.000 nanoseconds (0.2 seconds),
-		// the player will get a strike. 
-		if (latency >= 200000000) {
+		// If the client responds within 200 milliseconds (0.2 seconds), they are
+		// considered 'reachable'
+		boolean reachable = (boolean) arg;
+		System.out.format("%1$s is reachable: %2$s\n", player.getAddress().toString().substring(1), reachable);
+		
+		// If the client has a latency greater than 200 milliseconds (0.2 seconds)
+		// for 5 seconds, they will be disconnected.
+		if (!reachable) {
 			playerStrikes.put(player, playerStrikes.get(player)+1);
 		} else if (playerStrikes.get(player) > 0) {
 			playerStrikes.put(player, 0);
